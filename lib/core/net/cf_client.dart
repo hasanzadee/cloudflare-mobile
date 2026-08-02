@@ -188,8 +188,7 @@ class CfClient {
     final kind = switch (e.type) {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
-      DioExceptionType.receiveTimeout =>
-        NetworkKind.timeout,
+      DioExceptionType.receiveTimeout => NetworkKind.timeout,
       DioExceptionType.cancel => NetworkKind.cancelled,
       DioExceptionType.badCertificate => NetworkKind.tls,
       DioExceptionType.connectionError => _classifyConnection(e),

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/services.dart';
 
 /// Result of asking the platform about the biometric-bound key.
@@ -33,8 +31,9 @@ enum KeystoreStatus {
 class KeystoreChannel {
   const KeystoreChannel();
 
-  static const MethodChannel _channel =
-      MethodChannel('io.cfmgr.app/biometric_crypto');
+  static const MethodChannel _channel = MethodChannel(
+    'io.cfmgr.app/biometric_crypto',
+  );
 
   Future<KeystoreStatus> status() async {
     final raw = await _channel.invokeMethod<String>('status');

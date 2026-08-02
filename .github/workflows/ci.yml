@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The previous workflow ran `./gradlew` from a non-existent `android` directory
+# with no Flutter SDK installed, so it had never passed. Everything below runs
+# from the repository root, where the Flutter package now lives.
+env:
+  FLUTTER_VERSION: 3.44.8
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Formatting
+        run: dart format --set-exit-if-changed lib test tool integration_test
+      - name: Analyzer
+        run: flutter analyze --fatal-infos
+
+  generated-code-is-current:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      # The committed client must match spec/openapi.json exactly. This is the
+      # cheap guard that keeps generated code from drifting after a spec bump.
+      - run: dart run tool/openapi/generate.dart
+      - name: Fail if the generator produced a diff
+        run: git diff --exit-code
+
+  localization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Every user-visible string used to be a hardcoded Russian literal. This
+      # keeps them in ARB files where translators can reach them.
+      - name: No Cyrillic outside lib/l10n
+        run: |
+          if grep -rlP '[\x{0400}-\x{04FF}]' lib --include='*.dart' | grep -v '^lib/l10n/'; then
+            echo "::error::Move these strings into lib/l10n/*.arb"
+            exit 1
+          fi
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test --coverage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+
+  build-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build apk --debug
+
+  integration:
+    runs-on: ubuntu-latest
+    # The emulator is slow and the suite is long; run it on main and on demand
+    # rather than on every push to a branch.
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: flutter test integration_test

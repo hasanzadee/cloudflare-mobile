@@ -31,10 +31,10 @@ class RetryInterceptor extends Interceptor {
     Random? random,
     Future<void> Function(Duration)? sleep,
     DateTime Function()? clock,
-  })  : _dio = dio,
-        _random = random ?? Random(),
-        _sleep = sleep ?? Future<void>.delayed,
-        _clock = clock ?? DateTime.now;
+  }) : _dio = dio,
+       _random = random ?? Random(),
+       _sleep = sleep ?? Future<void>.delayed,
+       _clock = clock ?? DateTime.now;
 
   final Dio _dio;
 
@@ -115,8 +115,7 @@ class RetryInterceptor extends Interceptor {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
       DioExceptionType.receiveTimeout ||
-      DioExceptionType.connectionError =>
-        true,
+      DioExceptionType.connectionError => true,
       _ => false,
     };
   }

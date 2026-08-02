@@ -58,9 +58,9 @@ class CfApiError {
   }
 
   static List<CfApiError> listFrom(Object? raw) => switch (raw) {
-        final List<Object?> l => l.map(CfApiError.fromJson).toList(),
-        _ => const <CfApiError>[],
-      };
+    final List<Object?> l => l.map(CfApiError.fromJson).toList(),
+    _ => const <CfApiError>[],
+  };
 
   /// Flattened view including nested chain entries, for matching error codes.
   Iterable<CfApiError> get flattened sync* {
@@ -111,7 +111,8 @@ class CfResultInfo {
       count: _asInt(raw['count']),
       totalCount: _asInt(raw['total_count']),
       totalPages: _asInt(raw['total_pages']),
-      cursor: _asString(raw['cursor']) ??
+      cursor:
+          _asString(raw['cursor']) ??
           (cursors is Map ? _asString(cursors['after']) : null),
     );
   }
@@ -134,13 +135,13 @@ class CfResultInfo {
   }
 
   Map<String, Object?> toJson() => {
-        if (page != null) 'page': page,
-        if (perPage != null) 'per_page': perPage,
-        if (count != null) 'count': count,
-        if (totalCount != null) 'total_count': totalCount,
-        if (totalPages != null) 'total_pages': totalPages,
-        if (cursor != null) 'cursor': cursor,
-      };
+    if (page != null) 'page': page,
+    if (perPage != null) 'per_page': perPage,
+    if (count != null) 'count': count,
+    if (totalCount != null) 'total_count': totalCount,
+    if (totalPages != null) 'total_pages': totalPages,
+    if (cursor != null) 'cursor': cursor,
+  };
 }
 
 /// A parsed Cloudflare response.
@@ -192,14 +193,13 @@ class CfEnvelope {
       errors.expand((e) => e.flattened).map((e) => e.code).toSet();
 
   List<Object?> get resultAsList => switch (result) {
-        final List<Object?> l => l,
-        null => const [],
-        final Object o => [o],
-      };
+    final List<Object?> l => l,
+    null => const [],
+    final Object o => [o],
+  };
 
   Map<String, Object?> get resultAsMap => switch (result) {
-        final Map<Object?, Object?> m =>
-          m.map((k, v) => MapEntry(k.toString(), v)),
-        _ => const {},
-      };
+    final Map<Object?, Object?> m => m.map((k, v) => MapEntry(k.toString(), v)),
+    _ => const {},
+  };
 }

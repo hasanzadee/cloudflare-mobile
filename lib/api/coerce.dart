@@ -10,37 +10,33 @@ library;
 String? asString(Object? v) => v == null ? null : (v is String ? v : '$v');
 
 int? asInt(Object? v) => switch (v) {
-      final int i => i,
-      final num n => n.toInt(),
-      final String s => int.tryParse(s) ?? double.tryParse(s)?.toInt(),
-      _ => null,
-    };
+  final int i => i,
+  final num n => n.toInt(),
+  final String s => int.tryParse(s) ?? double.tryParse(s)?.toInt(),
+  _ => null,
+};
 
 num? asNum(Object? v) => switch (v) {
-      final num n => n,
-      final String s => num.tryParse(s),
-      _ => null,
-    };
+  final num n => n,
+  final String s => num.tryParse(s),
+  _ => null,
+};
 
 double? asDouble(Object? v) => asNum(v)?.toDouble();
 
 bool? asBool(Object? v) => switch (v) {
-      final bool b => b,
-      'true' || 'True' || '1' || 1 => true,
-      'false' || 'False' || '0' || 0 => false,
-      _ => null,
-    };
+  final bool b => b,
+  'true' || 'True' || '1' || 1 => true,
+  'false' || 'False' || '0' || 0 => false,
+  _ => null,
+};
 
-Map<String, Object?>? asMap(Object? v) => v is Map
-    ? v.map((k, value) => MapEntry(k.toString(), value))
-    : null;
+Map<String, Object?>? asMap(Object? v) =>
+    v is Map ? v.map((k, value) => MapEntry(k.toString(), value)) : null;
 
 /// Decodes a JSON array into models, skipping entries of the wrong shape
 /// rather than failing the whole list.
-List<T>? asModelList<T>(
-  Object? v,
-  T Function(Map<String, Object?>) parse,
-) {
+List<T>? asModelList<T>(Object? v, T Function(Map<String, Object?>) parse) {
   if (v is! List) return null;
   final out = <T>[];
   for (final e in v) {
