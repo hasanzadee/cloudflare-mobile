@@ -16,6 +16,15 @@ export 'ops/cache_api.dart';
 export 'ops/dns_api.dart';
 export 'ops/zones_api.dart';
 
+/// Number of operations described by the bundled spec.
+///
+/// Emitted rather than written by hand so the figure quoted
+/// in onboarding cannot drift from the shipped index.
+const int kCloudflareOperationCount = 3240;
+
+/// `info.version` of the bundled Cloudflare description.
+const String kCloudflareApiVersion = '4.0.0';
+
 /// Typed entry point to the allowlisted Cloudflare operations.
 ///
 /// Endpoints outside the allowlist remain reachable through the

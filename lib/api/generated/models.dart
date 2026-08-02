@@ -579,7 +579,7 @@ class DnsRecordResponse {
         commentModifiedOn: asString(json['comment_modified_on']),
         createdOn: asString(json['created_on']),
         id: asString(json['id']),
-        meta: asMap(json['meta']),
+        meta: asModel(json['meta'], DnsRecordResponseMeta.fromJson),
         modifiedOn: asString(json['modified_on']),
         proxiable: asBool(json['proxiable']),
         tagsModifiedOn: asString(json['tags_modified_on']),
@@ -635,8 +635,8 @@ class DnsRecordResponse {
   /// Identifier.
   final String? id;
 
-  /// Extra Cloudflare-specific information about the record.
-  final Map<String, Object?>? meta;
+  /// Extra Cloudflare-specific metadata about the record.
+  final DnsRecordResponseMeta? meta;
 
   /// When the record was last modified.
   final String? modifiedOn;
@@ -689,7 +689,7 @@ class DnsRecordResponse {
     if (commentModifiedOn != null) 'comment_modified_on': commentModifiedOn!,
     if (createdOn != null) 'created_on': createdOn!,
     if (id != null) 'id': id!,
-    if (meta != null) 'meta': meta!,
+    if (meta != null) 'meta': meta!.toJson(),
     if (modifiedOn != null) 'modified_on': modifiedOn!,
     if (proxiable != null) 'proxiable': proxiable!,
     if (tagsModifiedOn != null) 'tags_modified_on': tagsModifiedOn!,
@@ -710,7 +710,7 @@ class DnsRecordResponse {
     String? commentModifiedOn,
     String? createdOn,
     String? id,
-    Map<String, Object?>? meta,
+    DnsRecordResponseMeta? meta,
     String? modifiedOn,
     bool? proxiable,
     String? tagsModifiedOn,
@@ -779,6 +779,80 @@ class DnsRecordResponseData {
   }) => DnsRecordResponseData(
     target: target ?? this.target,
     weight: weight ?? this.weight,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Extra Cloudflare-specific metadata about the record.
+class DnsRecordResponseMeta {
+  const DnsRecordResponseMeta({
+    this.deadGlue,
+    this.isGlue,
+    this.shadowedBy,
+    this.shadowedRecordsCount,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory DnsRecordResponseMeta.fromJson(Map<String, Object?> json) =>
+      DnsRecordResponseMeta(
+        deadGlue: asBool(json['dead_glue']),
+        isGlue: asBool(json['is_glue']),
+        shadowedBy: asPrimitiveList<String>(json['shadowed_by'], asString),
+        shadowedRecordsCount: asInt(json['shadowed_records_count']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Whether this glue record is not served because a shallower NS delegation
+  /// takes precedence over the deeper delegation that needs it. Present only when
+  /// true; reachable glue carries only `is_glue`. See [Unreachable glue
+  /// records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#unreachable-glue-records).
+  final bool? deadGlue;
+
+  /// Whether this A or AAAA record is glue for a subdomain NS delegation. See
+  /// [Glue
+  /// records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records#glue-records).
+  final bool? isGlue;
+
+  /// IDs of the NS records that shadow this record. See [Shadowed
+  /// records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
+  final List<String>? shadowedBy;
+
+  /// Number of records shadowed by this NS delegation. See [Shadowed
+  /// records](https://developers.cloudflare.com/dns/manage-dns-records/reference/shadowed-records).
+  final int? shadowedRecordsCount;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'dead_glue',
+    'is_glue',
+    'shadowed_by',
+    'shadowed_records_count',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (deadGlue != null) 'dead_glue': deadGlue!,
+    if (isGlue != null) 'is_glue': isGlue!,
+    if (shadowedBy != null) 'shadowed_by': shadowedBy!,
+    if (shadowedRecordsCount != null)
+      'shadowed_records_count': shadowedRecordsCount!,
+  };
+
+  DnsRecordResponseMeta copyWith({
+    bool? deadGlue,
+    bool? isGlue,
+    List<String>? shadowedBy,
+    int? shadowedRecordsCount,
+    Map<String, Object?>? extra,
+  }) => DnsRecordResponseMeta(
+    deadGlue: deadGlue ?? this.deadGlue,
+    isGlue: isGlue ?? this.isGlue,
+    shadowedBy: shadowedBy ?? this.shadowedBy,
+    shadowedRecordsCount: shadowedRecordsCount ?? this.shadowedRecordsCount,
     extra: extra ?? this.extra,
   );
 }
@@ -904,6 +978,7 @@ class Organization {
 
 class PermissionGroupsListPermissionGroupsItem {
   const PermissionGroupsListPermissionGroupsItem({
+    this.category,
     this.id,
     this.name,
     this.scopes,
@@ -913,11 +988,19 @@ class PermissionGroupsListPermissionGroupsItem {
   factory PermissionGroupsListPermissionGroupsItem.fromJson(
     Map<String, Object?> json,
   ) => PermissionGroupsListPermissionGroupsItem(
+    category: asString(json['category']),
     id: asString(json['id']),
     name: asString(json['name']),
     scopes: asPrimitiveList<String>(json['scopes'], asString),
     extra: extraOf(json, _knownKeys),
   );
+
+  /// Product category that this permission group belongs to. Allowed values:
+  /// `developer_platform`, `ai_and_machine_learning`, `dns_and_zones`,
+  /// `app_security`, `rules_and_configuration`, `cloudflare_one_and_zero_trust`,
+  /// `analytics_and_logs`, `network_services`, `media`, `email_and_messaging`,
+  /// `cache_and_performance`, `account_and_billing`, `other`.
+  final String? category;
 
   /// Public ID.
   final String? id;
@@ -933,21 +1016,24 @@ class PermissionGroupsListPermissionGroupsItem {
   /// silently drop them.
   final Map<String, Object?> extra;
 
-  static const Set<String> _knownKeys = {'id', 'name', 'scopes'};
+  static const Set<String> _knownKeys = {'category', 'id', 'name', 'scopes'};
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
+    if (category != null) 'category': category!,
     if (id != null) 'id': id!,
     if (name != null) 'name': name!,
     if (scopes != null) 'scopes': scopes!,
   };
 
   PermissionGroupsListPermissionGroupsItem copyWith({
+    String? category,
     String? id,
     String? name,
     List<String>? scopes,
     Map<String, Object?>? extra,
   }) => PermissionGroupsListPermissionGroupsItem(
+    category: category ?? this.category,
     id: id ?? this.id,
     name: name ?? this.name,
     scopes: scopes ?? this.scopes,
@@ -1347,6 +1433,7 @@ class UserUserDetailsResult {
   const UserUserDetailsResult({
     this.betas,
     this.country,
+    this.email,
     this.firstName,
     this.hasBusinessZones,
     this.hasEnterpriseZones,
@@ -1366,6 +1453,7 @@ class UserUserDetailsResult {
       UserUserDetailsResult(
         betas: asPrimitiveList<String>(json['betas'], asString),
         country: asString(json['country']),
+        email: asString(json['email']),
         firstName: asString(json['first_name']),
         hasBusinessZones: asBool(json['has_business_zones']),
         hasEnterpriseZones: asBool(json['has_enterprise_zones']),
@@ -1393,6 +1481,9 @@ class UserUserDetailsResult {
 
   /// The country in which the user lives.
   final String? country;
+
+  /// Current email address of the user.
+  final String? email;
 
   /// User's first name
   final String? firstName;
@@ -1438,6 +1529,7 @@ class UserUserDetailsResult {
   static const Set<String> _knownKeys = {
     'betas',
     'country',
+    'email',
     'first_name',
     'has_business_zones',
     'has_enterprise_zones',
@@ -1456,6 +1548,7 @@ class UserUserDetailsResult {
     ...extra,
     if (betas != null) 'betas': betas!,
     if (country != null) 'country': country!,
+    if (email != null) 'email': email!,
     if (firstName != null) 'first_name': firstName!,
     if (hasBusinessZones != null) 'has_business_zones': hasBusinessZones!,
     if (hasEnterpriseZones != null) 'has_enterprise_zones': hasEnterpriseZones!,
@@ -1476,6 +1569,7 @@ class UserUserDetailsResult {
   UserUserDetailsResult copyWith({
     List<String>? betas,
     String? country,
+    String? email,
     String? firstName,
     bool? hasBusinessZones,
     bool? hasEnterpriseZones,
@@ -1492,6 +1586,7 @@ class UserUserDetailsResult {
   }) => UserUserDetailsResult(
     betas: betas ?? this.betas,
     country: country ?? this.country,
+    email: email ?? this.email,
     firstName: firstName ?? this.firstName,
     hasBusinessZones: hasBusinessZones ?? this.hasBusinessZones,
     hasEnterpriseZones: hasEnterpriseZones ?? this.hasEnterpriseZones,

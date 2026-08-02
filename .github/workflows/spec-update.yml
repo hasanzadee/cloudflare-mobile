@@ -24,10 +24,15 @@ jobs:
           channel: stable
           cache: true
 
+      # Cloudflare publishes the description at cloudflare/api-schemas. Verified
+      # reachable; `curl -f` makes a move fail the job loudly rather than
+      # silently committing an error page.
       - name: Fetch the current spec
         run: |
-          curl -fsSL https://developers.cloudflare.com/schemas/v4-api.json \
+          curl -fsSL \
+            https://raw.githubusercontent.com/cloudflare/api-schemas/main/openapi.json \
             -o spec/openapi.json.new
+          python3 -c "import json,sys; json.load(open('spec/openapi.json.new'))"
           if cmp -s spec/openapi.json spec/openapi.json.new; then
             echo "unchanged=true" >> "$GITHUB_ENV"
           else

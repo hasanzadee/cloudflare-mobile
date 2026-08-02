@@ -22,6 +22,7 @@ class ZonesApi {
   Future<CfPage<Zone>> listZones({
     String? name,
     String? status,
+    List<String>? type_,
     String? accountId,
     String? accountName,
     num? page,
@@ -38,6 +39,7 @@ class ZonesApi {
       query: <String, Object?>{
         'name': name,
         'status': status,
+        'type': type_,
         'account.id': accountId,
         'account.name': accountName,
         'page': page,

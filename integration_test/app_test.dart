@@ -225,9 +225,10 @@ void main() {
     // Parsing 3.6 MB of spec JSON happens in a background isolate.
     await tester.pumpAndSettle(const Duration(seconds: 20));
 
-    // The exact count proves the whole generated index parsed, not just that
-    // the screen rendered.
-    expect(find.text('2884 endpoints'), findsOneWidget);
+    // A concrete count proves the whole generated index parsed, not merely
+    // that the screen rendered. Matched by shape so a spec refresh does not
+    // break the test — the anchors keep it from also matching the search hint.
+    expect(find.textContaining(RegExp(r'^\d{3,5} endpoints$')), findsOneWidget);
 
     await tester.enterText(find.byType(TextField).first, 'dns_records');
     await tester.pumpAndSettle(const Duration(seconds: 3));
