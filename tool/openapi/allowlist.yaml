@@ -18,6 +18,9 @@ groups:
   dns: DNS records
   accounts: Accounts, users and tokens
   cache: Cache purging
+  waf: WAF, rate limiting and IP access rules
+  workers: Workers, Pages, KV, D1 and R2
+  zeroTrust: Tunnels, Access and Gateway
 
 operations:
   # --- Accounts / identity -------------------------------------------------
@@ -124,3 +127,133 @@ operations:
     as: importBind
     group: dns
     perms: [DNS Write]
+
+  # --- WAF / Ruleset Engine ------------------------------------------------
+  # Cloudflare exposes WAF custom rules, rate limiting and managed rulesets
+  # through one Ruleset Engine API; the phase name selects which.
+  - id: listZoneRulesets
+    as: listRulesets
+    group: waf
+    perms: [Zone WAF Read]
+
+  - id: getZoneRuleset
+    as: getRuleset
+    group: waf
+    perms: [Zone WAF Read]
+
+  - id: getZoneEntrypointRuleset
+    as: getPhaseEntrypoint
+    group: waf
+    perms: [Zone WAF Read]
+
+  - id: createZoneRulesetRule
+    as: createRule
+    group: waf
+    perms: [Zone WAF Write]
+
+  - id: updateZoneRulesetRule
+    as: updateRule
+    group: waf
+    perms: [Zone WAF Write]
+
+  - id: deleteZoneRulesetRule
+    as: deleteRule
+    group: waf
+    perms: [Zone WAF Write]
+
+  - id: ip-access-rules-for-a-zone-list-ip-access-rules
+    as: listIpAccessRules
+    group: waf
+    perms: [Firewall Services Read]
+
+  - id: ip-access-rules-for-a-zone-create-an-ip-access-rule
+    as: createIpAccessRule
+    group: waf
+    perms: [Firewall Services Write]
+
+  - id: ip-access-rules-for-a-zone-delete-an-ip-access-rule
+    as: deleteIpAccessRule
+    group: waf
+    perms: [Firewall Services Write]
+
+  # --- Developer platform ---------------------------------------------------
+  - id: worker-script-list-workers
+    as: listScripts
+    group: workers
+    perms: [Workers Scripts Read]
+
+  - id: worker-script-get-settings
+    as: getScriptSettings
+    group: workers
+    perms: [Workers Scripts Read]
+
+  - id: worker-cron-trigger-get-cron-triggers
+    as: getCronTriggers
+    group: workers
+    perms: [Workers Scripts Read]
+
+  - id: worker-routes-list-routes
+    as: listRoutes
+    group: workers
+    perms: [Workers Routes Read]
+
+  - id: pages-project-get-projects
+    as: listPagesProjects
+    group: workers
+    perms: [Pages Read]
+
+  - id: pages-deployment-get-deployments
+    as: listPagesDeployments
+    group: workers
+    perms: [Pages Read]
+
+  - id: workers-kv-namespace-list-namespaces
+    as: listKvNamespaces
+    group: workers
+    perms: [Workers KV Storage Read]
+
+  - id: d1-list-databases
+    as: listD1Databases
+    group: workers
+    perms: [D1 Read]
+
+  - id: d1-query-database
+    as: queryD1
+    group: workers
+    perms: [D1 Write]
+
+  - id: r2-list-buckets
+    as: listR2Buckets
+    group: workers
+    perms: [Workers R2 Storage Read]
+
+  # --- Zero Trust -----------------------------------------------------------
+  - id: cloudflare-tunnel-list-cloudflare-tunnels
+    as: listTunnels
+    group: zeroTrust
+    perms: [Cloudflare Tunnel Read]
+
+  - id: cloudflare-tunnel-get-a-cloudflare-tunnel
+    as: getTunnel
+    group: zeroTrust
+    perms: [Cloudflare Tunnel Read]
+
+  - id: cloudflare-tunnel-list-cloudflare-tunnel-connections
+    as: listTunnelConnections
+    group: zeroTrust
+    perms: [Cloudflare Tunnel Read]
+
+  - id: access-applications-list-access-applications
+    as: listAccessApps
+    group: zeroTrust
+    perms: [Access Apps and Policies Read]
+
+  - id: access-policies-list-access-app-policies
+    as: listAccessPolicies
+    group: zeroTrust
+    perms: [Access Apps and Policies Read]
+
+  - id: zero-trust-gateway-rules-list-zero-trust-gateway-rules
+    as: listGatewayRules
+    group: zeroTrust
+    perms: [Zero Trust Read]

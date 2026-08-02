@@ -12,6 +12,30 @@ OAuth case, the manifest registers both redirect strategies, and
 because seven things need to be confirmed against a real registration, and
 several of them change the design rather than just a constant.
 
+## Settled by running the registration form (2026-08-02)
+
+- **Public clients without a secret are supported.** The Token Authentication
+  Method dropdown offers `None (PKCE)`, which is exactly the shape a mobile app
+  needs.
+- **Custom-scheme redirects are rejected.** `io.cfmgr.app://oauth/callback` is
+  cleared by the form; the field requires `https://`. So the callback must be an
+  App Link on a domain the publisher controls, backed by
+  `https://<domain>/.well-known/assetlinks.json`. The manifest already registers
+  both filters, so this is a build-flag change:
+
+  ```bash
+  flutter build apk -Poauth-host=cf.example.com
+  ```
+
+  A fallback that needs no App Link verification is a two-line page at that URL
+  which redirects to the custom scheme. PKCE makes the exposed code useless
+  without the verifier, but App Links are the cleaner answer.
+- **Private vs public is about who may use the client, not who registers it.**
+  A private client works immediately for members of the account that created it.
+  Making it public — so anyone who installs the APK can sign in with their own
+  Cloudflare account — requires the optional fields filled and ownership of the
+  Client URL domain verified. End users never register anything.
+
 ## Confirmed from documentation
 
 - Authorization Code is the only grant available to third-party clients. No
@@ -30,7 +54,6 @@ several of them change the design rather than just a constant.
 | # | Question | Why it matters | How to settle it |
 |---|---|---|---|
 | 1 | Exact URL of the metadata document | Everything else is read from it | Probe `/.well-known/oauth-authorization-server` on the dash and api origins |
-| 2 | Is a custom-scheme redirect (`io.cfmgr.app://oauth/callback`) accepted for a public client, or is an `https` App Link required? | An App Link needs a domain you control and a hosted `assetlinks.json` | Register a test client and try the custom scheme first |
 | 3 | Are refresh tokens issued? Is `offline_access` (or an equivalent scope) required? Do they rotate? | Without refresh, users re-authenticate constantly and the UX changes | Complete one exchange and read the response |
 | 4 | Access-token lifetime | Tunes the refresh-ahead window | Same exchange |
 | 5 | **Does a Public client require domain-ownership verification?** | If yes, this is a hard gate for a community app: every user would have to register their own client. API tokens then stay the documented primary path | Read the client-creation flow in the dashboard |

@@ -25,7 +25,7 @@ class CacheApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'POST',
       path: '/zones/$zoneId/purge_cache',
       body: body.toJson(),
@@ -33,6 +33,6 @@ class CacheApi {
       cancelToken: cancelToken,
       missingPermissions: const {'Cache Purge'},
     );
-    return ZonePurgeResult.fromJson(env.resultAsMap);
+    return ZonePurgeResult.fromJson(_env.resultAsMap);
   }
 }

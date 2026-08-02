@@ -22,11 +22,15 @@ handling written down rather than hand-waved.
 | DNS — all 21 record types with structured forms, proxy toggle, TTL, comments | ✅ |
 | API explorer — every endpoint, typed inputs, enum pickers, body templates | ✅ |
 | Multi-profile credentials, PIN + hardware-bound biometric unlock | ✅ |
+| WAF custom rules and rate limiting — enable/disable, delete | ✅ |
+| IP access rules — list, create, delete | ✅ |
+| Workers — scripts, routes, cron triggers | ✅ read-only |
+| Pages — projects and deployments | ✅ read-only |
+| KV namespaces, D1 databases, R2 buckets | ✅ read-only |
+| Zero Trust — tunnels with live connector status, Access apps and policies, Gateway rules | ✅ read-only |
 | Cache purge, SSL/TLS, zone settings | 🚧 typed client ready, screens pending |
 | Analytics and charts | 📋 needs the GraphQL subsystem — see below |
-| WAF, rate limiting, security events | 📋 reachable through the explorer |
-| Workers, Pages, KV, D1, R2 | 📋 reachable through the explorer |
-| Zero Trust — tunnels, Access, Gateway | 📋 reachable through the explorer |
+| D1 SQL console, Workers deploy, R2 object browser | 📋 reachable through the explorer |
 | OAuth "Sign in with Cloudflare" | 📋 blocked on verification, see [docs/oauth-spike.md](docs/oauth-spike.md) |
 
 "Reachable through the explorer" is not a euphemism for missing: the explorer

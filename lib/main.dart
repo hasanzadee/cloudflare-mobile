@@ -8,10 +8,11 @@ import 'auth/application/auth_providers.dart';
 import 'auth/presentation/lock_screen.dart';
 import 'auth/presentation/onboarding_screen.dart';
 import 'core/security/secure_flag.dart';
+import 'features/developer/developer_screen.dart';
 import 'features/dns/dns_screen.dart';
-import 'features/explorer/explorer_screen.dart';
 import 'features/home/home_screen.dart';
-import 'features/settings/settings_screen.dart';
+import 'features/more/more_screen.dart';
+import 'features/security/security_screen.dart';
 import 'features/zones/zones_screen.dart';
 import 'l10n/app_localizations.dart';
 
@@ -146,8 +147,9 @@ class _AppShellState extends State<AppShell> {
               );
             },
           ),
-          const ExplorerScreen(),
-          const SettingsScreen(),
+          const SecurityScreen(),
+          const DeveloperScreen(),
+          const MoreScreen(),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -165,14 +167,18 @@ class _AppShellState extends State<AppShell> {
             label: l.navZones,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.terminal_outlined),
-            selectedIcon: const Icon(Icons.terminal),
-            label: l.navExplorer,
+            icon: const Icon(Icons.shield_outlined),
+            selectedIcon: const Icon(Icons.shield),
+            label: l.navSecurity,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: l.navSettings,
+            icon: const Icon(Icons.bolt_outlined),
+            selectedIcon: const Icon(Icons.bolt),
+            label: l.navDeveloper,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.more_horiz),
+            label: l.navMore,
           ),
         ],
       ),

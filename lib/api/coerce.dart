@@ -46,6 +46,14 @@ List<T>? asModelList<T>(Object? v, T Function(Map<String, Object?>) parse) {
   return out;
 }
 
+/// A list the spec does not describe the element type of.
+///
+/// A helper rather than an inline `is List` test, because Dart does not promote
+/// an index expression — `json['x'] is List ? List.from(json['x'])` does not
+/// compile.
+List<Object?>? asObjectList(Object? v) =>
+    v is List ? List<Object?>.from(v) : null;
+
 List<T>? asPrimitiveList<T>(Object? v, T? Function(Object?) coerce) {
   if (v is! List) return null;
   final out = <T>[];
