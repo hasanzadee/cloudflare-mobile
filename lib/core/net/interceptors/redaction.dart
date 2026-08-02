@@ -48,11 +48,9 @@ Object? redactJson(Object? node) {
 }
 
 Map<String, Object?> redactHeaders(Map<String, Object?> headers) => headers.map(
-      (k, v) => MapEntry(
-        k,
-        kSecretHeaders.contains(k.toLowerCase()) ? kRedacted : v,
-      ),
-    );
+  (k, v) =>
+      MapEntry(k, kSecretHeaders.contains(k.toLowerCase()) ? kRedacted : v),
+);
 
 /// Redacts a free-form string that may embed a token, for the rare case where
 /// a message interpolates one.

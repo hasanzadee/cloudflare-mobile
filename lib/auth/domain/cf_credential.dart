@@ -13,9 +13,10 @@ enum CfAuthMethod {
   globalKey,
   oauth;
 
-  static CfAuthMethod fromName(String? n) =>
-      CfAuthMethod.values.firstWhere((m) => m.name == n,
-          orElse: () => CfAuthMethod.apiToken);
+  static CfAuthMethod fromName(String? n) => CfAuthMethod.values.firstWhere(
+    (m) => m.name == n,
+    orElse: () => CfAuthMethod.apiToken,
+  );
 }
 
 sealed class CfCredential {
@@ -49,30 +50,30 @@ sealed class CfCredential {
     final label = json['label'] as String? ?? 'Cloudflare';
     return switch (method) {
       CfAuthMethod.apiToken => ApiTokenCredential(
-          id: id,
-          label: label,
-          token: json['token'] as String? ?? '',
-        ),
+        id: id,
+        label: label,
+        token: json['token'] as String? ?? '',
+      ),
       CfAuthMethod.globalKey => GlobalKeyCredential(
-          id: id,
-          label: label,
-          email: json['email'] as String? ?? '',
-          apiKey: json['api_key'] as String? ?? '',
-        ),
+        id: id,
+        label: label,
+        email: json['email'] as String? ?? '',
+        apiKey: json['api_key'] as String? ?? '',
+      ),
       CfAuthMethod.oauth => OAuthCredential(
-          id: id,
-          label: label,
-          accessToken: json['access_token'] as String? ?? '',
-          refreshToken: json['refresh_token'] as String?,
-          expiresAt: switch (json['expires_at']) {
-            final String s => DateTime.tryParse(s),
-            _ => null,
-          },
-          scopes: switch (json['scopes']) {
-            final List<Object?> l => l.map((e) => e.toString()).toSet(),
-            _ => const <String>{},
-          },
-        ),
+        id: id,
+        label: label,
+        accessToken: json['access_token'] as String? ?? '',
+        refreshToken: json['refresh_token'] as String?,
+        expiresAt: switch (json['expires_at']) {
+          final String s => DateTime.tryParse(s),
+          _ => null,
+        },
+        scopes: switch (json['scopes']) {
+          final List<Object?> l => l.map((e) => e.toString()).toSet(),
+          _ => const <String>{},
+        },
+      ),
     };
   }
 
@@ -100,11 +101,11 @@ class ApiTokenCredential extends CfCredential {
 
   @override
   Map<String, Object?> toJson() => {
-        'method': method.name,
-        'id': id,
-        'label': label,
-        'token': token,
-      };
+    'method': method.name,
+    'id': id,
+    'label': label,
+    'token': token,
+  };
 
   @override
   CfCredential copyWithLabel(String newLabel) =>
@@ -133,22 +134,26 @@ class GlobalKeyCredential extends CfCredential {
 
   @override
   Map<String, String> get authHeaders => {
-        'X-Auth-Email': email,
-        'X-Auth-Key': apiKey,
-      };
+    'X-Auth-Email': email,
+    'X-Auth-Key': apiKey,
+  };
 
   @override
   Map<String, Object?> toJson() => {
-        'method': method.name,
-        'id': id,
-        'label': label,
-        'email': email,
-        'api_key': apiKey,
-      };
+    'method': method.name,
+    'id': id,
+    'label': label,
+    'email': email,
+    'api_key': apiKey,
+  };
 
   @override
-  CfCredential copyWithLabel(String newLabel) =>
-      GlobalKeyCredential(id: id, label: newLabel, email: email, apiKey: apiKey);
+  CfCredential copyWithLabel(String newLabel) => GlobalKeyCredential(
+    id: id,
+    label: newLabel,
+    email: email,
+    apiKey: apiKey,
+  );
 }
 
 /// OAuth 2.0 access token obtained through Authorization Code + PKCE.
@@ -187,42 +192,42 @@ class OAuthCredential extends CfCredential {
   }
 
   @override
-  Map<String, String> get authHeaders =>
-      {'Authorization': 'Bearer $accessToken'};
+  Map<String, String> get authHeaders => {
+    'Authorization': 'Bearer $accessToken',
+  };
 
   OAuthCredential copyWithTokens({
     required String accessToken,
     String? refreshToken,
     DateTime? expiresAt,
     Set<String>? scopes,
-  }) =>
-      OAuthCredential(
-        id: id,
-        label: label,
-        accessToken: accessToken,
-        refreshToken: refreshToken ?? this.refreshToken,
-        expiresAt: expiresAt ?? this.expiresAt,
-        scopes: scopes ?? this.scopes,
-      );
+  }) => OAuthCredential(
+    id: id,
+    label: label,
+    accessToken: accessToken,
+    refreshToken: refreshToken ?? this.refreshToken,
+    expiresAt: expiresAt ?? this.expiresAt,
+    scopes: scopes ?? this.scopes,
+  );
 
   @override
   Map<String, Object?> toJson() => {
-        'method': method.name,
-        'id': id,
-        'label': label,
-        'access_token': accessToken,
-        if (refreshToken != null) 'refresh_token': refreshToken,
-        if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
-        'scopes': scopes.toList(),
-      };
+    'method': method.name,
+    'id': id,
+    'label': label,
+    'access_token': accessToken,
+    if (refreshToken != null) 'refresh_token': refreshToken,
+    if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
+    'scopes': scopes.toList(),
+  };
 
   @override
   CfCredential copyWithLabel(String newLabel) => OAuthCredential(
-        id: id,
-        label: newLabel,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        expiresAt: expiresAt,
-        scopes: scopes,
-      );
+    id: id,
+    label: newLabel,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    expiresAt: expiresAt,
+    scopes: scopes,
+  );
 }

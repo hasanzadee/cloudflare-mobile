@@ -1,0 +1,60 @@
+name: Cloudflare spec update
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Tracking 2884 endpoints by hand is not a plan. This fetches the published
+# OpenAPI description weekly, regenerates the client, and opens a PR whose diff
+# shows exactly which allowlisted operations changed shape. The generated
+# round-trip tests run against it, so a breaking rename fails in the same PR.
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.8
+          channel: stable
+          cache: true
+
+      - name: Fetch the current spec
+        run: |
+          curl -fsSL https://developers.cloudflare.com/schemas/v4-api.json \
+            -o spec/openapi.json.new
+          if cmp -s spec/openapi.json spec/openapi.json.new; then
+            echo "unchanged=true" >> "$GITHUB_ENV"
+          else
+            mv spec/openapi.json.new spec/openapi.json
+            echo "unchanged=false" >> "$GITHUB_ENV"
+          fi
+          rm -f spec/openapi.json.new
+
+      - if: env.unchanged == 'false'
+        run: flutter pub get
+
+      - if: env.unchanged == 'false'
+        run: dart run tool/openapi/generate.dart
+
+      - if: env.unchanged == 'false'
+        run: flutter test
+
+      - if: env.unchanged == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/spec-update
+          title: 'chore(spec): refresh the Cloudflare API description'
+          commit-message: 'chore(spec): refresh the Cloudflare API description'
+          body: |
+            Automated refresh of `spec/openapi.json` plus regenerated client.
+
+            Review the diff under `lib/api/generated/` — it shows precisely
+            which allowlisted operations changed shape. `assets/spec/*.json`
+            changes are expected on every upstream release and are not worth
+            reading line by line.

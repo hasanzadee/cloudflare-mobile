@@ -65,12 +65,9 @@ class HighlightedPath extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final base = baseStyle ??
-        const TextStyle(
-          fontFamily: 'monospace',
-          fontSize: 13,
-          height: 1.4,
-        );
+    final base =
+        baseStyle ??
+        const TextStyle(fontFamily: 'monospace', fontSize: 13, height: 1.4);
     final spans = <InlineSpan>[];
     final reg = RegExp(r'\{([^}]+)\}');
     var last = 0;
@@ -78,13 +75,15 @@ class HighlightedPath extends StatelessWidget {
       if (m.start > last) {
         spans.add(TextSpan(text: path.substring(last, m.start), style: base));
       }
-      spans.add(TextSpan(
-        text: m.group(0),
-        style: base.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.w600,
+      spans.add(
+        TextSpan(
+          text: m.group(0),
+          style: base.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ));
+      );
       last = m.end;
     }
     if (last < path.length) {
@@ -157,10 +156,7 @@ class SectionCard extends StatelessWidget {
             ),
           ),
           const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: child,
-          ),
+          Padding(padding: const EdgeInsets.all(12), child: child),
         ],
       ),
     );
@@ -189,11 +185,7 @@ class StatusChip extends StatelessWidget {
       ),
       child: Text(
         'HTTP $code',
-        style: TextStyle(
-          color: c,
-          fontWeight: FontWeight.w700,
-          fontSize: 11,
-        ),
+        style: TextStyle(color: c, fontWeight: FontWeight.w700, fontSize: 11),
       ),
     );
   }

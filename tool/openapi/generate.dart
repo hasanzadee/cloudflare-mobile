@@ -42,9 +42,11 @@ void main(List<String> args) {
 
   final bytes = specFile.readAsBytesSync();
   final spec = jsonDecode(utf8.decode(bytes)) as Map<String, Object?>;
-  final allowlist = loadYaml(
-    File('${root.path}/tool/openapi/allowlist.yaml').readAsStringSync(),
-  ) as YamlMap;
+  final allowlist =
+      loadYaml(
+            File('${root.path}/tool/openapi/allowlist.yaml').readAsStringSync(),
+          )
+          as YamlMap;
 
   final gen = Generator(spec: spec, allowlist: allowlist, root: root.path);
   gen.run();
@@ -66,7 +68,11 @@ void main(List<String> args) {
     'indexed ${gen.totalOperations} operations / ${gen.totalSchemas} schemas.',
   );
 
-  final fmt = Process.runSync('dart', ['format', 'lib/api/generated', 'test/generated']);
+  final fmt = Process.runSync('dart', [
+    'format',
+    'lib/api/generated',
+    'test/generated',
+  ]);
   if (fmt.exitCode != 0) {
     stderr.writeln('dart format failed:\n${fmt.stderr}');
   }
@@ -152,10 +158,8 @@ class TypeInfo {
 
   String writeExpr(String name) => write?.call(name) ?? name;
 
-  static TypeInfo primitive(String dart, String coerce) => TypeInfo(
-        dart: dart,
-        read: (src) => '$coerce($src)',
-      );
+  static TypeInfo primitive(String dart, String coerce) =>
+      TypeInfo(dart: dart, read: (src) => '$coerce($src)');
 }
 
 // ---------------------------------------------------------------------------
@@ -163,20 +167,17 @@ class TypeInfo {
 // ---------------------------------------------------------------------------
 
 class Generator {
-  Generator({
-    required this.spec,
-    required this.allowlist,
-    required this.root,
-  });
+  Generator({required this.spec, required this.allowlist, required this.root});
 
   final Map<String, Object?> spec;
   final YamlMap allowlist;
   final String root;
 
   late final Map<String, Object?> schemas =
-      ((spec['components'] as Map?)?['schemas'] as Map?)
-              ?.map((k, v) => MapEntry(k.toString(), v)) ??
-          {};
+      ((spec['components'] as Map?)?['schemas'] as Map?)?.map(
+        (k, v) => MapEntry(k.toString(), v),
+      ) ??
+      {};
 
   final List<SpecOp> allOps = [];
   final Map<String, ModelDef> models = {};
@@ -226,7 +227,8 @@ class Generator {
           SpecOp(
             // 49 operations in the spec have no operationId; synthesising a
             // stable one keeps the explorer able to address them.
-            id: (map['operationId'] as String?) ??
+            id:
+                (map['operationId'] as String?) ??
                 '${method}_${path.replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_')}',
             method: method.toUpperCase(),
             path: path,
@@ -324,10 +326,7 @@ class Generator {
       if (existing != null) return existing;
       final target = _lookupRef(ref);
       if (target == null) return 'Map<String, Object?>';
-      final name = uniqueName(
-        pascalCase(_nameFromRef(ref)),
-        _takenNames,
-      );
+      final name = uniqueName(pascalCase(_nameFromRef(ref)), _takenNames);
       // Register before recursing so a self-referencing schema terminates.
       _refToModel[ref] = name;
       _defineModel(name, target, depth: depth);
@@ -347,11 +346,7 @@ class Generator {
     return underscore > 0 ? raw.substring(underscore + 1) : raw;
   }
 
-  void _defineModel(
-    String name,
-    Map<String, Object?> schema, {
-    int depth = 0,
-  }) {
+  void _defineModel(String name, Map<String, Object?> schema, {int depth = 0}) {
     final node = deref(schema);
     final shape = flatten(node);
     final example = node['example'];
@@ -369,7 +364,11 @@ class Generator {
       final propSchema = entry.value;
       if (propSchema is! Map) continue;
       final map = propSchema.map((k, v) => MapEntry(k.toString(), v));
-      final type = _typeFor(map, '$name${pascalCase(entry.key)}', depth: depth + 1);
+      final type = _typeFor(
+        map,
+        '$name${pascalCase(entry.key)}',
+        depth: depth + 1,
+      );
       def.fields.add(
         ModelField(
           jsonKey: entry.key,
@@ -387,10 +386,7 @@ class Generator {
     final values = node['enum'];
     if (values is List && values.isNotEmpty) {
       final list = values.map((e) => '`$e`').join(', ');
-      return [
-        ?description,
-        'Allowed values: $list.',
-      ].join(' ');
+      return [?description, 'Allowed values: $list.'].join(' ');
     }
     return description;
   }
@@ -508,10 +504,9 @@ class Generator {
   }
 
   _EmittedOp _buildOp(SpecOp op, String methodName, List<String> perms) {
-    final pathParams = RegExp(r'\{([^}]+)\}')
-        .allMatches(op.path)
-        .map((m) => m.group(1)!)
-        .toList();
+    final pathParams = RegExp(
+      r'\{([^}]+)\}',
+    ).allMatches(op.path).map((m) => m.group(1)!).toList();
 
     final queryParams = <_Param>[];
     final headerParams = <_Param>[];
@@ -519,8 +514,7 @@ class Generator {
     if (rawParams is List) {
       for (final entry in rawParams) {
         if (entry is! Map) continue;
-        final resolved =
-            deref(entry.map((k, v) => MapEntry(k.toString(), v)));
+        final resolved = deref(entry.map((k, v) => MapEntry(k.toString(), v)));
         final name = resolved['name'] as String?;
         final location = resolved['in'] as String?;
         if (name == null || location == null) continue;
@@ -528,7 +522,10 @@ class Generator {
         final schema = schemaNode is Map
             ? schemaNode.map((k, v) => MapEntry(k.toString(), v))
             : <String, Object?>{};
-        final type = _typeFor(schema, '${pascalCase(op.id)}${pascalCase(name)}');
+        final type = _typeFor(
+          schema,
+          '${pascalCase(op.id)}${pascalCase(name)}',
+        );
         final param = _Param(
           jsonName: name,
           dartName: safeMember(name),
@@ -546,15 +543,14 @@ class Generator {
     var bodyIsModel = false;
     final requestBody = op.node['requestBody'];
     if (requestBody is Map) {
-      final resolved =
-          deref(requestBody.map((k, v) => MapEntry(k.toString(), v)));
+      final resolved = deref(
+        requestBody.map((k, v) => MapEntry(k.toString(), v)),
+      );
       final content = resolved['content'];
       if (content is Map && content['application/json'] is Map) {
-        final schemaNode =
-            (content['application/json']! as Map)['schema'];
+        final schemaNode = (content['application/json']! as Map)['schema'];
         if (schemaNode is Map) {
-          final schema =
-              schemaNode.map((k, v) => MapEntry(k.toString(), v));
+          final schema = schemaNode.map((k, v) => MapEntry(k.toString(), v));
           final info = _typeFor(schema, '${pascalCase(op.id)}Body');
           bodyType = info.dart;
           bodyIsModel = info.isModel;
@@ -580,10 +576,10 @@ class Generator {
   }
 
   String _paramDart(TypeInfo info) => switch (info.dart) {
-        'String' || 'int' || 'num' || 'bool' => info.dart,
-        final String d when d.startsWith('List<') => 'List<String>',
-        _ => 'String',
-      };
+    'String' || 'int' || 'num' || 'bool' => info.dart,
+    final String d when d.startsWith('List<') => 'List<String>',
+    _ => 'String',
+  };
 
   _ResponseInfo _responseSchema(SpecOp op) {
     final responses = op.node['responses'];
@@ -611,8 +607,8 @@ class Generator {
 
     final schema = schemaNode.map((k, v) => MapEntry(k.toString(), v));
     final shape = flatten(schema);
-    final hasEnvelope = shape.props.containsKey('success') &&
-        shape.props.containsKey('result');
+    final hasEnvelope =
+        shape.props.containsKey('success') && shape.props.containsKey('result');
     if (!hasEnvelope) return const _ResponseInfo();
 
     final resultSchema = shape.props['result'];
@@ -687,7 +683,9 @@ class Generator {
     }
     b
       ..writeln()
-      ..writeln('  /// Keys returned by Cloudflare that this spec snapshot does')
+      ..writeln(
+        '  /// Keys returned by Cloudflare that this spec snapshot does',
+      )
       ..writeln('  /// not describe. Preserved so an edit round-trip cannot')
       ..writeln('  /// silently drop them.')
       ..writeln('  final Map<String, Object?> extra;')
@@ -759,8 +757,10 @@ class Generator {
         _emitOperation(b, op);
       }
       b.writeln('}');
-      _write('lib/api/generated/ops/${snakeCase(entry.key)}_api.dart',
-          b.toString());
+      _write(
+        'lib/api/generated/ops/${snakeCase(entry.key)}_api.dart',
+        b.toString(),
+      );
     }
   }
 
@@ -858,18 +858,20 @@ class Generator {
     }
     b
       ..writeln()
-      ..writeln('/// Typed entry point to the allowlisted Cloudflare operations.')
+      ..writeln(
+        '/// Typed entry point to the allowlisted Cloudflare operations.',
+      )
       ..writeln('///')
-      ..writeln('/// Endpoints outside the allowlist remain reachable through the')
+      ..writeln(
+        '/// Endpoints outside the allowlist remain reachable through the',
+      )
       ..writeln('/// schema-aware explorer and [CfClient.sendRaw].')
       ..writeln('class CfApi {')
       ..writeln('  CfApi(this.client);')
       ..writeln()
       ..writeln('  final CfClient client;');
     for (final g in keys) {
-      b.writeln(
-        '  late final ${camelCase(g)} = ${pascalCase(g)}Api(client);',
-      );
+      b.writeln('  late final ${camelCase(g)} = ${pascalCase(g)}Api(client);');
     }
     b.writeln('}');
     _write('lib/api/generated/generated.dart', b.toString());
@@ -935,8 +937,7 @@ class Generator {
       String? bodyRef;
       final body = op.node['requestBody'];
       if (body is Map) {
-        final resolved =
-            deref(body.map((k, v) => MapEntry(k.toString(), v)));
+        final resolved = deref(body.map((k, v) => MapEntry(k.toString(), v)));
         final content = resolved['content'];
         if (content is Map) {
           final json = content['application/json'];
@@ -988,10 +989,7 @@ class Generator {
 
     _write(
       'assets/spec/schemas.json',
-      jsonEncode({
-        'schemas': _strip(schemas),
-        'inline': inline,
-      }),
+      jsonEncode({'schemas': _strip(schemas), 'inline': inline}),
       format: false,
     );
   }

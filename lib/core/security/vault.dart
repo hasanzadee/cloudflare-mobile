@@ -32,35 +32,32 @@ class Profile {
     CfCredential? credential,
     String? accountId,
     String? accountName,
-  }) =>
-      Profile(
-        id: id,
-        label: label ?? this.label,
-        credential: credential ?? this.credential,
-        accountId: accountId ?? this.accountId,
-        accountName: accountName ?? this.accountName,
-      );
+  }) => Profile(
+    id: id,
+    label: label ?? this.label,
+    credential: credential ?? this.credential,
+    accountId: accountId ?? this.accountId,
+    accountName: accountName ?? this.accountName,
+  );
 
   Map<String, Object?> toJson() => {
-        'id': id,
-        'label': label,
-        'credential': credential.toJson(),
-        if (accountId != null) 'account_id': accountId,
-        if (accountName != null) 'account_name': accountName,
-      };
+    'id': id,
+    'label': label,
+    'credential': credential.toJson(),
+    if (accountId != null) 'account_id': accountId,
+    if (accountName != null) 'account_name': accountName,
+  };
 
   static Profile fromJson(Map<String, Object?> json) => Profile(
-        id: json['id'] as String? ?? '',
-        label: json['label'] as String? ?? 'Cloudflare',
-        credential: CfCredential.fromJson(
-          (json['credential'] as Map?)?.map(
-                (k, v) => MapEntry(k.toString(), v),
-              ) ??
-              const {},
-        ),
-        accountId: json['account_id'] as String?,
-        accountName: json['account_name'] as String?,
-      );
+    id: json['id'] as String? ?? '',
+    label: json['label'] as String? ?? 'Cloudflare',
+    credential: CfCredential.fromJson(
+      (json['credential'] as Map?)?.map((k, v) => MapEntry(k.toString(), v)) ??
+          const {},
+    ),
+    accountId: json['account_id'] as String?,
+    accountName: json['account_name'] as String?,
+  );
 }
 
 /// Non-secret listing entry, readable without unlocking so the lock screen can
@@ -76,14 +73,17 @@ class ProfileStub {
   final String label;
   final CfAuthMethod method;
 
-  Map<String, Object?> toJson() =>
-      {'id': id, 'label': label, 'method': method.name};
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'label': label,
+    'method': method.name,
+  };
 
   static ProfileStub fromJson(Map<String, Object?> json) => ProfileStub(
-        id: json['id'] as String? ?? '',
-        label: json['label'] as String? ?? '',
-        method: CfAuthMethod.fromName(json['method'] as String?),
-      );
+    id: json['id'] as String? ?? '',
+    label: json['label'] as String? ?? '',
+    method: CfAuthMethod.fromName(json['method'] as String?),
+  );
 }
 
 /// Encrypted credential storage.
@@ -109,9 +109,9 @@ class Vault {
     SecureStore? store,
     KeystoreChannel keystore = const KeystoreChannel(),
     Random? random,
-  })  : _store = store ?? const FlutterSecureStore(),
-        _keystore = keystore,
-        _random = random ?? Random.secure();
+  }) : _store = store ?? const FlutterSecureStore(),
+       _keystore = keystore,
+       _random = random ?? Random.secure();
 
   final SecureStore _store;
   final KeystoreChannel _keystore;
@@ -232,9 +232,10 @@ class Vault {
     if (decoded is! List) return const [];
     return decoded
         .whereType<Map<Object?, Object?>>()
-        .map((e) => ProfileStub.fromJson(e.map(
-              (k, v) => MapEntry(k.toString(), v),
-            )))
+        .map(
+          (e) =>
+              ProfileStub.fromJson(e.map((k, v) => MapEntry(k.toString(), v))),
+        )
         .toList();
   }
 

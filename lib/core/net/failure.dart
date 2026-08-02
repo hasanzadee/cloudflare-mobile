@@ -14,11 +14,7 @@ enum NetworkKind { offline, timeout, tls, dns, cancelled, unknown }
 enum AuthReason { missing, invalid, expired, malformed }
 
 sealed class CfFailure implements Exception {
-  const CfFailure({
-    this.errors = const [],
-    this.httpStatus,
-    this.requestPath,
-  });
+  const CfFailure({this.errors = const [], this.httpStatus, this.requestPath});
 
   /// Raw Cloudflare errors, kept so diagnostics can be copied verbatim.
   final List<CfApiError> errors;
@@ -44,13 +40,13 @@ class NetworkFailure extends CfFailure {
 
   @override
   String get summary => switch (kind) {
-        NetworkKind.offline => 'No internet connection',
-        NetworkKind.timeout => 'Cloudflare did not respond in time',
-        NetworkKind.tls => 'Could not establish a secure connection',
-        NetworkKind.dns => 'Could not resolve api.cloudflare.com',
-        NetworkKind.cancelled => 'Request cancelled',
-        NetworkKind.unknown => 'Network error',
-      };
+    NetworkKind.offline => 'No internet connection',
+    NetworkKind.timeout => 'Cloudflare did not respond in time',
+    NetworkKind.tls => 'Could not establish a secure connection',
+    NetworkKind.dns => 'Could not resolve api.cloudflare.com',
+    NetworkKind.cancelled => 'Request cancelled',
+    NetworkKind.unknown => 'Network error',
+  };
 }
 
 class AuthFailure extends CfFailure {
@@ -65,11 +61,11 @@ class AuthFailure extends CfFailure {
 
   @override
   String get summary => switch (reason) {
-        AuthReason.missing => 'No credential is active',
-        AuthReason.invalid => 'Credential was rejected by Cloudflare',
-        AuthReason.expired => 'Credential has expired',
-        AuthReason.malformed => 'Credential is malformed',
-      };
+    AuthReason.missing => 'No credential is active',
+    AuthReason.invalid => 'Credential was rejected by Cloudflare',
+    AuthReason.expired => 'Credential has expired',
+    AuthReason.malformed => 'Credential is malformed',
+  };
 }
 
 /// The credential authenticated fine but is not allowed to do this.
