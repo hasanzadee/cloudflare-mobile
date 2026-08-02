@@ -23,13 +23,13 @@ class AccountsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/user/tokens/verify',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
     );
-    return UserApiTokensVerifyTokenResult.fromJson(env.resultAsMap);
+    return UserApiTokensVerifyTokenResult.fromJson(_env.resultAsMap);
   }
 
   /// `GET /accounts`
@@ -42,7 +42,7 @@ class AccountsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/accounts',
       query: <String, Object?>{
@@ -55,7 +55,7 @@ class AccountsApi {
       cancelToken: cancelToken,
       missingPermissions: const {'Account Settings Read'},
     );
-    return CfPage.from(env, Account.fromJson);
+    return CfPage.from(_env, Account.fromJson);
   }
 
   /// `GET /accounts/{account_id}`
@@ -65,14 +65,14 @@ class AccountsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/accounts/$accountId',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Account Settings Read'},
     );
-    return Account.fromJson(env.resultAsMap);
+    return Account.fromJson(_env.resultAsMap);
   }
 
   /// `GET /user`
@@ -81,14 +81,14 @@ class AccountsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/user',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'User Details Read'},
     );
-    return UserUserDetailsResult.fromJson(env.resultAsMap);
+    return UserUserDetailsResult.fromJson(_env.resultAsMap);
   }
 
   /// `GET /user/tokens/permission_groups`
@@ -100,13 +100,13 @@ class AccountsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/user/tokens/permission_groups',
       query: <String, Object?>{'name': name, 'scope': scope, ...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'API Tokens Read'},
     );
-    return CfPage.from(env, PermissionGroupsListPermissionGroupsItem.fromJson);
+    return CfPage.from(_env, PermissionGroupsListPermissionGroupsItem.fromJson);
   }
 }

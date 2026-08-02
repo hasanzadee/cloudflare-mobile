@@ -21,7 +21,78 @@ class LRu extends L {
   String get navExplorer => 'API';
 
   @override
-  String get navSettings => 'Ещё';
+  String get navSettings => 'Настройки';
+
+  @override
+  String get navSecurity => 'Защита';
+
+  @override
+  String get navDeveloper => 'Разработка';
+
+  @override
+  String get navZeroTrust => 'Zero Trust';
+
+  @override
+  String get navMore => 'Ещё';
+
+  @override
+  String get securityIpAccess => 'IP-доступ';
+
+  @override
+  String get securityPickZone =>
+      'Сначала выберите зону — правила защиты задаются на зону.';
+
+  @override
+  String get securityNoRules => 'В этой фазе правил пока нет';
+
+  @override
+  String get securityNewIpRule => 'Новое IP-правило';
+
+  @override
+  String get securityAction => 'Действие';
+
+  @override
+  String get securityTarget => 'Применять к';
+
+  @override
+  String get securityValue => 'Значение';
+
+  @override
+  String get devWorkers => 'Workers';
+
+  @override
+  String get devPages => 'Pages';
+
+  @override
+  String get devStorage => 'Хранилища';
+
+  @override
+  String get devPickAccount =>
+      'Сначала выберите аккаунт — это ресурсы уровня аккаунта.';
+
+  @override
+  String get devKvNamespaces => 'Пространства KV';
+
+  @override
+  String get devD1 => 'Базы D1';
+
+  @override
+  String get devR2 => 'Бакеты R2';
+
+  @override
+  String get ztTunnels => 'Туннели';
+
+  @override
+  String get ztAccess => 'Access';
+
+  @override
+  String get ztGateway => 'Gateway';
+
+  @override
+  String get ztNoConnectors => 'Сейчас ни один коннектор не запущен';
+
+  @override
+  String get ztNoPolicies => 'У этого приложения нет политик';
 
   @override
   String get commonRetry => 'Повторить';

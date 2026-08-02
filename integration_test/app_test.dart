@@ -221,7 +221,11 @@ void main() {
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle(const Duration(seconds: 15));
 
-    await tester.tap(find.text('API').last);
+    // The explorer moved under the "More" tab when Security and Developer
+    // took bottom-bar slots.
+    await tester.tap(find.text('More').last);
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await tester.tap(find.text('API explorer'));
     // Parsing 3.6 MB of spec JSON happens in a background isolate.
     await tester.pumpAndSettle(const Duration(seconds: 20));
 

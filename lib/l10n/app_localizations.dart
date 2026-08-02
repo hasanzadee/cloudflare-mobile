@@ -127,6 +127,144 @@ abstract class L {
   /// **'Settings'**
   String get navSettings;
 
+  /// No description provided for @navSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get navSecurity;
+
+  /// No description provided for @navDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get navDeveloper;
+
+  /// No description provided for @navZeroTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero Trust'**
+  String get navZeroTrust;
+
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
+
+  /// No description provided for @securityIpAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'IP access'**
+  String get securityIpAccess;
+
+  /// No description provided for @securityPickZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a zone first — security rules are per zone.'**
+  String get securityPickZone;
+
+  /// No description provided for @securityNoRules.
+  ///
+  /// In en, this message translates to:
+  /// **'No rules in this phase yet'**
+  String get securityNoRules;
+
+  /// No description provided for @securityNewIpRule.
+  ///
+  /// In en, this message translates to:
+  /// **'New IP access rule'**
+  String get securityNewIpRule;
+
+  /// No description provided for @securityAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get securityAction;
+
+  /// No description provided for @securityTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to'**
+  String get securityTarget;
+
+  /// No description provided for @securityValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get securityValue;
+
+  /// No description provided for @devWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers'**
+  String get devWorkers;
+
+  /// No description provided for @devPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Pages'**
+  String get devPages;
+
+  /// No description provided for @devStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get devStorage;
+
+  /// No description provided for @devPickAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an account first — these live at account level.'**
+  String get devPickAccount;
+
+  /// No description provided for @devKvNamespaces.
+  ///
+  /// In en, this message translates to:
+  /// **'KV namespaces'**
+  String get devKvNamespaces;
+
+  /// No description provided for @devD1.
+  ///
+  /// In en, this message translates to:
+  /// **'D1 databases'**
+  String get devD1;
+
+  /// No description provided for @devR2.
+  ///
+  /// In en, this message translates to:
+  /// **'R2 buckets'**
+  String get devR2;
+
+  /// No description provided for @ztTunnels.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnels'**
+  String get ztTunnels;
+
+  /// No description provided for @ztAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Access'**
+  String get ztAccess;
+
+  /// No description provided for @ztGateway.
+  ///
+  /// In en, this message translates to:
+  /// **'Gateway'**
+  String get ztGateway;
+
+  /// No description provided for @ztNoConnectors.
+  ///
+  /// In en, this message translates to:
+  /// **'No connectors are running right now'**
+  String get ztNoConnectors;
+
+  /// No description provided for @ztNoPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'No policies on this application'**
+  String get ztNoPolicies;
+
   /// No description provided for @commonRetry.
   ///
   /// In en, this message translates to:

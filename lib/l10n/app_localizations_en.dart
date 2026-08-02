@@ -24,6 +24,77 @@ class LEn extends L {
   String get navSettings => 'Settings';
 
   @override
+  String get navSecurity => 'Security';
+
+  @override
+  String get navDeveloper => 'Developer';
+
+  @override
+  String get navZeroTrust => 'Zero Trust';
+
+  @override
+  String get navMore => 'More';
+
+  @override
+  String get securityIpAccess => 'IP access';
+
+  @override
+  String get securityPickZone =>
+      'Pick a zone first — security rules are per zone.';
+
+  @override
+  String get securityNoRules => 'No rules in this phase yet';
+
+  @override
+  String get securityNewIpRule => 'New IP access rule';
+
+  @override
+  String get securityAction => 'Action';
+
+  @override
+  String get securityTarget => 'Applies to';
+
+  @override
+  String get securityValue => 'Value';
+
+  @override
+  String get devWorkers => 'Workers';
+
+  @override
+  String get devPages => 'Pages';
+
+  @override
+  String get devStorage => 'Storage';
+
+  @override
+  String get devPickAccount =>
+      'Pick an account first — these live at account level.';
+
+  @override
+  String get devKvNamespaces => 'KV namespaces';
+
+  @override
+  String get devD1 => 'D1 databases';
+
+  @override
+  String get devR2 => 'R2 buckets';
+
+  @override
+  String get ztTunnels => 'Tunnels';
+
+  @override
+  String get ztAccess => 'Access';
+
+  @override
+  String get ztGateway => 'Gateway';
+
+  @override
+  String get ztNoConnectors => 'No connectors are running right now';
+
+  @override
+  String get ztNoPolicies => 'No policies on this application';
+
+  @override
   String get commonRetry => 'Retry';
 
   @override

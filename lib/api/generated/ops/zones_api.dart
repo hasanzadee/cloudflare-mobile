@@ -33,7 +33,7 @@ class ZonesApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones',
       query: <String, Object?>{
@@ -52,7 +52,7 @@ class ZonesApi {
       cancelToken: cancelToken,
       missingPermissions: const {'Zone Read'},
     );
-    return CfPage.from(env, Zone.fromJson);
+    return CfPage.from(_env, Zone.fromJson);
   }
 
   /// `GET /zones/{zone_id}`
@@ -62,14 +62,14 @@ class ZonesApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone Read'},
     );
-    return Zone.fromJson(env.resultAsMap);
+    return Zone.fromJson(_env.resultAsMap);
   }
 
   /// `GET /zones/{zone_id}/settings`
@@ -80,14 +80,14 @@ class ZonesApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId/settings',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone Settings Read'},
     );
-    return CfPage.from(env, ZoneSettingsGetAllZoneSettingsItem.fromJson);
+    return CfPage.from(_env, ZoneSettingsGetAllZoneSettingsItem.fromJson);
   }
 
   /// `GET /zones/{zone_id}/settings/{setting_id}`
@@ -98,14 +98,14 @@ class ZonesApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId/settings/$settingId',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone Settings Read'},
     );
-    return Setting.fromJson(env.resultAsMap);
+    return Setting.fromJson(_env.resultAsMap);
   }
 
   /// `PATCH /zones/{zone_id}/settings/{setting_id}`
@@ -117,7 +117,7 @@ class ZonesApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'PATCH',
       path: '/zones/$zoneId/settings/$settingId',
       body: body.toJson(),
@@ -125,6 +125,6 @@ class ZonesApi {
       cancelToken: cancelToken,
       missingPermissions: const {'Zone Settings Write'},
     );
-    return Setting.fromJson(env.resultAsMap);
+    return Setting.fromJson(_env.resultAsMap);
   }
 }

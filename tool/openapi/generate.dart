@@ -414,7 +414,7 @@ class Generator {
       if (items is! Map) {
         return TypeInfo(
           dart: 'List<Object?>',
-          read: (src) => '($src is List ? List<Object?>.from($src) : null)',
+          read: (src) => 'asObjectList($src)',
         );
       }
       final itemMap = items.map((k, v) => MapEntry(k.toString(), v));
@@ -437,7 +437,7 @@ class Generator {
       if (coerce == null) {
         return TypeInfo(
           dart: 'List<Object?>',
-          read: (src) => '($src is List ? List<Object?>.from($src) : null)',
+          read: (src) => 'asObjectList($src)',
         );
       }
       return TypeInfo(
@@ -811,7 +811,10 @@ class Generator {
       (m) => '\$${safeMember(m.group(1)!)}',
     );
 
-    b.writeln('    final env = await _client.send(');
+    // Leading underscore so it can never collide with a parameter: safeMember
+    // strips punctuation, so no Cloudflare parameter name can produce one.
+    // Pages' deployment listing has a query parameter literally called `env`.
+    b.writeln('    final _env = await _client.send(');
     b.writeln("      method: '${op.op.method}',");
     b.writeln("      path: '$dartPath',");
     if (op.bodyType != null) {
@@ -834,11 +837,11 @@ class Generator {
     b.writeln('    );');
 
     if (op.isCollection && op.resultModel != null) {
-      b.writeln('    return CfPage.from(env, ${op.resultModel}.fromJson);');
+      b.writeln('    return CfPage.from(_env, ${op.resultModel}.fromJson);');
     } else if (op.resultModel != null) {
-      b.writeln('    return ${op.resultModel}.fromJson(env.resultAsMap);');
+      b.writeln('    return ${op.resultModel}.fromJson(_env.resultAsMap);');
     } else {
-      b.writeln('    return env;');
+      b.writeln('    return _env;');
     }
     b.writeln('  }');
   }

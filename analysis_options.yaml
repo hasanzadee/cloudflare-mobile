@@ -10,6 +10,11 @@ analyzer:
     strict-raw-types: true
   errors:
     invalid_annotation_target: ignore
+  # Generated code is excluded from *lints*, not from compilation: `flutter
+  # test` still compiles it, which is what catches a generator that emits
+  # something the analyzer here would never see. Two real bugs were found that
+  # way — an unpromotable `is List` test and a local colliding with a parameter
+  # named `env`.
   exclude:
     - lib/api/generated/**
     - test/generated/**

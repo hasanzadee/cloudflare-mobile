@@ -60,7 +60,7 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId/dns_records',
       query: <String, Object?>{
@@ -105,7 +105,7 @@ class DnsApi {
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Read'},
     );
-    return CfPage.from(env, DnsRecordResponse.fromJson);
+    return CfPage.from(_env, DnsRecordResponse.fromJson);
   }
 
   /// `GET /zones/{zone_id}/dns_records/{dns_record_id}`
@@ -117,7 +117,7 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
       query: <String, Object?>{
@@ -127,7 +127,7 @@ class DnsApi {
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Read'},
     );
-    return DnsRecordResponse.fromJson(env.resultAsMap);
+    return DnsRecordResponse.fromJson(_env.resultAsMap);
   }
 
   /// `POST /zones/{zone_id}/dns_records`
@@ -139,7 +139,7 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'POST',
       path: '/zones/$zoneId/dns_records',
       body: body.toJson(),
@@ -150,7 +150,7 @@ class DnsApi {
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
-    return DnsRecordResponse.fromJson(env.resultAsMap);
+    return DnsRecordResponse.fromJson(_env.resultAsMap);
   }
 
   /// `PUT /zones/{zone_id}/dns_records/{dns_record_id}`
@@ -163,7 +163,7 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'PUT',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
       body: body.toJson(),
@@ -174,7 +174,7 @@ class DnsApi {
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
-    return DnsRecordResponse.fromJson(env.resultAsMap);
+    return DnsRecordResponse.fromJson(_env.resultAsMap);
   }
 
   /// `PATCH /zones/{zone_id}/dns_records/{dns_record_id}`
@@ -187,7 +187,7 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'PATCH',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
       body: body.toJson(),
@@ -198,7 +198,7 @@ class DnsApi {
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
-    return DnsRecordResponse.fromJson(env.resultAsMap);
+    return DnsRecordResponse.fromJson(_env.resultAsMap);
   }
 
   /// `DELETE /zones/{zone_id}/dns_records/{dns_record_id}`
@@ -209,14 +209,14 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'DELETE',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
-    return env;
+    return _env;
   }
 
   /// `GET /zones/{zone_id}/dns_records/export`
@@ -226,7 +226,7 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId/dns_records/export',
       query: <String, Object?>{...?extraQuery},
@@ -234,7 +234,7 @@ class DnsApi {
       missingPermissions: const {'DNS Read'},
       responseType: ResponseType.plain,
     );
-    return env;
+    return _env;
   }
 
   /// `POST /zones/{zone_id}/dns_records/import`
@@ -244,13 +244,13 @@ class DnsApi {
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
-    final env = await _client.send(
+    final _env = await _client.send(
       method: 'POST',
       path: '/zones/$zoneId/dns_records/import',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
-    return DnsRecordsForAZoneImportDnsRecordsResult.fromJson(env.resultAsMap);
+    return DnsRecordsForAZoneImportDnsRecordsResult.fromJson(_env.resultAsMap);
   }
 }

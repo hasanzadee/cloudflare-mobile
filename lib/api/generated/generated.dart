@@ -8,12 +8,18 @@ import '../../core/net/cf_client.dart';
 import 'ops/accounts_api.dart';
 import 'ops/cache_api.dart';
 import 'ops/dns_api.dart';
+import 'ops/waf_api.dart';
+import 'ops/workers_api.dart';
+import 'ops/zero_trust_api.dart';
 import 'ops/zones_api.dart';
 
 export 'models.dart';
 export 'ops/accounts_api.dart';
 export 'ops/cache_api.dart';
 export 'ops/dns_api.dart';
+export 'ops/waf_api.dart';
+export 'ops/workers_api.dart';
+export 'ops/zero_trust_api.dart';
 export 'ops/zones_api.dart';
 
 /// Number of operations described by the bundled spec.
@@ -36,5 +42,8 @@ class CfApi {
   late final accounts = AccountsApi(client);
   late final cache = CacheApi(client);
   late final dns = DnsApi(client);
+  late final waf = WafApi(client);
+  late final workers = WorkersApi(client);
+  late final zeroTrust = ZeroTrustApi(client);
   late final zones = ZonesApi(client);
 }
