@@ -178,6 +178,23 @@ class LEn extends L {
       'Opens the Cloudflare dashboard so you can sign in with email, Google or SSO.';
 
   @override
+  String get authOAuthNotConfigured =>
+      'Add an OAuth client ID in Settings first';
+
+  @override
+  String get authOAuthSettings => 'OAuth client';
+
+  @override
+  String get authOAuthClientId => 'Client ID';
+
+  @override
+  String get authOAuthRedirect => 'Redirect URL';
+
+  @override
+  String get authOAuthHelp =>
+      'Register a client at Manage account → OAuth clients. Token auth method must be None (PKCE); the redirect must be https, so point it at the bridge Worker in tools/oauth-callback-worker.';
+
+  @override
   String get authCreateToken => 'Create a token in the dashboard';
 
   @override

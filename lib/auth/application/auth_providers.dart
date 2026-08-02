@@ -7,6 +7,7 @@ import '../../core/net/cf_client.dart';
 import '../../core/net/interceptors/auth_interceptor.dart';
 import '../../core/security/vault.dart';
 import '../domain/cf_credential.dart';
+import 'oauth_providers.dart';
 
 enum AuthStatus {
   /// No vault yet — first launch.
@@ -207,9 +208,38 @@ class _RiverpodCredentialSource implements CredentialSource {
 
   @override
   Future<CfCredential?> refresh() async {
-    // OAuth refresh lands with the OAuth flow; API tokens and global keys have
-    // nothing to renew, so callers correctly see "not renewable".
-    return null;
+    final active = _ref.read(authProvider).valueOrNull?.active;
+    final credential = active?.credential;
+    // API tokens and global keys have nothing to renew; callers correctly see
+    // "not renewable" rather than a spurious retry.
+    if (credential is! OAuthCredential) return null;
+
+    final token = credential.refreshToken;
+    if (token == null || token.isEmpty) return null;
+
+    try {
+      final oauth = await _ref.read(cloudflareOAuthProvider.future);
+      final tokens = await oauth.refresh(token);
+      final renewed = credential.copyWithTokens(
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        expiresAt: tokens.expiresAt,
+        scopes: tokens.scopes.isEmpty ? null : tokens.scopes,
+      );
+      // Persist immediately: with rotating refresh tokens, losing the new one
+      // means the session is unrecoverable.
+      await _ref
+          .read(authProvider.notifier)
+          .saveProfile(
+            active!.copyWith(credential: renewed),
+            makeActive: false,
+          );
+      return renewed;
+    } on Object {
+      // A failed refresh is reported as "not renewable"; the 401 that triggered
+      // it then surfaces as an AuthFailure and the user re-authenticates.
+      return null;
+    }
   }
 }
 
