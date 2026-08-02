@@ -1,0 +1,54 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IDE
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# Flutter / Dart / Pub
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+lcov.info
+
+# Symbolication / obfuscation
+app.*.symbols
+app.*.map.json
+/build/symbols/
+
+# Android build artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Android — machine-local and secret. local.properties holds absolute SDK paths;
+# it was previously committed pointing at another machine and broke fresh clones.
+/android/local.properties
+/android/.gradle/
+/android/.kotlin/
+/android/key.properties
+*.jks
+*.keystore
+
+# Credentials and OAuth client config are never committed
+/.env
+/.env.*
+!/.env.example

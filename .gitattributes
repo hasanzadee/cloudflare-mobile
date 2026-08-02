@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# The Cloudflare OpenAPI spec is a vendored upstream artifact: 9 MB of JSON that
+# would otherwise drown every diff and every language statistic.
+spec/openapi.json linguist-generated=true -diff
+
+# Generated Dart is committed so a fresh clone works without running the
+# generator, but it should not be reviewed by hand.
+lib/api/generated/** linguist-generated=true -diff
+assets/spec/*.json      linguist-generated=true -diff
+*.g.dart                linguist-generated=true -diff
+*.freezed.dart          linguist-generated=true -diff
+
+*.png binary
+*.jpg binary
+*.jks binary
+*.keystore binary

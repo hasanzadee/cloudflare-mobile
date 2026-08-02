@@ -1,0 +1,15 @@
+Cloudflare Mobile
+Copyright 2026 The Cloudflare Mobile Authors
+
+This product includes software developed by the Cloudflare Mobile Authors,
+licensed under the Apache License, Version 2.0.
+
+This project is NOT affiliated with, endorsed by, or sponsored by Cloudflare, Inc.
+"Cloudflare" and the Cloudflare logo are trademarks of Cloudflare, Inc. and are
+used here only to identify the third-party service this client talks to, as
+nominative fair use.
+
+This repository vendors, under spec/openapi.json, a copy of the Cloudflare API
+OpenAPI description published by Cloudflare, Inc. It is used solely to generate
+a client and to describe request/response shapes in the app. It remains the
+property of Cloudflare, Inc. and is not covered by this project's license.
