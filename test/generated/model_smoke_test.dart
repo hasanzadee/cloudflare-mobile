@@ -74,6 +74,13 @@ void main() {
       final again = DnsRecordResponseData.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('DnsRecordResponseMeta', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = DnsRecordResponseMeta.fromJson(json);
+      final encoded = model.toJson();
+      final again = DnsRecordResponseMeta.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('DnsRecordsForAZoneImportDnsRecordsResult', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = DnsRecordsForAZoneImportDnsRecordsResult.fromJson(json);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../api/generated/generated.dart';
 import '../../core/net/failure.dart';
 import '../../core/security/vault.dart';
 import '../../l10n/app_localizations.dart';
@@ -78,7 +79,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       Text(l.onboardWelcomeTitle, style: context.headline),
       const SizedBox(height: 8),
       Text(
-        l.onboardWelcomeBody(2884),
+        // Taken from the generated index, so the number cannot go stale when
+        // the spec is refreshed.
+        l.onboardWelcomeBody(kCloudflareOperationCount),
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       const SizedBox(height: 28),

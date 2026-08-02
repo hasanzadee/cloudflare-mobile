@@ -54,6 +54,9 @@ class DnsApi {
     num? perPage,
     String? order,
     String? direction,
+    bool? includeShadowMetadata,
+    String? shadowedByName,
+    String? shadowingName,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -94,6 +97,9 @@ class DnsApi {
         'per_page': perPage,
         'order': order,
         'direction': direction,
+        'include_shadow_metadata': includeShadowMetadata,
+        'shadowed_by_name': shadowedByName,
+        'shadowing_name': shadowingName,
         ...?extraQuery,
       },
       cancelToken: cancelToken,
@@ -107,13 +113,17 @@ class DnsApi {
   Future<DnsRecordResponse> getRecord({
     required String zoneId,
     required String dnsRecordId,
+    bool? includeShadowMetadata,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
     final env = await _client.send(
       method: 'GET',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{
+        'include_shadow_metadata': includeShadowMetadata,
+        ...?extraQuery,
+      },
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Read'},
     );
@@ -125,6 +135,7 @@ class DnsApi {
   Future<DnsRecordResponse> createRecord({
     required String zoneId,
     required DnsRecordPost body,
+    bool? includeShadowMetadata,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -132,7 +143,10 @@ class DnsApi {
       method: 'POST',
       path: '/zones/$zoneId/dns_records',
       body: body.toJson(),
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{
+        'include_shadow_metadata': includeShadowMetadata,
+        ...?extraQuery,
+      },
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
@@ -145,6 +159,7 @@ class DnsApi {
     required String zoneId,
     required String dnsRecordId,
     required DnsRecordPost body,
+    bool? includeShadowMetadata,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -152,7 +167,10 @@ class DnsApi {
       method: 'PUT',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
       body: body.toJson(),
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{
+        'include_shadow_metadata': includeShadowMetadata,
+        ...?extraQuery,
+      },
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
@@ -165,6 +183,7 @@ class DnsApi {
     required String zoneId,
     required String dnsRecordId,
     required DnsRecordPatch body,
+    bool? includeShadowMetadata,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -172,7 +191,10 @@ class DnsApi {
       method: 'PATCH',
       path: '/zones/$zoneId/dns_records/$dnsRecordId',
       body: body.toJson(),
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{
+        'include_shadow_metadata': includeShadowMetadata,
+        ...?extraQuery,
+      },
       cancelToken: cancelToken,
       missingPermissions: const {'DNS Write'},
     );
