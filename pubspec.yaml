@@ -1,39 +1,70 @@
-name: cfmgr_app
-description: Cloudflare Manager mobile client.
+name: cloudflare_mobile
+description: >-
+  An open-source Cloudflare management client for Android. Not affiliated with
+  Cloudflare, Inc.
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.1.0+1
 
 environment:
-  sdk: ^3.10.8
+  sdk: ^3.10.0
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
+  flutter_localizations:
+    sdk: flutter
+  # Pinned by flutter_localizations; `any` avoids a resolution conflict.
+  intl: any
+
+  # State + navigation
   flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
   go_router: ^14.6.2
+
+  # Networking
   dio: ^5.7.0
-  pretty_dio_logger: ^1.4.0
+
+  # Credential storage and device security
+  flutter_secure_storage: ^9.2.2
+  cryptography: ^2.7.0
+  local_auth: ^2.3.0
+  shared_preferences: ^2.3.3
+
+  # OAuth (Authorization Code + PKCE) and dashboard deep links
+  flutter_web_auth_2: ^4.1.0
+  url_launcher: ^6.3.1
+
+  # UI
+  dynamic_color: ^1.7.0
+
+  # Hand-written domain models (the generated API models deliberately use
+  # plain Dart instead — see tool/openapi/README.md).
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
-  local_auth: ^2.3.0
-  flutter_secure_storage: ^9.2.2
-  shared_preferences: ^2.3.3
-  cryptography: ^2.7.0
-  dynamic_color: ^1.7.0
-  material_symbols_icons: ^4.2784.1
-  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   build_runner: ^2.4.13
   freezed: ^2.5.7
   json_serializable: ^6.8.0
+  riverpod_generator: ^2.6.3
+  custom_lint: ^0.7.0
+  riverpod_lint: ^2.6.3
+
+  # Test doubles
+  http_mock_adapter: ^0.6.1
+  mocktail: ^1.0.4
+
+  # Used only by tool/openapi/generate.dart
+  yaml: ^3.1.2
+  crypto: ^3.0.6
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
-    - assets/endpoints.json
-
+    - assets/spec/

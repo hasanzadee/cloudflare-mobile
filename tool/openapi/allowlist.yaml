@@ -1,0 +1,126 @@
+# Operations that get a typed, hand-reviewed client.
+#
+# Generating types for all 2884 operations is not viable: the spec carries 5815
+# component schemas, and the transitive closure of even a small allowlist is
+# ~6 schemas per operation. The remaining endpoints stay fully usable through
+# the schema-aware API explorer, which reads assets/spec/*.json at runtime.
+#
+# Fields per entry:
+#   id      operationId from the spec (unique — verified, zero duplicates)
+#   as      Dart method name
+#   group   Dart class the method lands on, e.g. `zones` -> ZonesApi
+#   perms   permission group names this endpoint needs. Cloudflare never says
+#           which permission is missing on a 403, so we say it for them.
+#   union   how to treat anyOf/oneOf in the request body: flatten | manual
+
+groups:
+  zones: Zones and zone-level settings
+  dns: DNS records
+  accounts: Accounts, users and tokens
+  cache: Cache purging
+
+operations:
+  # --- Accounts / identity -------------------------------------------------
+  - id: user-api-tokens-verify-token
+    as: verifyToken
+    group: accounts
+    perms: []
+
+  - id: accounts-list-accounts
+    as: listAccounts
+    group: accounts
+    perms: [Account Settings Read]
+
+  - id: accounts-account-details
+    as: getAccount
+    group: accounts
+    perms: [Account Settings Read]
+
+  - id: user-user-details
+    as: getUser
+    group: accounts
+    perms: [User Details Read]
+
+  - id: permission-groups-list-permission-groups
+    as: listPermissionGroups
+    group: accounts
+    perms: [API Tokens Read]
+
+  # --- Zones ---------------------------------------------------------------
+  - id: zones-get
+    as: listZones
+    group: zones
+    perms: [Zone Read]
+
+  - id: zones-0-get
+    as: getZone
+    group: zones
+    perms: [Zone Read]
+
+  - id: zone-settings-get-all-zone-settings
+    as: getAllSettings
+    group: zones
+    perms: [Zone Settings Read]
+
+  - id: zone-settings-get-single-setting
+    as: getSetting
+    group: zones
+    perms: [Zone Settings Read]
+
+  - id: zone-settings-edit-single-setting
+    as: editSetting
+    group: zones
+    perms: [Zone Settings Write]
+
+  # --- Cache ---------------------------------------------------------------
+  - id: zone-purge
+    as: purge
+    group: cache
+    perms: [Cache Purge]
+    union: flatten
+
+  # --- DNS -----------------------------------------------------------------
+  - id: dns-records-for-a-zone-list-dns-records
+    as: listRecords
+    group: dns
+    perms: [DNS Read]
+
+  - id: dns-records-for-a-zone-dns-record-details
+    as: getRecord
+    group: dns
+    perms: [DNS Read]
+
+  - id: dns-records-for-a-zone-create-dns-record
+    as: createRecord
+    group: dns
+    perms: [DNS Write]
+    # anyOf[dns-record-without-data, dns-record-with-data]: flattening is
+    # correct here because the DNS editor already selects fields by `type`.
+    union: flatten
+
+  - id: dns-records-for-a-zone-update-dns-record
+    as: updateRecord
+    group: dns
+    perms: [DNS Write]
+    union: flatten
+
+  - id: dns-records-for-a-zone-patch-dns-record
+    as: patchRecord
+    group: dns
+    perms: [DNS Write]
+    union: flatten
+
+  - id: dns-records-for-a-zone-delete-dns-record
+    as: deleteRecord
+    group: dns
+    perms: [DNS Write]
+
+  - id: dns-records-for-a-zone-export-dns-records
+    as: exportBind
+    group: dns
+    perms: [DNS Read]
+
+  - id: dns-records-for-a-zone-import-dns-records
+    as: importBind
+    group: dns
+    perms: [DNS Write]

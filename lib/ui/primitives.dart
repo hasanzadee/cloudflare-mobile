@@ -173,11 +173,13 @@ class StatusChip extends StatelessWidget {
   const StatusChip(this.code, {super.key});
   @override
   Widget build(BuildContext context) {
-    Color c = Colors.grey;
-    if (code >= 200 && code < 300) c = const Color(0xFF22C55E);
-    else if (code >= 300 && code < 400) c = const Color(0xFF3B82F6);
-    else if (code >= 400 && code < 500) c = const Color(0xFFF59E0B);
-    else if (code >= 500) c = const Color(0xFFEF4444);
+    final c = switch (code) {
+      >= 200 && < 300 => const Color(0xFF22C55E),
+      >= 300 && < 400 => const Color(0xFF3B82F6),
+      >= 400 && < 500 => const Color(0xFFF59E0B),
+      >= 500 => const Color(0xFFEF4444),
+      _ => Colors.grey,
+    };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(

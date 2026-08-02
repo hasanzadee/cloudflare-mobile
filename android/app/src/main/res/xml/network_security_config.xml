@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext is off everywhere, and release builds do not trust user-installed
+  CAs, which blocks casual interception of API tokens by a proxy someone
+  installed on the phone.
+
+  Certificate pinning is deliberately absent. Cloudflare rotates leaf and
+  intermediate certificates on a public CDN; pinning them would turn a routine
+  rotation into an app-wide outage that only a new release could fix.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system"/>
+            <!-- Debug builds only, so mitmproxy can be used while developing. -->
+            <certificates src="user"/>
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>
