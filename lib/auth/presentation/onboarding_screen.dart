@@ -8,6 +8,8 @@ import '../../core/security/vault.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/failure_text.dart';
 import '../application/auth_providers.dart';
+import '../application/oauth_providers.dart';
+import '../data/oauth_client.dart';
 import '../data/token_template.dart';
 import '../domain/cf_credential.dart';
 
@@ -34,6 +36,37 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   CfCredential? _pending;
   bool _busy = false;
   String? _error;
+
+  bool get _oauthReady =>
+      ref.watch(oauthConfigProvider).valueOrNull?.isConfigured ?? false;
+
+  /// Runs the browser flow, then joins the same PIN step the other methods use.
+  Future<void> _startOAuth() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final oauth = await ref.read(cloudflareOAuthProvider.future);
+      final tokens = await oauth.authorize();
+      if (!mounted) return;
+      setState(() {
+        _pending = credentialFromTokens(
+          tokens,
+          id: _newId(),
+          label: 'Cloudflare',
+        );
+        _step = _Step.pin;
+      });
+    } on OAuthException catch (e) {
+      if (mounted) setState(() => _error = e.description ?? e.error);
+    } on Object catch (e) {
+      // Cancelling the browser tab throws too; it is not worth a scary message.
+      if (mounted) setState(() => _error = '$e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -98,10 +131,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         icon: Icons.account_circle_outlined,
         title: l.authOAuth,
         body: l.authOAuthBlurb,
-        // Enabled once the OAuth client registration is verified; see
-        // docs/oauth-spike.md for what is still unknown.
-        disabledNote: 'Coming in 1.1 — see docs/oauth-spike.md',
-        onTap: null,
+        // Only offered when a client has been registered — either baked in at
+        // build time or pasted in Settings. Without one the button could only
+        // fail, so it says why instead.
+        disabledNote: _oauthReady ? null : l.authOAuthNotConfigured,
+        onTap: _oauthReady ? _startOAuth : null,
       ),
       _MethodCard(
         icon: Icons.warning_amber_outlined,
