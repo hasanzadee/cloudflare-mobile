@@ -386,7 +386,6 @@ class _MethodCard extends StatelessWidget {
     required this.body,
     required this.onTap,
     this.recommended = false,
-    this.disabledNote,
   });
 
   final IconData icon;
@@ -394,7 +393,6 @@ class _MethodCard extends StatelessWidget {
   final String body;
   final VoidCallback? onTap;
   final bool recommended;
-  final String? disabledNote;
 
   @override
   Widget build(BuildContext context) {
@@ -413,8 +411,7 @@ class _MethodCard extends StatelessWidget {
             ],
           ],
         ),
-        subtitle: Text(disabledNote == null ? body : '$body\n$disabledNote'),
-        isThreeLine: disabledNote != null,
+        subtitle: Text(body),
         trailing: enabled ? const Icon(Icons.chevron_right) : null,
         onTap: onTap,
       ),
