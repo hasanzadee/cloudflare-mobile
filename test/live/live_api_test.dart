@@ -30,9 +30,6 @@ class _Source implements CredentialSource {
 
   @override
   final CfCredential current;
-
-  @override
-  Future<CfCredential?> refresh() async => null;
 }
 
 void say(String line) {

@@ -30,9 +30,8 @@ handling written down rather than hand-waved.
 | Zero Trust — tunnels with live connector status, Access apps and policies, Gateway rules | ✅ read-only |
 | Cache purge — by URL, host, prefix, tag, or everything | ✅ |
 | Zone settings — SSL/TLS mode, HSTS, min TLS, cache level, security level, and 15 more | ✅ |
-| Analytics and charts | 📋 needs the GraphQL subsystem — see below |
+| Analytics — traffic charts, cache ratio, threats, status codes, countries, firewall events | ✅ |
 | D1 SQL console, Workers deploy, R2 object browser | 📋 reachable through the explorer |
-| OAuth "Sign in with Cloudflare" | 📋 blocked on verification, see [docs/oauth-spike.md](docs/oauth-spike.md) |
 
 "Reachable through the explorer" is not a euphemism for missing: the explorer
 builds a real form from the endpoint's schema — required flags, types, ranges,
@@ -56,8 +55,8 @@ notes. If it ever changes without an announcement in this README, do not install
 
 ## Signing in
 
-Cloudflare offers three ways to authenticate an API client, and this app
-supports all three.
+Cloudflare offers three ways to authenticate an API client. This app supports
+the two that a person actually has.
 
 **API token — recommended.** Onboarding opens the Cloudflare dashboard with the
 right permissions already ticked (a *template URL*), so you press Create and
@@ -69,12 +68,7 @@ drive.
 a type-to-confirm screen. It cannot be scoped or IP-limited, it can read and
 change billing, and it can delete the account. Use a token instead.
 
-**OAuth.** Cloudflare opened self-managed OAuth clients in June 2026, which
-would give a real "Sign in with Cloudflare" button — you would log in with
-email, Google or SSO in the browser and the app would never see a password. The
-plumbing is written; what is not yet settled is whether a *public* client can be
-used by people who did not register it. See
-[docs/oauth-spike.md](docs/oauth-spike.md) for the exact open questions.
+**OAuth** is deliberately not supported. It was built and working, then removed — the setup it demands (a registered client, a domain, a hosted callback) lands on the user before their first login, while a token takes two taps. The reasoning and the endpoint details are in [docs/why-api-tokens.md](docs/why-api-tokens.md).
 
 ## Security and privacy
 

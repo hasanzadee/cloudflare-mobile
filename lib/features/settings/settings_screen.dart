@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/theme.dart';
 import '../../auth/application/auth_providers.dart';
-import '../../auth/application/oauth_providers.dart';
 import '../../auth/data/token_template.dart';
 import '../../core/security/secure_flag.dart';
 import '../../l10n/app_localizations.dart';
@@ -58,9 +57,6 @@ class SettingsScreen extends ConsumerWidget {
               mode: LaunchMode.externalApplication,
             ),
           ),
-
-          _Header(l.authOAuthSettings),
-          const _OAuthConfigTile(),
 
           _Header(l.settingsSecurity),
           SwitchListTile(
@@ -155,108 +151,6 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-}
-
-/// Lets anyone point the app at their own registered OAuth client.
-///
-/// Neither value is a secret: a public PKCE client has no secret, and the
-/// redirect URL is visible in the consent screen anyway.
-class _OAuthConfigTile extends ConsumerWidget {
-  const _OAuthConfigTile();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l = L.of(context);
-    final settings = ref.watch(oauthSettingsProvider).valueOrNull;
-    final configured =
-        (settings?.clientId.isNotEmpty ?? false) &&
-        (settings?.redirectUri.isNotEmpty ?? false);
-
-    return Column(
-      children: [
-        ListTile(
-          leading: Icon(
-            configured ? Icons.check_circle_outline : Icons.info_outline,
-            color: configured ? context.cf.success : null,
-          ),
-          title: Text(l.authOAuthClientId),
-          subtitle: Text(
-            configured ? settings!.clientId : l.authOAuthNotConfigured,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: const Icon(Icons.edit_outlined),
-          onTap: () => _edit(context, ref, settings),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: Text(
-            l.authOAuthHelp,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _edit(
-    BuildContext context,
-    WidgetRef ref,
-    OAuthSettings? current,
-  ) async {
-    final l = L.of(context);
-    final clientId = TextEditingController(text: current?.clientId ?? '');
-    final redirect = TextEditingController(text: current?.redirectUri ?? '');
-
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.authOAuthSettings),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: clientId,
-              autocorrect: false,
-              decoration: InputDecoration(labelText: l.authOAuthClientId),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: redirect,
-              autocorrect: false,
-              keyboardType: TextInputType.url,
-              decoration: InputDecoration(
-                labelText: l.authOAuthRedirect,
-                hintText: 'https://…/oauth/callback',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l.commonSave),
-          ),
-        ],
-      ),
-    );
-
-    if (saved == true) {
-      final prefs = await ref.read(sharedPrefsProvider.future);
-      await saveOAuthSettings(
-        prefs,
-        clientId: clientId.text,
-        redirectUri: redirect.text,
-      );
-      ref.invalidate(oauthSettingsProvider);
-    }
-    clientId.dispose();
-    redirect.dispose();
   }
 }
 

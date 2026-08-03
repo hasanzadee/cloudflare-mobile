@@ -29,9 +29,7 @@ dependencies:
   cryptography: ^2.7.0
   local_auth: ^2.3.0
   shared_preferences: ^2.3.3
-
-  # OAuth (Authorization Code + PKCE) and dashboard deep links
-  flutter_web_auth_2: ^4.1.0
+  # Opens the Cloudflare dashboard for the token wizard
   url_launcher: ^6.3.1
 
   # UI

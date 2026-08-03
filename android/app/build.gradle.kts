@@ -41,14 +41,6 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
-        // OAuth redirect registration. Overridable at build time so a fork can
-        // point the App Link at its own verified domain:
-        //   flutter build apk -Poauth-host=cf.example.com
-        manifestPlaceholders["oauthScheme"] =
-            project.findProperty("oauth-scheme")?.toString() ?: "io.cfmgr.app"
-        manifestPlaceholders["oauthHost"] =
-            project.findProperty("oauth-host")?.toString() ?: "oauth.invalid"
     }
 
     signingConfigs {
