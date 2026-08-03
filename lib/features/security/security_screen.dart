@@ -56,7 +56,12 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen>
         ),
       ),
       body: zoneId == null
-          ? _PickZone(message: l.securityPickZone)
+          ? ScopePrompt(
+              icon: Icons.public_off,
+              message: l.securityPickZone,
+              action: l.scopePickZone,
+              onTap: () => pickZone(context, ref),
+            )
           : TabBarView(
               controller: _tabs,
               children: [
@@ -67,26 +72,6 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen>
             ),
     );
   }
-}
-
-class _PickZone extends StatelessWidget {
-  const _PickZone({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.public_off, size: 40),
-          const SizedBox(height: 12),
-          Text(message, textAlign: TextAlign.center),
-        ],
-      ),
-    ),
-  );
 }
 
 class _PhaseRules extends ConsumerWidget {

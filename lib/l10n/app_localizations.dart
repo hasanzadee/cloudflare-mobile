@@ -151,6 +151,42 @@ abstract class L {
   /// **'More'**
   String get navMore;
 
+  /// No description provided for @scopeAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get scopeAccount;
+
+  /// No description provided for @scopeZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone'**
+  String get scopeZone;
+
+  /// No description provided for @scopeAllAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'All accounts'**
+  String get scopeAllAccounts;
+
+  /// No description provided for @scopePickZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a zone'**
+  String get scopePickZone;
+
+  /// No description provided for @scopePickAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an account'**
+  String get scopePickAccount;
+
+  /// No description provided for @scopeMoreZones.
+  ///
+  /// In en, this message translates to:
+  /// **'More zones exist — type to search'**
+  String get scopeMoreZones;
+
   /// No description provided for @securityIpAccess.
   ///
   /// In en, this message translates to:
