@@ -76,12 +76,16 @@ class AuthController extends AsyncNotifier<AuthState> {
     );
   }
 
+  /// Creates the vault and holds the session, but deliberately does not
+  /// announce `unlocked` yet.
+  ///
+  /// Publishing an unlocked state with no profile swapped the UI to the app
+  /// shell a moment before the credential existed, so the home screen loaded
+  /// against nothing and settled on "problem". [saveProfile] publishes instead,
+  /// once there is something to authenticate with.
   Future<bool> createVault({required String pin}) async {
     final vault = ref.read(vaultProvider);
     _session = await vault.create(pin: pin);
-    state = AsyncData(
-      AuthState(status: AuthStatus.unlocked, profiles: const []),
-    );
     return true;
   }
 
@@ -210,9 +214,21 @@ final credentialSourceProvider = Provider<CredentialSource>(
   _RiverpodCredentialSource.new,
 );
 
-final cfClientProvider = Provider<CfClient>(
-  (ref) => CfClient(credentials: ref.watch(credentialSourceProvider)),
-);
+/// Rebuilt whenever the active profile changes.
+///
+/// [_RiverpodCredentialSource] reads the credential lazily, so requests always
+/// carried the current one — but nothing told the providers already holding a
+/// result to ask again. After onboarding, the home screen kept the failure it
+/// got before a credential existed, and only a restart cleared it. Depending on
+/// the active id makes every downstream provider rebuild on sign-in and on
+/// profile switch.
+final cfClientProvider = Provider<CfClient>((ref) {
+  ref.watch(authProvider.select((s) => s.valueOrNull?.activeId));
+  final client = CfClient(credentials: ref.watch(credentialSourceProvider));
+  // Aborts in-flight requests made with the credential we just left.
+  ref.onDispose(() => client.dio.close(force: true));
+  return client;
+});
 
 final cfApiProvider = Provider<CfApi>(
   (ref) => CfApi(ref.watch(cfClientProvider)),

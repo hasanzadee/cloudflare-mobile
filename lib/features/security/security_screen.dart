@@ -184,7 +184,7 @@ class _RuleTile extends ConsumerWidget {
           .setRuleEnabled(
             zoneId: zoneId,
             rulesetId: rulesetId,
-            ruleId: rule.id!,
+            rule: rule,
             enabled: enabled,
           );
       onChanged();
