@@ -115,6 +115,19 @@ class _RootState extends ConsumerState<_Root> with WidgetsBindingObserver {
       const SecureFlag().set(enabled: on);
     });
 
+    // Locking swaps what `home` renders, but pushed routes sit *above* home and
+    // survive that swap. Without this, "Lock now" left the screen you were on
+    // fully visible with the lock screen hidden underneath — and auto-lock on
+    // resume did the same, which is worse, because the screens worth pushing
+    // are the ones showing KV values, D1 rows and credentials.
+    ref.listen(authProvider.select((s) => s.valueOrNull?.status), (_, status) {
+      if (status == AuthStatus.unlocked) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      });
+    });
+
     return auth.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),

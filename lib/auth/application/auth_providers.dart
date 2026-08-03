@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -222,9 +223,21 @@ final credentialSourceProvider = Provider<CredentialSource>(
 /// got before a credential existed, and only a restart cleared it. Depending on
 /// the active id makes every downstream provider rebuild on sign-in and on
 /// profile switch.
+/// Test seam: how the client's transport is built.
+///
+/// A factory rather than a single [Dio], because every client gets its own
+/// interceptor chain and reusing one instance would stack them. Exposed so
+/// integration tests can drive the *real* provider graph — including the
+/// rebuild below — against a scripted server; overriding [cfClientProvider]
+/// itself would replace the very wiring under test.
+final dioFactoryProvider = Provider<Dio Function()>((ref) => Dio.new);
+
 final cfClientProvider = Provider<CfClient>((ref) {
   ref.watch(authProvider.select((s) => s.valueOrNull?.activeId));
-  final client = CfClient(credentials: ref.watch(credentialSourceProvider));
+  final client = CfClient(
+    credentials: ref.watch(credentialSourceProvider),
+    dio: ref.watch(dioFactoryProvider)(),
+  );
   // Aborts in-flight requests made with the credential we just left.
   ref.onDispose(() => client.dio.close(force: true));
   return client;
