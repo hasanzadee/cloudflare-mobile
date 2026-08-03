@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloudflare_mobile/app/app_settings.dart';
 import 'package:cloudflare_mobile/l10n/app_localizations.dart';
+import 'package:cloudflare_mobile/l10n/supported_languages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Translations rot quietly: a new English string lands, the other locales keep

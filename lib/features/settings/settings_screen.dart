@@ -7,6 +7,7 @@ import '../../app/theme.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../auth/data/token_template.dart';
 import '../../l10n/app_localizations.dart';
+import '../../l10n/supported_languages.dart';
 
 String _autoLockLabel(L l, Duration d) {
   if (d == Duration.zero) return l.settingsAutoLockImmediate;
