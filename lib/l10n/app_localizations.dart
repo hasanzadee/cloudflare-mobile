@@ -223,6 +223,54 @@ abstract class L {
   /// **'New IP access rule'**
   String get securityNewIpRule;
 
+  /// No description provided for @securityNewCustomRule.
+  ///
+  /// In en, this message translates to:
+  /// **'New custom rule'**
+  String get securityNewCustomRule;
+
+  /// No description provided for @securityNewRateLimitRule.
+  ///
+  /// In en, this message translates to:
+  /// **'New rate limiting rule'**
+  String get securityNewRateLimitRule;
+
+  /// No description provided for @securityExpression.
+  ///
+  /// In en, this message translates to:
+  /// **'Expression'**
+  String get securityExpression;
+
+  /// No description provided for @securityExpressionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruleset Engine syntax. Cloudflare validates it when you save and says what is wrong.'**
+  String get securityExpressionHelp;
+
+  /// No description provided for @securityExpressionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'An expression is required'**
+  String get securityExpressionRequired;
+
+  /// No description provided for @securityRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get securityRequests;
+
+  /// No description provided for @securityPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Per seconds'**
+  String get securityPeriod;
+
+  /// No description provided for @securityRateLimitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Counted per client IP and data centre. Blocking lasts as long as the period.'**
+  String get securityRateLimitHelp;
+
   /// No description provided for @securityAction.
   ///
   /// In en, this message translates to:

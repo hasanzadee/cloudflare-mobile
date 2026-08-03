@@ -67,6 +67,32 @@ class LFr extends L {
   String get securityNewIpRule => 'Nouvelle règle d\'accès par IP';
 
   @override
+  String get securityNewCustomRule => 'Nouvelle règle personnalisée';
+
+  @override
+  String get securityNewRateLimitRule => 'Nouvelle limite de débit';
+
+  @override
+  String get securityExpression => 'Expression';
+
+  @override
+  String get securityExpressionHelp =>
+      'Syntaxe du Ruleset Engine. Cloudflare la valide à l\'enregistrement et indique l\'erreur.';
+
+  @override
+  String get securityExpressionRequired => 'Une expression est obligatoire';
+
+  @override
+  String get securityRequests => 'Requêtes';
+
+  @override
+  String get securityPeriod => 'Par secondes';
+
+  @override
+  String get securityRateLimitHelp =>
+      'Compté par IP client et centre de données. Le blocage dure aussi longtemps que la période.';
+
+  @override
   String get securityAction => 'Action';
 
   @override

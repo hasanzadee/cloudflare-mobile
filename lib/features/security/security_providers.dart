@@ -111,6 +111,40 @@ class SecurityActions {
     );
   }
 
+  /// Adds a rule to a phase, creating the phase's ruleset if it has none.
+  ///
+  /// Two paths, because Cloudflare gives no single one. `createRule` needs a
+  /// ruleset id, and a zone that has never had a rule in this phase has no
+  /// entry point ruleset — the GET 404s and [phaseRulesProvider] reports null.
+  /// `PUT .../phases/{phase}/entrypoint` creates the ruleset and its rules
+  /// together, so that is the path for the first rule.
+  ///
+  /// [rulesetId] null means "no ruleset yet", which is why it is not simply a
+  /// required String: passing an empty one silently posts to `/rulesets//rules`.
+  Future<void> createPhaseRule({
+    required String zoneId,
+    required String phase,
+    required String? rulesetId,
+    required Map<String, Object?> rule,
+  }) async {
+    if (rulesetId != null && rulesetId.isNotEmpty) {
+      await _api.waf.createRule(
+        zoneId: zoneId,
+        rulesetId: rulesetId,
+        body: CreateZoneRulesetRuleBody.fromJson(rule),
+      );
+      return;
+    }
+
+    await _api.waf.putPhaseEntrypoint(
+      zoneId: zoneId,
+      rulesetPhase: phase,
+      body: UpdateZoneEntrypointRulesetBody.fromJson({
+        'rules': [rule],
+      }),
+    );
+  }
+
   Future<void> deleteRule({
     required String zoneId,
     required String rulesetId,

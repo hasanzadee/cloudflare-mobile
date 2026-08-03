@@ -154,6 +154,15 @@ operations:
     group: waf
     perms: [Zone WAF Write]
 
+  # Needed for the *first* rule in a phase. createRule wants a ruleset id, and
+  # a zone that has never had a rule in this phase has no entry point ruleset
+  # to give one — the GET above 404s. This PUT creates the ruleset and its
+  # rules in one call.
+  - id: updateZoneEntrypointRuleset
+    as: putPhaseEntrypoint
+    group: waf
+    perms: [Zone WAF Write]
+
   - id: updateZoneRulesetRule
     as: updateRule
     group: waf

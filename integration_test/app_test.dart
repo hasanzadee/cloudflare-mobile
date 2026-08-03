@@ -193,6 +193,14 @@ void main() {
         data: Matchers.any,
       )
       ..onPost(
+        'zones/zone1/rulesets/rs1/rules',
+        (server) => server.reply(
+          200,
+          envelope({'id': 'rs1', 'rules': <Object>[]}),
+        ),
+        data: Matchers.any,
+      )
+      ..onPost(
         'zones/zone1/dns_records',
         (server) => server.reply(
           200,
@@ -266,6 +274,20 @@ void main() {
   /// push what was at the top out of the build cache entirely.
   Future<void> scrollToTop(WidgetTester tester) async {
     await tester.drag(find.byType(Scrollable).first, const Offset(0, 800));
+    await tester.pumpAndSettle();
+  }
+
+  /// Scrolls the topmost scrollable — the open bottom sheet, when there is one.
+  ///
+  /// [scrollTo] targets the first scrollable, which is the screen behind the
+  /// sheet. A sheet's own list is lazy like any other, so a button below its
+  /// fold is absent from the tree, not merely off-screen.
+  Future<void> scrollToInSheet(WidgetTester tester, Finder finder) async {
+    await tester.scrollUntilVisible(
+      finder,
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
     await tester.pumpAndSettle();
   }
 
@@ -394,6 +416,7 @@ void main() {
     await tester.enterText(field('Content'), '198.51.100.7');
     await tester.pumpAndSettle();
 
+    await scrollToInSheet(tester, find.text('Save'));
     await tapAt(tester, find.text('Save'), settle: const Duration(seconds: 3));
 
     final post = requests.lastWhere((r) => r.method == 'POST');
@@ -470,6 +493,93 @@ void main() {
     // Server-managed fields must not be echoed.
     expect(body.containsKey('version'), isFalse);
     expect(body.containsKey('last_updated'), isFalse);
+  });
+
+  testWidgets('a WAF rule can be created from the Security tab', (
+    tester,
+  ) async {
+    await onboard(tester);
+    await openTab(tester, 'Security');
+    await tapAt(
+      tester,
+      find.text('Pick a zone').last,
+      settle: const Duration(seconds: 3),
+    );
+    await tapAt(
+      tester,
+      find.text('example.com').last,
+      settle: const Duration(seconds: 3),
+    );
+
+    // There was no way to create one at all: the tab listed rules and offered
+    // nothing else, so an empty phase was a screen you could only look at.
+    await tapAt(tester, find.text('Add'), settle: const Duration(seconds: 2));
+
+    await tester.enterText(
+      find.ancestor(
+        of: find.text('Expression'),
+        matching: find.byType(TextField),
+      ),
+      '(ip.src.country ne "AZ")',
+    );
+    await tester.pumpAndSettle();
+
+    await scrollToInSheet(tester, find.text('Save'));
+    await tapAt(tester, find.text('Save'), settle: const Duration(seconds: 3));
+
+    final post = requests.lastWhere((r) => r.method == 'POST');
+    final body = post.data! as Map<String, Object?>;
+
+    expect(post.path, contains('rulesets/rs1/rules'));
+    expect(body['expression'], '(ip.src.country ne "AZ")');
+    expect(body['action'], 'block');
+    expect(body['enabled'], isTrue);
+  });
+
+  testWidgets('a second credential can be added after setup', (tester) async {
+    await onboard(tester);
+    await openTab(tester, 'More');
+    await tapAt(
+      tester,
+      find.text('Settings'),
+      settle: const Duration(seconds: 3),
+    );
+
+    await tapAt(
+      tester,
+      find.text('Add profile'),
+      settle: const Duration(seconds: 2),
+    );
+
+    // This used to open the Cloudflare website and end there.
+    await tapAt(tester, find.text('API token'));
+
+    await tester.enterText(
+      find.ancestor(
+        of: find.text('Profile name'),
+        matching: find.byType(TextField),
+      ),
+      'Client',
+    );
+    await tester.enterText(
+      find.ancestor(
+        of: find.text('Paste your API token'),
+        matching: find.byType(TextField),
+      ),
+      'a-second-token',
+    );
+    await tester.pumpAndSettle();
+
+    await scrollToInSheet(tester, find.text('Verify and continue'));
+    await tapAt(
+      tester,
+      find.text('Verify and continue'),
+      settle: const Duration(seconds: 5),
+    );
+
+    // Back on Settings, with both profiles and the new one active.
+    expect(find.text('Client'), findsOneWidget);
+    expect(find.text('Cloudflare'), findsOneWidget);
   });
 
   testWidgets('the account picker lists every account', (tester) async {

@@ -66,6 +66,31 @@ class LZh extends L {
   String get securityNewIpRule => '新建 IP 访问规则';
 
   @override
+  String get securityNewCustomRule => '新建自定义规则';
+
+  @override
+  String get securityNewRateLimitRule => '新建速率限制规则';
+
+  @override
+  String get securityExpression => '表达式';
+
+  @override
+  String get securityExpressionHelp =>
+      'Ruleset Engine 语法。保存时 Cloudflare 会校验并指出问题所在。';
+
+  @override
+  String get securityExpressionRequired => '必须填写表达式';
+
+  @override
+  String get securityRequests => '请求数';
+
+  @override
+  String get securityPeriod => '每多少秒';
+
+  @override
+  String get securityRateLimitHelp => '按客户端 IP 和数据中心分别计数。封禁时长与统计周期相同。';
+
+  @override
   String get securityAction => '动作';
 
   @override

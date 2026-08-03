@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/app_settings.dart';
 import '../../app/theme.dart';
 import '../../auth/application/auth_providers.dart';
-import '../../auth/data/token_template.dart';
+import '../../auth/presentation/add_profile_screen.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/supported_languages.dart';
 
@@ -117,10 +116,11 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.add),
             title: Text(l.authAddProfile),
-            subtitle: const Text('Opens the Cloudflare token page'),
-            onTap: () => launchUrl(
-              TokenTemplate.userToken(TokenTemplate.full),
-              mode: LaunchMode.externalApplication,
+            subtitle: const Text('Another account or a differently scoped key'),
+            // This used to launch the Cloudflare website and stop there, which
+            // left you holding a new token and nowhere in the app to paste it.
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const AddProfileScreen()),
             ),
           ),
 

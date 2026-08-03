@@ -67,6 +67,32 @@ class LAz extends L {
   String get securityNewIpRule => 'Yeni IP giriş qaydası';
 
   @override
+  String get securityNewCustomRule => 'Yeni xüsusi qayda';
+
+  @override
+  String get securityNewRateLimitRule => 'Yeni tezlik məhdudiyyəti';
+
+  @override
+  String get securityExpression => 'İfadə';
+
+  @override
+  String get securityExpressionHelp =>
+      'Ruleset Engine sintaksisi. Cloudflare yadda saxlayanda yoxlayır və nəyin səhv olduğunu deyir.';
+
+  @override
+  String get securityExpressionRequired => 'İfadə mütləqdir';
+
+  @override
+  String get securityRequests => 'Sorğu';
+
+  @override
+  String get securityPeriod => 'Saniyə ərzində';
+
+  @override
+  String get securityRateLimitHelp =>
+      'Müştəri IP-si və data mərkəzi üzrə sayılır. Bloklama period qədər davam edir.';
+
+  @override
   String get securityAction => 'Əməliyyat';
 
   @override
