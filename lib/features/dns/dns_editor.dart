@@ -107,145 +107,152 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
         expand: false,
         initialChildSize: 0.9,
         maxChildSize: 0.95,
-        builder: (context, controller) => ListView(
+        // A scrolling Column, not a ListView. A form must not be lazily built:
+        // a field below the fold simply would not exist, so focus, validation
+        // and anything typed into it depended on whether the sheet happened to
+        // be scrolled far enough. Eight widgets cost nothing to build eagerly.
+        builder: (context, controller) => SingleChildScrollView(
           controller: controller,
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    editing ? l.dnsEditRecord : l.dnsAddRecord,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            DropdownButtonFormField<String>(
-              initialValue: _type.name,
-              decoration: InputDecoration(labelText: l.dnsType),
-              // Without isExpanded the button sizes to its widest item, and
-              // "SVCB — service binding, modern alternative to CNAME at apex"
-              // is wider than a phone. It overflowed by ~105px, striped.
-              isExpanded: true,
-              items: [
-                for (final t in kDnsRecordTypes)
-                  DropdownMenuItem(
-                    value: t.name,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
                     child: Text(
-                      '${t.name} — ${t.description}',
-                      overflow: TextOverflow.ellipsis,
+                      editing ? l.dnsEditRecord : l.dnsAddRecord,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-              ],
-              onChanged: editing
-                  ? null // Cloudflare does not allow changing a record's type.
-                  : (v) => _changeType(dnsTypeByName(v)),
-            ),
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: _name,
-              decoration: InputDecoration(
-                labelText: l.dnsName,
-                hintText: '@ for ${widget.zoneName}',
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
               ),
-              autocorrect: false,
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            if (_type.usesContent)
+              DropdownButtonFormField<String>(
+                initialValue: _type.name,
+                decoration: InputDecoration(labelText: l.dnsType),
+                // Without isExpanded the button sizes to its widest item, and
+                // "SVCB — service binding, modern alternative to CNAME at apex"
+                // is wider than a phone. It overflowed by ~105px, striped.
+                isExpanded: true,
+                items: [
+                  for (final t in kDnsRecordTypes)
+                    DropdownMenuItem(
+                      value: t.name,
+                      child: Text(
+                        '${t.name} — ${t.description}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
+                onChanged: editing
+                    ? null // Cloudflare does not allow changing a record's type.
+                    : (v) => _changeType(dnsTypeByName(v)),
+              ),
+              const SizedBox(height: 12),
+
               TextField(
-                controller: _content,
+                controller: _name,
                 decoration: InputDecoration(
-                  labelText: l.dnsContent,
-                  hintText: _type.contentHint,
+                  labelText: l.dnsName,
+                  hintText: '@ for ${widget.zoneName}',
                 ),
                 autocorrect: false,
-                maxLines: _type.name == 'TXT' ? 4 : 1,
               ),
-
-            if (_type.hasPriority) ...[
               const SizedBox(height: 12),
-              TextField(
-                controller: _priority,
-                decoration: InputDecoration(labelText: l.dnsPriority),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-            ],
 
-            for (final field in _type.dataFields) ...[
-              const SizedBox(height: 12),
-              TextField(
-                controller: _data[field.key],
-                decoration: InputDecoration(
-                  labelText: field.required
-                      ? field.label
-                      : '${field.label} (optional)',
-                  hintText: field.hint,
+              if (_type.usesContent)
+                TextField(
+                  controller: _content,
+                  decoration: InputDecoration(
+                    labelText: l.dnsContent,
+                    hintText: _type.contentHint,
+                  ),
+                  autocorrect: false,
+                  maxLines: _type.name == 'TXT' ? 4 : 1,
                 ),
-                keyboardType: field.kind == DnsFieldKind.number
-                    ? TextInputType.number
-                    : TextInputType.text,
-                maxLines: field.kind == DnsFieldKind.multiline ? 3 : 1,
-                autocorrect: false,
-              ),
-            ],
 
-            const SizedBox(height: 16),
-            DropdownButtonFormField<int>(
-              initialValue: kTtlChoices.contains(_ttl) ? _ttl : 1,
-              decoration: InputDecoration(labelText: l.dnsTtl),
-              items: [
-                for (final t in kTtlChoices)
-                  DropdownMenuItem(value: t, child: Text(ttlLabel(t))),
+              if (_type.hasPriority) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _priority,
+                  decoration: InputDecoration(labelText: l.dnsPriority),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
               ],
-              onChanged: (v) => setState(() => _ttl = v ?? 1),
-            ),
 
-            if (_type.proxyable) ...[
-              const SizedBox(height: 4),
-              SwitchListTile(
-                value: _proxied,
-                onChanged: (v) => setState(() => _proxied = v),
-                title: Text(l.dnsProxied),
-                subtitle: const Text(
-                  'Traffic goes through Cloudflare and the origin IP is hidden. '
-                  'TTL is managed by Cloudflare while this is on.',
+              for (final field in _type.dataFields) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _data[field.key],
+                  decoration: InputDecoration(
+                    labelText: field.required
+                        ? field.label
+                        : '${field.label} (optional)',
+                    hintText: field.hint,
+                  ),
+                  keyboardType: field.kind == DnsFieldKind.number
+                      ? TextInputType.number
+                      : TextInputType.text,
+                  maxLines: field.kind == DnsFieldKind.multiline ? 3 : 1,
+                  autocorrect: false,
                 ),
-                secondary: Icon(Icons.cloud, color: context.cf.proxied),
-                contentPadding: EdgeInsets.zero,
+              ],
+
+              const SizedBox(height: 16),
+              DropdownButtonFormField<int>(
+                initialValue: kTtlChoices.contains(_ttl) ? _ttl : 1,
+                decoration: InputDecoration(labelText: l.dnsTtl),
+                items: [
+                  for (final t in kTtlChoices)
+                    DropdownMenuItem(value: t, child: Text(ttlLabel(t))),
+                ],
+                onChanged: (v) => setState(() => _ttl = v ?? 1),
               ),
-            ],
 
-            const SizedBox(height: 12),
-            TextField(
-              controller: _comment,
-              decoration: InputDecoration(labelText: l.dnsComment),
-              maxLines: 2,
-            ),
+              if (_type.proxyable) ...[
+                const SizedBox(height: 4),
+                SwitchListTile(
+                  value: _proxied,
+                  onChanged: (v) => setState(() => _proxied = v),
+                  title: Text(l.dnsProxied),
+                  subtitle: const Text(
+                    'Traffic goes through Cloudflare and the origin IP is hidden. '
+                    'TTL is managed by Cloudflare while this is on.',
+                  ),
+                  secondary: Icon(Icons.cloud, color: context.cf.proxied),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ],
 
-            if (_error != null) ...[
               const SizedBox(height: 12),
-              Text(
-                _error!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              TextField(
+                controller: _comment,
+                decoration: InputDecoration(labelText: l.dnsComment),
+                maxLines: 2,
+              ),
+
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+
+              const SizedBox(height: 20),
+              FilledButton(
+                onPressed: _busy ? null : _save,
+                child: Text(_busy ? '…' : l.commonSave),
               ),
             ],
-
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _busy ? null : _save,
-              child: Text(_busy ? '…' : l.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

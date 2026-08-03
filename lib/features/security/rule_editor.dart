@@ -86,112 +86,122 @@ class _RuleEditorSheetState extends ConsumerState<RuleEditorSheet> {
         expand: false,
         initialChildSize: 0.9,
         maxChildSize: 0.95,
-        builder: (context, controller) => ListView(
+        // Eagerly built, like the DNS editor: a lazily built form has fields
+        // that do not exist until scrolled to, which breaks focus, validation
+        // and anything typed into them.
+        builder: (context, controller) => SingleChildScrollView(
           controller: controller,
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.isRateLimit
-                        ? l.securityNewRateLimitRule
-                        : l.securityNewCustomRule,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: _description,
-              decoration: InputDecoration(labelText: l.dnsComment),
-              autocorrect: false,
-            ),
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: _expression,
-              decoration: InputDecoration(
-                labelText: l.securityExpression,
-                hintText:
-                    '(http.host eq "example.com" and ip.src.country ne "AZ")',
-                helperText: l.securityExpressionHelp,
-                helperMaxLines: 3,
-              ),
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
-              maxLines: 5,
-              minLines: 3,
-              autocorrect: false,
-              enableSuggestions: false,
-            ),
-            const SizedBox(height: 12),
-
-            DropdownButtonFormField<String>(
-              initialValue: _action,
-              decoration: InputDecoration(labelText: l.securityAction),
-              isExpanded: true,
-              items: [
-                for (final (id, label) in kCustomRuleActions)
-                  if (!widget.isRateLimit || id != 'skip')
-                    DropdownMenuItem(
-                      value: id,
-                      child: Text(label, overflow: TextOverflow.ellipsis),
-                    ),
-              ],
-              onChanged: (v) => setState(() => _action = v ?? 'block'),
-            ),
-
-            if (widget.isRateLimit) ...[
-              const SizedBox(height: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _requests,
-                      decoration: InputDecoration(
-                        labelText: l.securityRequests,
-                      ),
-                      keyboardType: TextInputType.number,
+                    child: Text(
+                      widget.isRateLimit
+                          ? l.securityNewRateLimitRule
+                          : l.securityNewCustomRule,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: _period,
-                      decoration: InputDecoration(labelText: l.securityPeriod),
-                      keyboardType: TextInputType.number,
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                l.securityRateLimitHelp,
-                style: Theme.of(context).textTheme.bodySmall,
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: _description,
+                decoration: InputDecoration(labelText: l.dnsComment),
+                autocorrect: false,
+              ),
+              const SizedBox(height: 12),
+
+              TextField(
+                controller: _expression,
+                decoration: InputDecoration(
+                  labelText: l.securityExpression,
+                  hintText:
+                      '(http.host eq "example.com" and ip.src.country ne "AZ")',
+                  helperText: l.securityExpressionHelp,
+                  helperMaxLines: 3,
+                ),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+                maxLines: 5,
+                minLines: 3,
+                autocorrect: false,
+                enableSuggestions: false,
+              ),
+              const SizedBox(height: 12),
+
+              DropdownButtonFormField<String>(
+                initialValue: _action,
+                decoration: InputDecoration(labelText: l.securityAction),
+                isExpanded: true,
+                items: [
+                  for (final (id, label) in kCustomRuleActions)
+                    if (!widget.isRateLimit || id != 'skip')
+                      DropdownMenuItem(
+                        value: id,
+                        child: Text(label, overflow: TextOverflow.ellipsis),
+                      ),
+                ],
+                onChanged: (v) => setState(() => _action = v ?? 'block'),
+              ),
+
+              if (widget.isRateLimit) ...[
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _requests,
+                        decoration: InputDecoration(
+                          labelText: l.securityRequests,
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _period,
+                        decoration: InputDecoration(
+                          labelText: l.securityPeriod,
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  l.securityRateLimitHelp,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    _error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 20),
+              FilledButton(
+                onPressed: _busy ? null : _save,
+                child: Text(_busy ? '…' : l.commonSave),
               ),
             ],
-
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(
-                  _error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
-
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: _busy ? null : _save,
-              child: Text(_busy ? '…' : l.commonSave),
-            ),
-          ],
+          ),
         ),
       ),
     );

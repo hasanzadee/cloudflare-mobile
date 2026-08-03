@@ -466,7 +466,17 @@ void main() {
     await scrollToInSheet(tester, find.text('Save'));
     await tapAt(tester, find.text('Save'), settle: const Duration(seconds: 3));
 
-    final post = requests.lastWhere((r) => r.method == 'POST');
+    // With the reason attached, a failure here says which validation message
+    // is on screen instead of "Bad state: No element".
+    final posts = requests.where((r) => r.method == 'POST').toList();
+    expect(
+      posts,
+      isNotEmpty,
+      reason:
+          'nothing was posted. On screen: '
+          '${onScreen(tester)}',
+    );
+    final post = posts.last;
     final body = post.data! as Map<String, Object?>;
 
     expect(post.path, contains('zones/zone1/dns_records'));
@@ -584,7 +594,15 @@ void main() {
     await scrollToInSheet(tester, find.text('Save'));
     await tapAt(tester, find.text('Save'), settle: const Duration(seconds: 3));
 
-    final post = requests.lastWhere((r) => r.method == 'POST');
+    final posts = requests.where((r) => r.method == 'POST').toList();
+    expect(
+      posts,
+      isNotEmpty,
+      reason:
+          'nothing was posted. On screen: '
+          '${onScreen(tester)}',
+    );
+    final post = posts.last;
     final body = post.data! as Map<String, Object?>;
 
     expect(post.path, contains('rulesets/rs1/rules'));
