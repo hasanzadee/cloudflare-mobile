@@ -4,21 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/application/auth_providers.dart';
 
-/// Languages the app ships, in the order the picker shows them.
-///
-/// English leads because it is the default. The rest are alphabetical by their
-/// own endonym, not by English name — a Turkish speaker looks for "Türkçe".
-const Map<String, String> kSupportedLanguages = {
-  'en': 'English',
-  'az': 'Azərbaycanca',
-  'de': 'Deutsch',
-  'es': 'Español',
-  'fr': 'Français',
-  'tr': 'Türkçe',
-  'ru': 'Русский',
-  'zh': '中文',
-};
-
 /// Appearance and language, persisted.
 ///
 /// Language defaults to English rather than the system: this is a technical
