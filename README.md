@@ -19,6 +19,18 @@ Cloudflare API, not just the ones with a hand-built screen.
 > they are listed in [CHANGELOG.md](CHANGELOG.md). Read the code. Issues and
 > corrections welcome.
 
+## Screenshots
+
+| Zone overview | Analytics |
+|---|---|
+| <img src="docs/screenshots/01-zone.jpg" width="270"> | <img src="docs/screenshots/02-analytics.jpg" width="270"> |
+| Every zone-level area behind one hub, with plan, status, nameservers and SSL/TLS mode inline. | Traffic, cache hit ratio, threats, status codes and countries, over the GraphQL Analytics API. |
+
+| Security | Settings |
+|---|---|
+| <img src="docs/screenshots/03-security.jpg" width="270"> | <img src="docs/screenshots/04-settings.jpg" width="270"> |
+| WAF custom rules, rate limiting and IP access, scoped by the account/zone bar at the top. | Theme, eight languages, PIN and hardware-bound biometric unlock, screenshot blocking, auto-lock. |
+
 ## Why
 
 There is no good Cloudflare app for Android. The official one was retired, and
