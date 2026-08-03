@@ -268,6 +268,13 @@ class LAz extends L {
   String get authCreateToken => 'Paneldə token yarat';
 
   @override
+  String get authManualPermsTitle => 'Bunları əl ilə əlavə edin';
+
+  @override
+  String get authManualPermsBody =>
+      'Cloudflare-in link formatında bu icazələr üçün açar yoxdur, ona görə yuxarıdakı düymə onları işarələyə bilmir. Açılan səhifədə Permissions bölməsində hər birini əlavə edin.';
+
+  @override
   String get authPasteToken => 'API token-i yapışdırın';
 
   @override

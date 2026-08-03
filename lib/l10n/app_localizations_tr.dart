@@ -267,6 +267,13 @@ class LTr extends L {
   String get authCreateToken => 'Panelde belirteç oluştur';
 
   @override
+  String get authManualPermsTitle => 'Bunları elle ekleyin';
+
+  @override
+  String get authManualPermsBody =>
+      'Cloudflare\'in bağlantı biçiminde bu izinler için anahtar yok, bu yüzden yukarıdaki düğme onları işaretleyemiyor. Açılan sayfadaki Permissions bölümünden her birini ekleyin.';
+
+  @override
   String get authPasteToken => 'API belirtecini yapıştırın';
 
   @override

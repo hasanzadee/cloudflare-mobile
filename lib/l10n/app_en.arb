@@ -94,6 +94,8 @@
   "authGlobalKey": "Global API key",
   "authGlobalKeyBlurb": "Legacy. Unrestricted access to your whole account.",
   "authCreateToken": "Create a token in the dashboard",
+  "authManualPermsTitle": "Add these by hand",
+  "authManualPermsBody": "Cloudflare's link format has no key for these, so the button above cannot tick them. Add each one under Permissions on the page that just opened.",
   "authPasteToken": "Paste your API token",
   "authTokenHint": "40-character token from the dashboard",
   "authVerify": "Verify and continue",

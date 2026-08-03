@@ -271,6 +271,13 @@ class LFr extends L {
   String get authCreateToken => 'Créer un jeton dans le tableau de bord';
 
   @override
+  String get authManualPermsTitle => 'À ajouter à la main';
+
+  @override
+  String get authManualPermsBody =>
+      'Le format de lien de Cloudflare n\'a pas de clé pour ces permissions, le bouton ci-dessus ne peut donc pas les cocher. Ajoutez-les une par une dans la section Permissions de la page qui vient de s\'ouvrir.';
+
+  @override
   String get authPasteToken => 'Collez votre jeton d\'API';
 
   @override

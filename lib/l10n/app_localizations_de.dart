@@ -268,6 +268,13 @@ class LDe extends L {
   String get authCreateToken => 'Token im Dashboard erstellen';
 
   @override
+  String get authManualPermsTitle => 'Diese von Hand hinzufügen';
+
+  @override
+  String get authManualPermsBody =>
+      'Für diese Berechtigungen gibt es im Link-Format von Cloudflare keinen Schlüssel, der Button oben kann sie also nicht ankreuzen. Füge jede davon auf der eben geöffneten Seite unter Permissions hinzu.';
+
+  @override
   String get authPasteToken => 'API-Token einfügen';
 
   @override

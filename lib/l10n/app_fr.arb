@@ -93,6 +93,8 @@
   "authGlobalKey": "Global API Key",
   "authGlobalKeyBlurb": "Ancienne méthode. Accès sans restriction à tout le compte.",
   "authCreateToken": "Créer un jeton dans le tableau de bord",
+  "authManualPermsTitle": "À ajouter à la main",
+  "authManualPermsBody": "Le format de lien de Cloudflare n'a pas de clé pour ces permissions, le bouton ci-dessus ne peut donc pas les cocher. Ajoutez-les une par une dans la section Permissions de la page qui vient de s'ouvrir.",
   "authPasteToken": "Collez votre jeton d'API",
   "authTokenHint": "Jeton de 40 caractères issu du tableau de bord",
   "authVerify": "Vérifier et continuer",

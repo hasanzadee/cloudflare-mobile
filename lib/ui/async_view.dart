@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../auth/data/token_template.dart';
 import '../core/net/failure.dart';
 import '../l10n/app_localizations.dart';
 import 'failure_text.dart';
@@ -131,12 +133,21 @@ class FailureView extends StatelessWidget {
   final Object error;
   final StackTrace? stack;
   final VoidCallback? onRetry;
+
+  /// Overrides the default, which opens the dashboard's token form pre-filled.
+  /// Every screen gets that for free — the previous version accepted this
+  /// callback and no caller ever passed one, so the offer to fix a 403 existed
+  /// only in the widget's source.
   final VoidCallback? onFixPermissions;
 
   @override
   Widget build(BuildContext context) {
     final l = L.of(context);
-    final isPermission = error is PermissionFailure;
+    final failure = error;
+    final isPermission = failure is PermissionFailure;
+    final missing = isPermission
+        ? TokenTemplate.resolveMissing(failure.missingPermissions)
+        : const <CfPermission>[];
 
     return Center(
       child: SingleChildScrollView(
@@ -155,6 +166,20 @@ class FailureView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
+            if (missing.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              // The dashboard's own wording plus the access level, because a
+              // user hunting a checkbox in a list of ~150 needs the exact
+              // label, not our paraphrase of it.
+              Text(
+                missing.map((p) => '${p.group} — ${p.level}').join('\n'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             Wrap(
               spacing: 8,
@@ -166,9 +191,14 @@ class FailureView extends StatelessWidget {
                     icon: const Icon(Icons.refresh),
                     label: Text(l.commonRetry),
                   ),
-                if (isPermission && onFixPermissions != null)
+                if (isPermission)
                   FilledButton.icon(
-                    onPressed: onFixPermissions,
+                    onPressed:
+                        onFixPermissions ??
+                        () => launchUrl(
+                          TokenTemplate.forMissing(failure.missingPermissions),
+                          mode: LaunchMode.externalApplication,
+                        ),
                     icon: const Icon(Icons.vpn_key_outlined),
                     label: Text(l.permFixCta),
                   ),

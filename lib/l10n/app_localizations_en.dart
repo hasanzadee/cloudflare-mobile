@@ -267,6 +267,13 @@ class LEn extends L {
   String get authCreateToken => 'Create a token in the dashboard';
 
   @override
+  String get authManualPermsTitle => 'Add these by hand';
+
+  @override
+  String get authManualPermsBody =>
+      'Cloudflare\'s link format has no key for these, so the button above cannot tick them. Add each one under Permissions on the page that just opened.';
+
+  @override
   String get authPasteToken => 'Paste your API token';
 
   @override

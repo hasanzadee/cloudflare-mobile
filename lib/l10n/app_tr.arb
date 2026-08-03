@@ -93,6 +93,8 @@
   "authGlobalKey": "Global API Key",
   "authGlobalKeyBlurb": "Eski yöntem. Tüm hesaba sınırsız erişim.",
   "authCreateToken": "Panelde belirteç oluştur",
+  "authManualPermsTitle": "Bunları elle ekleyin",
+  "authManualPermsBody": "Cloudflare'in bağlantı biçiminde bu izinler için anahtar yok, bu yüzden yukarıdaki düğme onları işaretleyemiyor. Açılan sayfadaki Permissions bölümünden her birini ekleyin.",
   "authPasteToken": "API belirtecini yapıştırın",
   "authTokenHint": "Panelden 40 karakterlik belirteç",
   "authVerify": "Doğrula ve devam et",

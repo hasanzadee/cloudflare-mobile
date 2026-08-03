@@ -613,6 +613,18 @@ abstract class L {
   /// **'Create a token in the dashboard'**
   String get authCreateToken;
 
+  /// No description provided for @authManualPermsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add these by hand'**
+  String get authManualPermsTitle;
+
+  /// No description provided for @authManualPermsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudflare\'s link format has no key for these, so the button above cannot tick them. Add each one under Permissions on the page that just opened.'**
+  String get authManualPermsBody;
+
   /// No description provided for @authPasteToken.
   ///
   /// In en, this message translates to:

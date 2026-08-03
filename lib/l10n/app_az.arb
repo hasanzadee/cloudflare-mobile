@@ -93,6 +93,8 @@
   "authGlobalKey": "Global API Key",
   "authGlobalKeyBlurb": "Köhnə üsul. Bütün hesaba məhdudiyyətsiz giriş.",
   "authCreateToken": "Paneldə token yarat",
+  "authManualPermsTitle": "Bunları əl ilə əlavə edin",
+  "authManualPermsBody": "Cloudflare-in link formatında bu icazələr üçün açar yoxdur, ona görə yuxarıdakı düymə onları işarələyə bilmir. Açılan səhifədə Permissions bölməsində hər birini əlavə edin.",
   "authPasteToken": "API token-i yapışdırın",
   "authTokenHint": "Paneldən 40 simvolluq token",
   "authVerify": "Yoxla və davam et",
