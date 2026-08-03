@@ -1081,6 +1081,60 @@ abstract class L {
   /// **'Settings'**
   String get settingsTitle;
 
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get settingsTheme;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsDynamicColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Match my wallpaper'**
+  String get settingsDynamicColor;
+
+  /// No description provided for @settingsDynamicColorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Material You. Off uses the app\'s own palette.'**
+  String get settingsDynamicColorHint;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsLanguageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsLanguageSystem;
+
   /// No description provided for @settingsSecurity.
   ///
   /// In en, this message translates to:
@@ -1105,11 +1159,23 @@ abstract class L {
   /// **'Never'**
   String get settingsAutoLockNever;
 
+  /// No description provided for @settingsLockNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock now'**
+  String get settingsLockNow;
+
   /// No description provided for @settingsBlockScreenshots.
   ///
   /// In en, this message translates to:
   /// **'Block screenshots'**
   String get settingsBlockScreenshots;
+
+  /// No description provided for @settingsBlockScreenshotsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hides the app from screenshots, screen recording and the recent-apps preview.'**
+  String get settingsBlockScreenshotsHint;
 
   /// No description provided for @settingsPrivacyTitle.
   ///

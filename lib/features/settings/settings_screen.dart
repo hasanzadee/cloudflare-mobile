@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app/app_settings.dart';
 import '../../app/theme.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../auth/data/token_template.dart';
-import '../../core/security/secure_flag.dart';
 import '../../l10n/app_localizations.dart';
 
-/// Screenshot blocking, on by default because tokens and secrets pass through
-/// the UI and the recents thumbnail is captured without user action.
-final secureFlagProvider = StateProvider<bool>((ref) => true);
+String _autoLockLabel(L l, Duration d) {
+  if (d == Duration.zero) return l.settingsAutoLockImmediate;
+  if (d.inDays > 100) return l.settingsAutoLockNever;
+  if (d.inMinutes < 1) return '${d.inSeconds} s';
+  return '${d.inMinutes} min';
+}
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -19,12 +22,74 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L.of(context);
     final auth = ref.watch(authProvider).valueOrNull;
-    final secure = ref.watch(secureFlagProvider);
+    final ui = ref.watch(appSettingsProvider);
+    final controller = ref.read(appSettingsProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: Text(l.settingsTitle)),
       body: ListView(
         children: [
+          _Header(l.settingsAppearance),
+          ListTile(
+            leading: const Icon(Icons.brightness_6_outlined),
+            title: Text(l.settingsTheme),
+            subtitle: Text(switch (ui.themeMode) {
+              ThemeMode.light => l.settingsThemeLight,
+              ThemeMode.dark => l.settingsThemeDark,
+              ThemeMode.system => l.settingsThemeSystem,
+            }),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: SegmentedButton<ThemeMode>(
+              segments: [
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  icon: const Icon(Icons.phone_android, size: 18),
+                  label: Text(l.settingsThemeSystem),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  icon: const Icon(Icons.light_mode_outlined, size: 18),
+                  label: Text(l.settingsThemeLight),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  icon: const Icon(Icons.dark_mode_outlined, size: 18),
+                  label: Text(l.settingsThemeDark),
+                ),
+              ],
+              selected: {ui.themeMode},
+              onSelectionChanged: (s) => controller.setThemeMode(s.first),
+            ),
+          ),
+          SwitchListTile(
+            secondary: const Icon(Icons.palette_outlined),
+            title: Text(l.settingsDynamicColor),
+            subtitle: Text(l.settingsDynamicColorHint),
+            value: ui.useDynamicColor,
+            onChanged: (v) => controller.setDynamicColor(enabled: v),
+          ),
+          ListTile(
+            leading: const Icon(Icons.translate),
+            title: Text(l.settingsLanguage),
+            trailing: DropdownButton<String>(
+              value: ui.locale?.languageCode ?? '',
+              underline: const SizedBox.shrink(),
+              items: [
+                DropdownMenuItem(
+                  value: '',
+                  child: Text(l.settingsLanguageSystem),
+                ),
+                const DropdownMenuItem(value: 'en', child: Text('English')),
+                const DropdownMenuItem(value: 'ru', child: Text('Русский')),
+              ],
+              onChanged: (v) => controller.setLocale(
+                v == null || v.isEmpty ? null : Locale(v),
+              ),
+            ),
+          ),
+
           _Header(l.authProfiles),
           if (auth != null)
             for (final p in auth.profiles)
@@ -86,16 +151,31 @@ class SettingsScreen extends ConsumerWidget {
           SwitchListTile(
             secondary: const Icon(Icons.screenshot_monitor_outlined),
             title: Text(l.settingsBlockScreenshots),
-            value: secure,
-            onChanged: (v) {
-              ref.read(secureFlagProvider.notifier).state = v;
-              const SecureFlag().set(enabled: v);
-            },
+            subtitle: Text(l.settingsBlockScreenshotsHint),
+            value: ui.blockScreenshots,
+            onChanged: (v) => controller.setBlockScreenshots(enabled: v),
+          ),
+          ListTile(
+            leading: const Icon(Icons.timer_outlined),
+            title: Text(l.settingsAutoLock),
+            trailing: DropdownButton<int>(
+              value: ui.autoLock.inSeconds,
+              underline: const SizedBox.shrink(),
+              items: [
+                for (final d in kAutoLockChoices)
+                  DropdownMenuItem(
+                    value: d.inSeconds,
+                    child: Text(_autoLockLabel(l, d)),
+                  ),
+              ],
+              onChanged: (v) => v == null
+                  ? null
+                  : controller.setAutoLock(Duration(seconds: v)),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.lock_outline),
-            title: Text(l.commonUnlock),
-            subtitle: const Text('Lock now'),
+            title: Text(l.settingsLockNow),
             onTap: () => ref.read(authProvider.notifier).lock(),
           ),
 

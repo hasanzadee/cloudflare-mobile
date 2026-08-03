@@ -524,6 +524,34 @@ class LEn extends L {
   String get settingsTitle => 'Settings';
 
   @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsTheme => 'Theme';
+
+  @override
+  String get settingsThemeSystem => 'System';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsDynamicColor => 'Match my wallpaper';
+
+  @override
+  String get settingsDynamicColorHint =>
+      'Material You. Off uses the app\'s own palette.';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsLanguageSystem => 'System';
+
+  @override
   String get settingsSecurity => 'Security';
 
   @override
@@ -536,7 +564,14 @@ class LEn extends L {
   String get settingsAutoLockNever => 'Never';
 
   @override
+  String get settingsLockNow => 'Lock now';
+
+  @override
   String get settingsBlockScreenshots => 'Block screenshots';
+
+  @override
+  String get settingsBlockScreenshotsHint =>
+      'Hides the app from screenshots, screen recording and the recent-apps preview.';
 
   @override
   String get settingsPrivacyTitle => 'Privacy';

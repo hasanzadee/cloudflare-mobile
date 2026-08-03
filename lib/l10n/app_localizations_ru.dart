@@ -526,6 +526,34 @@ class LRu extends L {
   String get settingsTitle => 'Настройки';
 
   @override
+  String get settingsAppearance => 'Внешний вид';
+
+  @override
+  String get settingsTheme => 'Тема';
+
+  @override
+  String get settingsThemeSystem => 'Как в системе';
+
+  @override
+  String get settingsThemeLight => 'Светлая';
+
+  @override
+  String get settingsThemeDark => 'Тёмная';
+
+  @override
+  String get settingsDynamicColor => 'Цвета из обоев';
+
+  @override
+  String get settingsDynamicColorHint =>
+      'Material You. Если выключить — своя палитра приложения.';
+
+  @override
+  String get settingsLanguage => 'Язык';
+
+  @override
+  String get settingsLanguageSystem => 'Как в системе';
+
+  @override
   String get settingsSecurity => 'Безопасность';
 
   @override
@@ -538,7 +566,14 @@ class LRu extends L {
   String get settingsAutoLockNever => 'Никогда';
 
   @override
+  String get settingsLockNow => 'Заблокировать сейчас';
+
+  @override
   String get settingsBlockScreenshots => 'Запретить скриншоты';
+
+  @override
+  String get settingsBlockScreenshotsHint =>
+      'Скрывает приложение от скриншотов, записи экрана и превью в недавних.';
 
   @override
   String get settingsPrivacyTitle => 'Приватность';
