@@ -9,10 +9,10 @@ import 'auth/presentation/lock_screen.dart';
 import 'auth/presentation/onboarding_screen.dart';
 import 'core/security/secure_flag.dart';
 import 'features/developer/developer_screen.dart';
-import 'features/dns/dns_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
 import 'features/security/security_screen.dart';
+import 'features/zones/zone_screen.dart';
 import 'features/zones/zones_screen.dart';
 import 'l10n/app_localizations.dart';
 
@@ -137,9 +137,11 @@ class _AppShellState extends State<AppShell> {
           HomeScreen(onOpenZones: () => setState(() => _index = 1)),
           ZonesScreen(
             onOpenZone: (zone) {
+              // Tapping a zone lands on the zone hub — DNS, purge and settings
+              // — rather than jumping straight into DNS as the prototype did.
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (_) => DnsScreen(
+                  builder: (_) => ZoneScreen(
                     zoneId: zone.id ?? '',
                     zoneName: zone.name ?? '',
                   ),

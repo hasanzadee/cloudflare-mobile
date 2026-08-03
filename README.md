@@ -28,7 +28,8 @@ handling written down rather than hand-waved.
 | Pages — projects and deployments | ✅ read-only |
 | KV namespaces, D1 databases, R2 buckets | ✅ read-only |
 | Zero Trust — tunnels with live connector status, Access apps and policies, Gateway rules | ✅ read-only |
-| Cache purge, SSL/TLS, zone settings | 🚧 typed client ready, screens pending |
+| Cache purge — by URL, host, prefix, tag, or everything | ✅ |
+| Zone settings — SSL/TLS mode, HSTS, min TLS, cache level, security level, and 15 more | ✅ |
 | Analytics and charts | 📋 needs the GraphQL subsystem — see below |
 | D1 SQL console, Workers deploy, R2 object browser | 📋 reachable through the explorer |
 | OAuth "Sign in with Cloudflare" | 📋 blocked on verification, see [docs/oauth-spike.md](docs/oauth-spike.md) |
