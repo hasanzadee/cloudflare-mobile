@@ -32,31 +32,6 @@
             </intent-filter>
         </activity>
 
-        <!-- OAuth callback.
-             Both redirect strategies are registered up front so switching
-             between them is a build-config change rather than a new release.
-             Which one Cloudflare accepts for a public client is still open —
-             tracked in docs/oauth-spike.md. -->
-        <activity
-            android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
-            android:exported="true">
-            <intent-filter android:label="oauth_custom_scheme">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="${oauthScheme}"/>
-            </intent-filter>
-            <intent-filter android:label="oauth_app_link" android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data
-                    android:scheme="https"
-                    android:host="${oauthHost}"
-                    android:path="/oauth/callback"/>
-            </intent-filter>
-        </activity>
-
         <!-- Don't delete: used by the Flutter tool to generate the plugin registrant. -->
         <meta-data
             android:name="flutterEmbedding"
@@ -68,7 +43,7 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
-        <!-- Custom Tabs, used by the API token wizard and the OAuth consent screen. -->
+        <!-- Opening the Cloudflare dashboard for the API token wizard. -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.BROWSABLE"/>

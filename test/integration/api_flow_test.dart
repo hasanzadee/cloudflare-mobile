@@ -14,9 +14,6 @@ class _Source implements CredentialSource {
 
   @override
   final CfCredential? current;
-
-  @override
-  Future<CfCredential?> refresh() async => null;
 }
 
 Map<String, Object?> _envelope(Object? result, {Map<String, Object?>? info}) =>
@@ -93,13 +90,31 @@ void main() {
 
       await api.zones.listZones();
       expect(seen, 'checked');
+
       // The interceptor sets the header on the request; assert it directly.
       final options = RequestOptions(path: 'zones');
-      await AuthInterceptor(
+      AuthInterceptor(
         _Source(const ApiTokenCredential(id: 'x', label: 'x', token: 'abc')),
-        dio: dio,
       ).onRequest(options, RequestInterceptorHandler());
       expect(options.headers['Authorization'], 'Bearer abc');
+    });
+
+    test('a global key sends the legacy header pair', () async {
+      final options = RequestOptions(path: 'zones');
+      AuthInterceptor(
+        _Source(
+          const GlobalKeyCredential(
+            id: 'g',
+            label: 'g',
+            email: 'me@example.com',
+            apiKey: 'deadbeef',
+          ),
+        ),
+      ).onRequest(options, RequestInterceptorHandler());
+
+      expect(options.headers['X-Auth-Email'], 'me@example.com');
+      expect(options.headers['X-Auth-Key'], 'deadbeef');
+      expect(options.headers.containsKey('Authorization'), isFalse);
     });
   });
 

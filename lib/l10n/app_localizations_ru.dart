@@ -171,29 +171,6 @@ class LRu extends L {
       'Устаревший способ. Неограниченный доступ ко всему аккаунту.';
 
   @override
-  String get authOAuth => 'Войти через Cloudflare';
-
-  @override
-  String get authOAuthBlurb =>
-      'Откроет панель Cloudflare — войдёте почтой, через Google или SSO.';
-
-  @override
-  String get authOAuthNotConfigured => 'Сначала укажите Client ID в настройках';
-
-  @override
-  String get authOAuthSettings => 'OAuth-клиент';
-
-  @override
-  String get authOAuthClientId => 'Client ID';
-
-  @override
-  String get authOAuthRedirect => 'Redirect URL';
-
-  @override
-  String get authOAuthHelp =>
-      'Клиент создаётся в Manage account → OAuth clients. Token auth method — None (PKCE); redirect обязан быть https, поэтому укажите адрес воркера из tools/oauth-callback-worker.';
-
-  @override
   String get authCreateToken => 'Создать токен в панели';
 
   @override

@@ -1,17 +1,18 @@
-/// The three ways to authenticate against the Cloudflare API, behind one type.
+/// The two ways this app authenticates against the Cloudflare API.
 ///
-/// The spec's `components.securitySchemes` confirms exactly these: `api_token`
-/// (bearer), `api_email` + `api_key` (the legacy global key), and
-/// `user_service_key`. OAuth rides on the same bearer header as an API token
-/// but carries expiry and refresh state, so it is a separate case.
+/// The spec's `components.securitySchemes` lists `api_token` (bearer),
+/// `api_email` + `api_key` (the legacy global key), and `user_service_key`.
+/// The first two are what a person actually has.
+///
+/// OAuth is deliberately absent — see docs/why-api-tokens.md. It was built and
+/// working, and dropped on purpose.
 library;
 
 import 'dart:convert';
 
 enum CfAuthMethod {
   apiToken,
-  globalKey,
-  oauth;
+  globalKey;
 
   static CfAuthMethod fromName(String? n) => CfAuthMethod.values.firstWhere(
     (m) => m.name == n,
@@ -59,20 +60,6 @@ sealed class CfCredential {
         label: label,
         email: json['email'] as String? ?? '',
         apiKey: json['api_key'] as String? ?? '',
-      ),
-      CfAuthMethod.oauth => OAuthCredential(
-        id: id,
-        label: label,
-        accessToken: json['access_token'] as String? ?? '',
-        refreshToken: json['refresh_token'] as String?,
-        expiresAt: switch (json['expires_at']) {
-          final String s => DateTime.tryParse(s),
-          _ => null,
-        },
-        scopes: switch (json['scopes']) {
-          final List<Object?> l => l.map((e) => e.toString()).toSet(),
-          _ => const <String>{},
-        },
       ),
     };
   }
@@ -153,81 +140,5 @@ class GlobalKeyCredential extends CfCredential {
     label: newLabel,
     email: email,
     apiKey: apiKey,
-  );
-}
-
-/// OAuth 2.0 access token obtained through Authorization Code + PKCE.
-class OAuthCredential extends CfCredential {
-  const OAuthCredential({
-    required super.id,
-    required super.label,
-    required this.accessToken,
-    this.refreshToken,
-    this.expiresAt,
-    this.scopes = const {},
-  });
-
-  final String accessToken;
-  final String? refreshToken;
-  final DateTime? expiresAt;
-  final Set<String> scopes;
-
-  /// Refresh a little early so a long request cannot start on a token that
-  /// expires mid-flight.
-  static const Duration refreshMargin = Duration(minutes: 2);
-
-  @override
-  CfAuthMethod get method => CfAuthMethod.oauth;
-
-  @override
-  bool get isExpired {
-    final exp = expiresAt;
-    return exp != null && DateTime.now().isAfter(exp);
-  }
-
-  bool get needsRefresh {
-    final exp = expiresAt;
-    if (exp == null) return false;
-    return DateTime.now().isAfter(exp.subtract(refreshMargin));
-  }
-
-  @override
-  Map<String, String> get authHeaders => {
-    'Authorization': 'Bearer $accessToken',
-  };
-
-  OAuthCredential copyWithTokens({
-    required String accessToken,
-    String? refreshToken,
-    DateTime? expiresAt,
-    Set<String>? scopes,
-  }) => OAuthCredential(
-    id: id,
-    label: label,
-    accessToken: accessToken,
-    refreshToken: refreshToken ?? this.refreshToken,
-    expiresAt: expiresAt ?? this.expiresAt,
-    scopes: scopes ?? this.scopes,
-  );
-
-  @override
-  Map<String, Object?> toJson() => {
-    'method': method.name,
-    'id': id,
-    'label': label,
-    'access_token': accessToken,
-    if (refreshToken != null) 'refresh_token': refreshToken,
-    if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
-    'scopes': scopes.toList(),
-  };
-
-  @override
-  CfCredential copyWithLabel(String newLabel) => OAuthCredential(
-    id: id,
-    label: newLabel,
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-    expiresAt: expiresAt,
-    scopes: scopes,
   );
 }

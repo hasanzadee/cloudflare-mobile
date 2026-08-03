@@ -8,8 +8,6 @@ import '../../core/security/vault.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/failure_text.dart';
 import '../application/auth_providers.dart';
-import '../application/oauth_providers.dart';
-import '../data/oauth_client.dart';
 import '../data/token_template.dart';
 import '../domain/cf_credential.dart';
 
@@ -36,37 +34,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   CfCredential? _pending;
   bool _busy = false;
   String? _error;
-
-  bool get _oauthReady =>
-      ref.watch(oauthConfigProvider).valueOrNull?.isConfigured ?? false;
-
-  /// Runs the browser flow, then joins the same PIN step the other methods use.
-  Future<void> _startOAuth() async {
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    try {
-      final oauth = await ref.read(cloudflareOAuthProvider.future);
-      final tokens = await oauth.authorize();
-      if (!mounted) return;
-      setState(() {
-        _pending = credentialFromTokens(
-          tokens,
-          id: _newId(),
-          label: 'Cloudflare',
-        );
-        _step = _Step.pin;
-      });
-    } on OAuthException catch (e) {
-      if (mounted) setState(() => _error = e.description ?? e.error);
-    } on Object catch (e) {
-      // Cancelling the browser tab throws too; it is not worth a scary message.
-      if (mounted) setState(() => _error = '$e');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
 
   @override
   void dispose() {
@@ -127,17 +94,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         recommended: true,
         onTap: () => setState(() => _step = _Step.token),
       ),
-      // OAuth is implemented and tested, but hidden unless a client has been
-      // registered: offering a third sign-in method that cannot work without
-      // setup elsewhere is worse than not offering it. Configure it in
-      // Settings and this appears.
-      if (_oauthReady)
-        _MethodCard(
-          icon: Icons.account_circle_outlined,
-          title: l.authOAuth,
-          body: l.authOAuthBlurb,
-          onTap: _startOAuth,
-        ),
       _MethodCard(
         icon: Icons.warning_amber_outlined,
         title: l.authGlobalKey,

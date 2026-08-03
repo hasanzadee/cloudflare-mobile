@@ -409,48 +409,6 @@ abstract class L {
   /// **'Legacy. Unrestricted access to your whole account.'**
   String get authGlobalKeyBlurb;
 
-  /// No description provided for @authOAuth.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in with Cloudflare'**
-  String get authOAuth;
-
-  /// No description provided for @authOAuthBlurb.
-  ///
-  /// In en, this message translates to:
-  /// **'Opens the Cloudflare dashboard so you can sign in with email, Google or SSO.'**
-  String get authOAuthBlurb;
-
-  /// No description provided for @authOAuthNotConfigured.
-  ///
-  /// In en, this message translates to:
-  /// **'Add an OAuth client ID in Settings first'**
-  String get authOAuthNotConfigured;
-
-  /// No description provided for @authOAuthSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'OAuth client'**
-  String get authOAuthSettings;
-
-  /// No description provided for @authOAuthClientId.
-  ///
-  /// In en, this message translates to:
-  /// **'Client ID'**
-  String get authOAuthClientId;
-
-  /// No description provided for @authOAuthRedirect.
-  ///
-  /// In en, this message translates to:
-  /// **'Redirect URL'**
-  String get authOAuthRedirect;
-
-  /// No description provided for @authOAuthHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Register a client at Manage account → OAuth clients. Token auth method must be None (PKCE); the redirect must be https, so point it at the bridge Worker in tools/oauth-callback-worker.'**
-  String get authOAuthHelp;
-
   /// No description provided for @authCreateToken.
   ///
   /// In en, this message translates to:

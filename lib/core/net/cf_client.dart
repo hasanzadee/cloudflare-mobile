@@ -45,7 +45,7 @@ class CfClient {
       // `sendRaw` opts out per-request for the API explorer.
     );
     d.interceptors.addAll([
-      AuthInterceptor(credentials, dio: d),
+      AuthInterceptor(credentials),
       RetryInterceptor(dio: d),
       if (enableLogging) const RedactingLogInterceptor(),
     ]);
