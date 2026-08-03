@@ -52,30 +52,44 @@ class ScopeBar extends ConsumerWidget implements PreferredSizeWidget {
     final scope = ref.watch(scopeProvider);
     final auth = ref.watch(authProvider).valueOrNull;
 
+    // A Row of shrinking chips, not a horizontal ListView. The list let the
+    // third chip fall off the edge of a 360dp phone with nothing to show the
+    // bar scrolled — hiding the zone picker, which is the one control people
+    // come here for. Every chip is now always on screen; long names ellipsize.
     return SizedBox(
       height: 48,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        children: [
-          _Chip(
-            icon: Icons.badge_outlined,
-            label: auth?.active?.label ?? l.authProfiles,
-            onTap: () => pickProfile(context, ref),
-          ),
-          _Chip(
-            icon: Icons.account_balance_outlined,
-            label: scope.accountName ?? l.scopeAllAccounts,
-            onTap: () => pickAccount(context, ref),
-          ),
-          if (showZone)
-            _Chip(
-              icon: Icons.public,
-              label: scope.zoneName ?? l.scopePickZone,
-              highlighted: scope.zoneName == null,
-              onTap: () => pickZone(context, ref),
+        child: Row(
+          children: [
+            Flexible(
+              child: _Chip(
+                icon: Icons.badge_outlined,
+                label: auth?.active?.label ?? l.authProfiles,
+                onTap: () => pickProfile(context, ref),
+              ),
             ),
-        ],
+            const SizedBox(width: 8),
+            Flexible(
+              child: _Chip(
+                icon: Icons.account_balance_outlined,
+                label: scope.accountName ?? l.scopeAllAccounts,
+                onTap: () => pickAccount(context, ref),
+              ),
+            ),
+            if (showZone) ...[
+              const SizedBox(width: 8),
+              Flexible(
+                child: _Chip(
+                  icon: Icons.public,
+                  label: scope.zoneName ?? l.scopePickZone,
+                  highlighted: scope.zoneName == null,
+                  onTap: () => pickZone(context, ref),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -311,7 +325,10 @@ class ScopePrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Padding(
+    // Scrollable, not a bare Column. Icon, message and button have fixed
+    // heights, so on a short viewport — a small phone, a landscape one, or any
+    // screen with the keyboard up — they overflow the space Center gives them.
+    child: SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -378,15 +395,13 @@ class _Chip extends StatelessWidget {
   final bool highlighted;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4),
-    child: ActionChip(
-      avatar: Icon(icon, size: 16),
-      label: Text(label, overflow: TextOverflow.ellipsis),
-      side: highlighted
-          ? BorderSide(color: Theme.of(context).colorScheme.primary)
-          : null,
-      onPressed: onTap,
-    ),
+  Widget build(BuildContext context) => ActionChip(
+    avatar: Icon(icon, size: 16),
+    label: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
+    labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+    side: highlighted
+        ? BorderSide(color: Theme.of(context).colorScheme.primary)
+        : null,
+    onPressed: onTap,
   );
 }
