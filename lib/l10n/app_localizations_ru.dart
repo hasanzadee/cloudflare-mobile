@@ -396,6 +396,48 @@ class LRu extends L {
   String get purgeOnePerLine => 'По одному в строке';
 
   @override
+  String get analyticsTitle => 'Аналитика';
+
+  @override
+  String get analyticsRequests => 'Запросы';
+
+  @override
+  String get analyticsCached => 'Из кэша';
+
+  @override
+  String get analyticsBandwidth => 'Трафик';
+
+  @override
+  String get analyticsUniques => 'Посетители';
+
+  @override
+  String get analyticsCacheRatio => 'Попаданий';
+
+  @override
+  String get analyticsThreats => 'Угрозы';
+
+  @override
+  String get analyticsRequestsOverTime => 'Запросы по времени';
+
+  @override
+  String get analyticsStatusCodes => 'Коды ответов';
+
+  @override
+  String get analyticsTopCountries => 'Страны';
+
+  @override
+  String get analyticsContentTypes => 'Типы контента';
+
+  @override
+  String get analyticsSecurityEvents => 'События безопасности';
+
+  @override
+  String get analyticsNoData => 'За этот период трафика не было';
+
+  @override
+  String get zoneAnalyticsSubtitle => 'Трафик, попадания в кэш, угрозы';
+
+  @override
   String get zoneDnsSubtitle => 'Записи, статус прокси, выгрузка BIND';
 
   @override

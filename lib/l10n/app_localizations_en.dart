@@ -396,6 +396,48 @@ class LEn extends L {
   String get purgeOnePerLine => 'One per line';
 
   @override
+  String get analyticsTitle => 'Analytics';
+
+  @override
+  String get analyticsRequests => 'Requests';
+
+  @override
+  String get analyticsCached => 'Cached';
+
+  @override
+  String get analyticsBandwidth => 'Bandwidth';
+
+  @override
+  String get analyticsUniques => 'Visitors';
+
+  @override
+  String get analyticsCacheRatio => 'Cache hit';
+
+  @override
+  String get analyticsThreats => 'Threats';
+
+  @override
+  String get analyticsRequestsOverTime => 'Requests over time';
+
+  @override
+  String get analyticsStatusCodes => 'Status codes';
+
+  @override
+  String get analyticsTopCountries => 'Top countries';
+
+  @override
+  String get analyticsContentTypes => 'Content types';
+
+  @override
+  String get analyticsSecurityEvents => 'Security events';
+
+  @override
+  String get analyticsNoData => 'No traffic in this period';
+
+  @override
+  String get zoneAnalyticsSubtitle => 'Traffic, cache hit ratio, threats';
+
+  @override
   String get zoneDnsSubtitle => 'Records, proxy status, BIND export';
 
   @override

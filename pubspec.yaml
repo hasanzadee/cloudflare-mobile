@@ -36,6 +36,7 @@ dependencies:
 
   # UI
   dynamic_color: ^1.7.0
+  fl_chart: ^0.69.2
 
   # Hand-written domain models (the generated API models deliberately use
   # plain Dart instead — see tool/openapi/README.md).

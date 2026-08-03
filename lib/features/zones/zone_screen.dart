@@ -7,6 +7,7 @@ import '../../core/net/failure.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/async_view.dart';
 import '../../ui/failure_text.dart';
+import '../analytics/analytics_screen.dart';
 import '../dns/dns_screen.dart';
 import 'zone_settings_providers.dart';
 import 'zones_providers.dart';
@@ -33,6 +34,18 @@ class ZoneScreen extends ConsumerWidget {
         },
         child: ListView(
           children: [
+            ListTile(
+              leading: const Icon(Icons.insights_outlined),
+              title: Text(l.analyticsTitle),
+              subtitle: Text(l.zoneAnalyticsSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      AnalyticsScreen(zoneId: zoneId, zoneName: zoneName),
+                ),
+              ),
+            ),
             ListTile(
               leading: const Icon(Icons.dns_outlined),
               title: Text(l.dnsTitle),
