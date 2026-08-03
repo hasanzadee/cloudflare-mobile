@@ -89,6 +89,9 @@ class _PhaseRules extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
+        // Every tab's button says "Add"; the phase makes it identifiable to a
+        // test that has to prove the rule landed in the right ruleset.
+        key: ValueKey('add-rule-${phase.id}'),
         onPressed: () async {
           final created = await showModalBottomSheet<bool>(
             context: context,
