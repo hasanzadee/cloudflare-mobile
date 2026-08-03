@@ -25,6 +25,13 @@ jobs:
 
       - run: flutter pub get
 
+      # A tag can be pushed from a branch CI never saw, and a release is the
+      # one artifact that is awkward to take back. Cheap insurance.
+      - name: Analyzer
+        run: flutter analyze --fatal-infos
+      - name: Tests
+        run: flutter test
+
       # Signing material never touches the repository. The keystore is written
       # to a scratch directory and removed in an always() step below.
       - name: Restore keystore
