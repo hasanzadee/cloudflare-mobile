@@ -194,10 +194,8 @@ void main() {
       )
       ..onPost(
         'zones/zone1/rulesets/rs1/rules',
-        (server) => server.reply(
-          200,
-          envelope({'id': 'rs1', 'rules': <Object>[]}),
-        ),
+        (server) =>
+            server.reply(200, envelope({'id': 'rs1', 'rules': <Object>[]})),
         data: Matchers.any,
       )
       ..onPost(
@@ -513,7 +511,15 @@ void main() {
 
     // There was no way to create one at all: the tab listed rules and offered
     // nothing else, so an empty phase was a screen you could only look at.
-    await tapAt(tester, find.text('Add'), settle: const Duration(seconds: 2));
+    //
+    // By key, not by label: all three tabs have an "Add" button, and the first
+    // version of this test silently created the rule in the rate-limiting
+    // ruleset instead.
+    await tapAt(
+      tester,
+      find.byKey(const ValueKey('add-rule-http_request_firewall_custom')),
+      settle: const Duration(seconds: 2),
+    );
 
     await tester.enterText(
       find.ancestor(
@@ -577,9 +583,11 @@ void main() {
       settle: const Duration(seconds: 5),
     );
 
-    // Back on Settings, with both profiles and the new one active.
-    expect(find.text('Client'), findsOneWidget);
-    expect(find.text('Cloudflare'), findsOneWidget);
+    // Back on Settings, listing both. The profiles sit below the appearance
+    // section, so the list has to be at the top for both to be built.
+    await scrollToTop(tester);
+    expect(find.text('Client'), findsOneWidget, reason: onScreen(tester));
+    expect(find.text('Cloudflare'), findsOneWidget, reason: onScreen(tester));
   });
 
   testWidgets('the account picker lists every account', (tester) async {
