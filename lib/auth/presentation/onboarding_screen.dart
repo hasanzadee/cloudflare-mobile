@@ -114,25 +114,29 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       const SizedBox(height: 16),
+      // Full access leads: it is the one that makes every screen work, and
+      // anyone who wants less already knows they do.
       Wrap(
         spacing: 8,
+        runSpacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
+          FilledButton.icon(
+            onPressed: () => _open(TokenTemplate.userToken(TokenTemplate.full)),
+            icon: const Icon(Icons.all_inclusive),
+            label: const Text('Everything (read + write)'),
+          ),
           OutlinedButton.icon(
             onPressed: () =>
                 _open(TokenTemplate.userToken(TokenTemplate.dnsAdmin)),
             icon: const Icon(Icons.dns_outlined),
-            label: const Text('DNS admin'),
+            label: const Text('DNS only'),
           ),
           OutlinedButton.icon(
             onPressed: () =>
                 _open(TokenTemplate.userToken(TokenTemplate.readOnly)),
             icon: const Icon(Icons.visibility_outlined),
             label: const Text('Read only'),
-          ),
-          OutlinedButton.icon(
-            onPressed: () => _open(TokenTemplate.userToken(TokenTemplate.full)),
-            icon: const Icon(Icons.all_inclusive),
-            label: const Text('Full'),
           ),
         ],
       ),
