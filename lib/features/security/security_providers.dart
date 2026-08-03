@@ -77,21 +77,37 @@ class SecurityActions {
 
   CfApi get _api => _ref.read(cfApiProvider);
 
-  /// Enables or disables a rule with a partial PATCH.
+  /// Enables or disables a rule.
   ///
-  /// Only `enabled` is sent: the Ruleset API merges, and echoing back a whole
-  /// rule we did not fully model risks rewriting fields we never showed.
+  /// The Ruleset API does not merge, whatever the verb suggests: sending
+  /// `{enabled: false}` on its own is rejected with *"action is required to
+  /// create or update a rule"* and *"expression cannot be blank"*. The whole
+  /// rule has to come back.
+  ///
+  /// So it round-trips the rule already on screen. Every field the generator
+  /// did not model survives in `extra` and is written back untouched — which is
+  /// what `extra` is for, and the only thing that makes a replace-semantics
+  /// update safe against a rule using features this app has never heard of.
+  ///
+  /// Three server-managed fields are dropped: `version` and `last_updated`
+  /// belong to Cloudflare, and `id` travels in the path.
   Future<void> setRuleEnabled({
     required String zoneId,
     required String rulesetId,
-    required String ruleId,
+    required ResponseRule rule,
     required bool enabled,
   }) async {
+    final body = Map<String, Object?>.from(rule.toJson())
+      ..['enabled'] = enabled
+      ..remove('id')
+      ..remove('version')
+      ..remove('last_updated');
+
     await _api.waf.updateRule(
       zoneId: zoneId,
       rulesetId: rulesetId,
-      ruleId: ruleId,
-      body: UpdateZoneRulesetRuleBody(enabled: enabled),
+      ruleId: rule.id!,
+      body: UpdateZoneRulesetRuleBody.fromJson(body),
     );
   }
 
