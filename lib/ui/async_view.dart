@@ -56,7 +56,15 @@ class _Skeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     // A shimmerless skeleton: cheap, and it communicates layout rather than
     // "something is happening somewhere".
+    //
+    // Shrink-wrapped and unscrollable on purpose. AsyncView is used both as a
+    // whole screen body and nested inside a scrolling page — the analytics
+    // charts are the latter — and a plain ListView there is a viewport with
+    // unbounded height, which throws during layout. The user saw a red screen
+    // while the request was in flight, then a working page once it landed.
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
       itemCount: 6,
       itemBuilder: (context, i) => Padding(
