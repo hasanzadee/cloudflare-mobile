@@ -191,6 +191,19 @@ void main() {
         (server) =>
             server.reply(200, envelope({'id': 'rs1', 'rules': <Object>[]})),
         data: Matchers.any,
+      )
+      ..onPost(
+        'zones/zone1/dns_records',
+        (server) => server.reply(
+          200,
+          envelope({
+            'id': 'rec3',
+            'type': 'A',
+            'name': 'api.example.com',
+            'content': '198.51.100.7',
+          }),
+        ),
+        data: Matchers.any,
       );
   }
 
@@ -348,6 +361,51 @@ void main() {
     expect(find.text('MX'), findsWidgets);
     // The prototype dropped MX priority entirely.
     expect(find.textContaining('priority 10'), findsOneWidget);
+  });
+
+  testWidgets('creating a DNS record posts what the form was filled with', (
+    tester,
+  ) async {
+    await onboard(tester);
+    await openTab(tester, 'Zones');
+    await tapAt(
+      tester,
+      find.text('example.com'),
+      settle: const Duration(seconds: 3),
+    );
+    await tapAt(
+      tester,
+      find.text('DNS').first,
+      settle: const Duration(seconds: 3),
+    );
+
+    await tapAt(
+      tester,
+      find.text('Add record'),
+      settle: const Duration(seconds: 2),
+    );
+
+    // By label, not by index: the DNS screen has its own search field, and
+    // which one `find.byType(TextField).at(n)` lands on is paint order.
+    Finder field(String label) =>
+        find.ancestor(of: find.text(label), matching: find.byType(TextField));
+
+    await tester.enterText(field('Name'), 'api');
+    await tester.enterText(field('Content'), '198.51.100.7');
+    await tester.pumpAndSettle();
+
+    await tapAt(tester, find.text('Save'), settle: const Duration(seconds: 3));
+
+    final post = requests.lastWhere((r) => r.method == 'POST');
+    final body = post.data! as Map<String, Object?>;
+
+    expect(post.path, contains('zones/zone1/dns_records'));
+    expect(body['type'], 'A');
+    expect(body['name'], 'api');
+    expect(body['content'], '198.51.100.7');
+    // TTL 1 is Cloudflare's "automatic"; the form defaults there rather than
+    // sending nothing, which the API rejects.
+    expect(body['ttl'], 1);
   });
 
   testWidgets('a zone can be chosen from Security without visiting Zones', (
