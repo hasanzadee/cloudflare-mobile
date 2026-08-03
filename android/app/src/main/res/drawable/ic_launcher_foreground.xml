@@ -1,0 +1,33 @@
+<!--
+  App mark: a shield with a bolt through it — protection and speed, which is
+  what the app is for.
+
+  Deliberately NOT Cloudflare's cloud. Using their logo on a third-party client
+  would be trademark infringement however friendly the intent; the orange is
+  fair game as a colour, the mark is not.
+
+  Adaptive icons are 108x108dp with only the middle 72x72 guaranteed visible,
+  so everything here sits inside roughly x/y 26..82.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Shield body -->
+    <path
+        android:pathData="M54,25 L80,34 L80,57 C80,71.5 69.5,82.5 54,88 C38.5,82.5 28,71.5 28,57 L28,34 Z"
+        android:fillColor="#F6821F" />
+
+    <!-- Inner highlight, so the shield still reads as a shape on an orange
+         wallpaper rather than turning into a flat blob -->
+    <path
+        android:pathData="M54,31 L74,37.5 L74,57 C74,68.5 65.5,77.5 54,82.2 C42.5,77.5 34,68.5 34,57 L34,37.5 Z"
+        android:fillColor="#FFB25E" />
+
+    <!-- Bolt, punched out dark -->
+    <path
+        android:pathData="M58.5,38 L43,61 L52.5,61 L49,76 L65,52.5 L55.5,52.5 Z"
+        android:fillColor="#1B1B1F" />
+</vector>

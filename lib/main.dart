@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'app/app_settings.dart';
 import 'app/theme.dart';
 import 'auth/application/auth_providers.dart';
 import 'auth/presentation/lock_screen.dart';
@@ -21,20 +22,28 @@ void main() {
   runApp(const ProviderScope(child: CloudflareMobileApp()));
 }
 
-class CloudflareMobileApp extends StatelessWidget {
+class CloudflareMobileApp extends ConsumerWidget {
   const CloudflareMobileApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(appSettingsProvider);
+
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) => MaterialApp(
         title: 'Cloudflare Mobile',
         debugShowCheckedModeBanner: false,
-        theme: buildTheme(dynamicScheme: lightDynamic, mode: Brightness.light),
+        theme: buildTheme(
+          dynamicScheme: settings.useDynamicColor ? lightDynamic : null,
+          mode: Brightness.light,
+        ),
         darkTheme: buildTheme(
-          dynamicScheme: darkDynamic,
+          dynamicScheme: settings.useDynamicColor ? darkDynamic : null,
           mode: Brightness.dark,
         ),
+        themeMode: settings.themeMode,
+        // Null follows the system, which is the default.
+        locale: settings.locale,
         localizationsDelegates: const [
           L.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -60,13 +69,12 @@ class _Root extends ConsumerStatefulWidget {
 class _RootState extends ConsumerState<_Root> with WidgetsBindingObserver {
   DateTime? _backgroundedAt;
 
-  /// Matches the prototype's default; configurable later.
-  static const Duration _autoLockAfter = Duration(minutes: 1);
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // On by default from the first frame; the listener below then follows any
+    // change, including the one that arrives when preferences finish loading.
     const SecureFlag().set(enabled: true);
   }
 
@@ -84,8 +92,10 @@ class _RootState extends ConsumerState<_Root> with WidgetsBindingObserver {
         _backgroundedAt = DateTime.now();
       case AppLifecycleState.resumed:
         final since = _backgroundedAt;
-        if (since != null &&
-            DateTime.now().difference(since) >= _autoLockAfter) {
+        final after = ref.read(appSettingsProvider).autoLock;
+        // A ten-year "never" beats a nullable duration: one comparison, no
+        // special case to forget.
+        if (since != null && DateTime.now().difference(since) >= after) {
           ref.read(authProvider.notifier).lock();
         }
         _backgroundedAt = null;
@@ -98,6 +108,12 @@ class _RootState extends ConsumerState<_Root> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
+
+    // Kept in sync here rather than only where the switch lives, so the flag is
+    // also right after a restart and after the stored value loads from disk.
+    ref.listen(appSettingsProvider.select((s) => s.blockScreenshots), (_, on) {
+      const SecureFlag().set(enabled: on);
+    });
 
     return auth.when(
       loading: () =>

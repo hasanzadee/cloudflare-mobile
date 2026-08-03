@@ -1,0 +1,15 @@
+<!--
+  Themed-icon variant. The launcher tints this a single colour, so the bolt has
+  to be a hole in the shield rather than a differently coloured shape on top —
+  otherwise it disappears the moment both are tinted the same.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M54,25 L80,34 L80,57 C80,71.5 69.5,82.5 54,88 C38.5,82.5 28,71.5 28,57 L28,34 Z M58.5,38 L43,61 L52.5,61 L49,76 L65,52.5 L55.5,52.5 Z"
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd" />
+</vector>

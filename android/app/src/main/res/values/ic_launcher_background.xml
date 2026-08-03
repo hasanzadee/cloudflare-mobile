@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark slate rather than white: the mark is orange, and a light
+         background makes it vanish on the many launchers that sit on a bright
+         wallpaper. -->
+    <color name="ic_launcher_background">#0F1420</color>
+</resources>
