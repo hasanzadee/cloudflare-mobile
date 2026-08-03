@@ -127,16 +127,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         recommended: true,
         onTap: () => setState(() => _step = _Step.token),
       ),
-      _MethodCard(
-        icon: Icons.account_circle_outlined,
-        title: l.authOAuth,
-        body: l.authOAuthBlurb,
-        // Only offered when a client has been registered — either baked in at
-        // build time or pasted in Settings. Without one the button could only
-        // fail, so it says why instead.
-        disabledNote: _oauthReady ? null : l.authOAuthNotConfigured,
-        onTap: _oauthReady ? _startOAuth : null,
-      ),
+      // OAuth is implemented and tested, but hidden unless a client has been
+      // registered: offering a third sign-in method that cannot work without
+      // setup elsewhere is worse than not offering it. Configure it in
+      // Settings and this appears.
+      if (_oauthReady)
+        _MethodCard(
+          icon: Icons.account_circle_outlined,
+          title: l.authOAuth,
+          body: l.authOAuthBlurb,
+          onTap: _startOAuth,
+        ),
       _MethodCard(
         icon: Icons.warning_amber_outlined,
         title: l.authGlobalKey,

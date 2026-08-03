@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 
+import 'capability_cache.dart';
 import 'cf_error_codes.dart';
 import 'envelope.dart';
 import 'failure.dart';
@@ -19,13 +20,14 @@ const String kCloudflareApiBase = 'https://api.cloudflare.com/client/v4/';
 /// schema-aware explorer — funnels through [send] or [sendRaw], so retry,
 /// auth, redaction and envelope handling exist in exactly one place.
 class CfClient {
-  CfClient._(this.dio);
+  CfClient._(this.dio, this.capabilities, this._credentials);
 
   factory CfClient({
     required CredentialSource credentials,
     String baseUrl = kCloudflareApiBase,
     Dio? dio,
     bool enableLogging = true,
+    CapabilityCache? capabilities,
   }) {
     final d = dio ?? Dio();
     d.options = d.options.copyWith(
@@ -47,13 +49,19 @@ class CfClient {
       RetryInterceptor(dio: d),
       if (enableLogging) const RedactingLogInterceptor(),
     ]);
-    return CfClient._(d);
+    return CfClient._(d, capabilities ?? CapabilityCache(), credentials);
   }
 
   /// Test seam: wraps an already-configured Dio without adding interceptors.
-  factory CfClient.raw(Dio dio) => CfClient._(dio);
+  factory CfClient.raw(Dio dio) => CfClient._(dio, CapabilityCache(), null);
 
   final Dio dio;
+
+  /// Denied permissions, remembered so the app stops re-asking. See
+  /// [CapabilityCache] for why that matters in practice.
+  final CapabilityCache capabilities;
+
+  final CredentialSource? _credentials;
 
   /// Issues a request and returns the parsed envelope.
   ///
@@ -71,6 +79,12 @@ class CfClient {
     Set<String> missingPermissions = const {},
     ResponseType responseType = ResponseType.json,
   }) async {
+    // Answer locally if this credential was already refused these permissions.
+    // Cloudflare throttles repeated failed authorization hard, so re-asking on
+    // every screen visit is how a scoped token gets the account rate-limited.
+    capabilities.bind(_credentials?.current?.id);
+    capabilities.guard(missingPermissions, path: path);
+
     Response<dynamic> response;
     try {
       response = await dio.request<dynamic>(
@@ -89,11 +103,15 @@ class CfClient {
       // exhausted; the body still carries the useful `errors` array.
       final failed = e.response;
       if (failed == null) throw _fromDio(e, path);
-      throw _classify(
+      final failure = _classify(
         failed,
         path: path,
         missingPermissions: missingPermissions,
       );
+      if (failure is PermissionFailure) {
+        capabilities.recordDenied(missingPermissions);
+      }
+      throw failure;
     }
 
     final status = response.statusCode ?? 0;
