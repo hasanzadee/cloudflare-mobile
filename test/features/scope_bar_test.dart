@@ -142,6 +142,50 @@ void main() {
     expect(find.text('match-shop.com'), findsOneWidget);
   });
 
+  testWidgets('the zone sheet survives being opened and closed on a small '
+      'screen', (tester) async {
+    // 360x640 is the CI emulator. A sheet whose header and search box have
+    // fixed heights overflows while the sheet animates shut, and the widget is
+    // already disposed by the time Flutter names it — which is how this cost
+    // four on-device tests a "RenderFlex overflowed by 7.0 pixels" with no clue
+    // attached.
+    tester.view.devicePixelRatio = 3;
+    tester.view.physicalSize = const Size(1080, 1920);
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      _host(
+        overrides: [
+          accountsProvider.overrideWith((ref) async => accounts),
+          zonePickerProvider.overrideWith(
+            (ref, q) async => _page([
+              const Zone(id: 'z1', name: 'example.com', status: 'active'),
+            ]),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Pick a zone'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'opening the sheet');
+
+    // Picking a zone pops the sheet. Step through the dismissal rather than
+    // settling past it: the overflow lives in the middle frames.
+    await tester.tap(find.text('example.com'));
+    for (var i = 0; i < 12; i++) {
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'frame $i of the sheet closing',
+      );
+    }
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull, reason: 'after the sheet closed');
+  });
+
   testWidgets('account sheet lists every account', (tester) async {
     await tester.pumpWidget(
       _host(
