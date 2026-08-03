@@ -378,6 +378,30 @@ class LEn extends L {
   String get cachePurged => 'Cache purged';
 
   @override
+  String get purgeByUrl => 'URL';
+
+  @override
+  String get purgeByHost => 'Host';
+
+  @override
+  String get purgeByPrefix => 'Prefix';
+
+  @override
+  String get purgeByTag => 'Tag';
+
+  @override
+  String get purgeTargets => 'What to purge';
+
+  @override
+  String get purgeOnePerLine => 'One per line';
+
+  @override
+  String get zoneDnsSubtitle => 'Records, proxy status, BIND export';
+
+  @override
+  String get zonePurgeSubtitle => 'By URL, host, prefix, tag — or everything';
+
+  @override
   String get explorerTitle => 'API explorer';
 
   @override

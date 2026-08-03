@@ -787,6 +787,54 @@ abstract class L {
   /// **'Cache purged'**
   String get cachePurged;
 
+  /// No description provided for @purgeByUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'URL'**
+  String get purgeByUrl;
+
+  /// No description provided for @purgeByHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Host'**
+  String get purgeByHost;
+
+  /// No description provided for @purgeByPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefix'**
+  String get purgeByPrefix;
+
+  /// No description provided for @purgeByTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get purgeByTag;
+
+  /// No description provided for @purgeTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'What to purge'**
+  String get purgeTargets;
+
+  /// No description provided for @purgeOnePerLine.
+  ///
+  /// In en, this message translates to:
+  /// **'One per line'**
+  String get purgeOnePerLine;
+
+  /// No description provided for @zoneDnsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records, proxy status, BIND export'**
+  String get zoneDnsSubtitle;
+
+  /// No description provided for @zonePurgeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'By URL, host, prefix, tag — or everything'**
+  String get zonePurgeSubtitle;
+
   /// No description provided for @explorerTitle.
   ///
   /// In en, this message translates to:

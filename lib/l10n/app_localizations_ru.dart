@@ -378,6 +378,30 @@ class LRu extends L {
   String get cachePurged => 'Кэш очищен';
 
   @override
+  String get purgeByUrl => 'URL';
+
+  @override
+  String get purgeByHost => 'Хост';
+
+  @override
+  String get purgeByPrefix => 'Префикс';
+
+  @override
+  String get purgeByTag => 'Тег';
+
+  @override
+  String get purgeTargets => 'Что чистим';
+
+  @override
+  String get purgeOnePerLine => 'По одному в строке';
+
+  @override
+  String get zoneDnsSubtitle => 'Записи, статус прокси, выгрузка BIND';
+
+  @override
+  String get zonePurgeSubtitle => 'По URL, хосту, префиксу, тегу — или всё';
+
+  @override
   String get explorerTitle => 'Обозреватель API';
 
   @override
