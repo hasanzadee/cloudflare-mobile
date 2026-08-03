@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Shown for the fraction of a second before Flutter draws its first frame.
+  The stock template uses white here, which reads as a flash on a dark theme;
+  matching the icon background makes launch look continuous instead.
+
+  The icon is a plain item, not wrapped in <bitmap>: the stock template's
+  <bitmap> only accepts a raster, so pointing it at a vector made every cold
+  start log "requires a valid 'src' attribute" and draw nothing at all.
+  android:width/height on an item needs API 23, which minSdk 26 guarantees.
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/launch_background" />
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/ic_launcher_foreground" />
-    </item>
+    <item
+        android:drawable="@drawable/ic_launcher_foreground"
+        android:gravity="center"
+        android:width="160dp"
+        android:height="160dp" />
 </layer-list>
