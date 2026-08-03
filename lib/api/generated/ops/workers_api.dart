@@ -239,4 +239,157 @@ class WorkersApi {
     );
     return R2ListBucketsResult.fromJson(_env.resultAsMap);
   }
+
+  /// `GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys`
+  /// List a Namespace's Keys
+  Future<CfPage<Key>> listKvKeys({
+    required String accountId,
+    required String namespaceId,
+    num? limit,
+    String? prefix,
+    String? cursor,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'GET',
+      path: '/accounts/$accountId/storage/kv/namespaces/$namespaceId/keys',
+      query: <String, Object?>{
+        'limit': limit,
+        'prefix': prefix,
+        'cursor': cursor,
+        ...?extraQuery,
+      },
+      cancelToken: cancelToken,
+      missingPermissions: const {'Workers KV Storage Read'},
+    );
+    return CfPage.from(_env, Key.fromJson);
+  }
+
+  /// `GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}`
+  /// Read key-value pair
+  Future<CfEnvelope> readKvValue({
+    required String accountId,
+    required String namespaceId,
+    required String keyName,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'GET',
+      path:
+          '/accounts/$accountId/storage/kv/namespaces/$namespaceId/values/$keyName',
+      query: <String, Object?>{...?extraQuery},
+      cancelToken: cancelToken,
+      missingPermissions: const {'Workers KV Storage Read'},
+      responseType: ResponseType.plain,
+    );
+    return _env;
+  }
+
+  /// `PUT /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}`
+  /// Write key-value pair with optional metadata
+  Future<CfEnvelope> writeKvValue({
+    required String accountId,
+    required String namespaceId,
+    required String keyName,
+    num? expiration,
+    num? expirationTtl,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'PUT',
+      path:
+          '/accounts/$accountId/storage/kv/namespaces/$namespaceId/values/$keyName',
+      query: <String, Object?>{
+        'expiration': expiration,
+        'expiration_ttl': expirationTtl,
+        ...?extraQuery,
+      },
+      cancelToken: cancelToken,
+      missingPermissions: const {'Workers KV Storage Write'},
+    );
+    return _env;
+  }
+
+  /// `DELETE /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}`
+  /// Delete key-value pair
+  Future<CfEnvelope> deleteKvValue({
+    required String accountId,
+    required String namespaceId,
+    required String keyName,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'DELETE',
+      path:
+          '/accounts/$accountId/storage/kv/namespaces/$namespaceId/values/$keyName',
+      query: <String, Object?>{...?extraQuery},
+      cancelToken: cancelToken,
+      missingPermissions: const {'Workers KV Storage Write'},
+    );
+    return _env;
+  }
+
+  /// `PUT /accounts/{account_id}/workers/scripts/{script_name}/schedules`
+  /// Update Cron Triggers
+  Future<WorkerCronTriggerUpdateCronTriggersResult> updateCronTriggers({
+    required String accountId,
+    required String scriptName,
+    required List<Schedule> body,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'PUT',
+      path: '/accounts/$accountId/workers/scripts/$scriptName/schedules',
+      body: body,
+      query: <String, Object?>{...?extraQuery},
+      cancelToken: cancelToken,
+      missingPermissions: const {'Workers Scripts Write'},
+    );
+    return WorkerCronTriggerUpdateCronTriggersResult.fromJson(_env.resultAsMap);
+  }
+
+  /// `POST /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/retry`
+  /// Retry deployment
+  Future<Deployment> retryDeployment({
+    required String accountId,
+    required String projectName,
+    required String deploymentId,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'POST',
+      path:
+          '/accounts/$accountId/pages/projects/$projectName/deployments/$deploymentId/retry',
+      query: <String, Object?>{...?extraQuery},
+      cancelToken: cancelToken,
+      missingPermissions: const {'Pages Write'},
+    );
+    return Deployment.fromJson(_env.resultAsMap);
+  }
+
+  /// `POST /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback`
+  /// Rollback deployment
+  Future<Deployment> rollbackDeployment({
+    required String accountId,
+    required String projectName,
+    required String deploymentId,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'POST',
+      path:
+          '/accounts/$accountId/pages/projects/$projectName/deployments/$deploymentId/rollback',
+      query: <String, Object?>{...?extraQuery},
+      cancelToken: cancelToken,
+      missingPermissions: const {'Pages Write'},
+    );
+    return Deployment.fromJson(_env.resultAsMap);
+  }
 }

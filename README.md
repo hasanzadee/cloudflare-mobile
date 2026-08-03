@@ -31,7 +31,13 @@ handling written down rather than hand-waved.
 | Cache purge — by URL, host, prefix, tag, or everything | ✅ |
 | Zone settings — SSL/TLS mode, HSTS, min TLS, cache level, security level, and 15 more | ✅ |
 | Analytics — traffic charts, cache ratio, threats, status codes, countries, firewall events | ✅ |
-| D1 SQL console, Workers deploy, R2 object browser | 📋 reachable through the explorer |
+| KV — browse keys, read, edit and delete values | ✅ |
+| D1 — SQL console with a result table, destructive statements gated | ✅ |
+| Page rules, load balancers, waiting rooms | ✅ read-only |
+| Certificate packs, custom hostnames, DNSSEC | ✅ read-only |
+| Email routing rules and destination addresses | ✅ read-only |
+| Notification policies, alert history, Turnstile widgets | ✅ read-only |
+| Workers deploy, Pages rollback, R2 object browser | 📋 reachable through the explorer |
 
 "Reachable through the explorer" is not a euphemism for missing: the explorer
 builds a real form from the endpoint's schema — required flags, types, ranges,

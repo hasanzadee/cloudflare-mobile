@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/generated/generated.dart';
 import '../../auth/application/auth_providers.dart';
+import '../../core/net/cf_error_codes.dart';
+import '../../core/net/envelope.dart';
 import '../../core/net/paginator.dart';
 import '../scope/scope_providers.dart';
 
@@ -98,26 +101,131 @@ final r2BucketsProvider = FutureProvider.autoDispose
           );
     });
 
-/// Runs one SQL statement against a D1 database.
-///
-/// Deliberately not a provider: a query is an action with side effects, and
-/// caching or auto-retrying it would be wrong.
-Future<CfPage<QueryResultResponse>> runD1Query(
-  Ref ref, {
-  required String accountId,
-  required String databaseId,
-  required String sql,
-  List<String> params = const [],
-}) {
-  return ref
-      .read(cfApiProvider)
+typedef KvNamespaceKey = ({String accountId, String namespaceId});
+typedef KvValueKey = ({String accountId, String namespaceId, String keyName});
+
+/// KV is cursor-paginated rather than page-numbered — the only such listing in
+/// the app. CfResultInfo already carries the cursor, so nothing special here.
+final kvKeysProvider = FutureProvider.autoDispose
+    .family<CfPage<Key>, KvNamespaceKey>((ref, key) {
+      return ref
+          .watch(cfApiProvider)
+          .workers
+          .listKvKeys(
+            accountId: key.accountId,
+            namespaceId: key.namespaceId,
+            limit: 1000,
+            cancelToken: autoCancelToken(ref),
+          );
+    });
+
+/// A KV value is arbitrary bytes, not an envelope — the client hands back the
+/// raw body and it is shown as text.
+final kvValueProvider = FutureProvider.autoDispose.family<String, KvValueKey>((
+  ref,
+  key,
+) async {
+  final env = await ref
+      .watch(cfApiProvider)
       .workers
-      .queryD1(
-        accountId: accountId,
-        databaseId: databaseId,
-        // D1 takes bound parameters as strings; using them rather than string
-        // interpolation is the only sane way to avoid SQL injection from a
-        // value the user typed.
-        body: BatchQuery(sql: sql, params: params),
+      .readKvValue(
+        accountId: key.accountId,
+        namespaceId: key.namespaceId,
+        keyName: key.keyName,
+        cancelToken: autoCancelToken(ref),
       );
+  return env.result?.toString() ?? '';
+});
+
+class KvActions {
+  const KvActions(this._ref);
+
+  final Ref _ref;
+
+  /// Writes a KV value.
+  ///
+  /// Goes through the raw client rather than the generated method: this is one
+  /// of 22 endpoints in the spec whose request body is `multipart/form-data`,
+  /// and the generator only emits typed bodies for `application/json`. Rather
+  /// than teach it a shape used by a handful of endpoints, the call is made
+  /// directly and the limitation is written down.
+  Future<void> write({
+    required String accountId,
+    required String namespaceId,
+    required String keyName,
+    required String value,
+  }) async {
+    final response = await _ref
+        .read(cfClientProvider)
+        .sendRaw(
+          method: 'PUT',
+          path:
+              'accounts/$accountId/storage/kv/namespaces/$namespaceId'
+              '/values/${Uri.encodeComponent(keyName)}',
+          body: FormData.fromMap({'value': value, 'metadata': '{}'}),
+        );
+    final status = response.statusCode ?? 0;
+    if (status < 200 || status >= 300) {
+      throw failureFromEnvelope(
+        CfEnvelope.fromBody(response.data, httpStatus: status),
+        requestPath: 'kv write',
+        missingPermissions: const {'Workers KV Storage Write'},
+      );
+    }
+    _ref.invalidate(
+      kvValueProvider((
+        accountId: accountId,
+        namespaceId: namespaceId,
+        keyName: keyName,
+      )),
+    );
+  }
+
+  Future<void> delete({
+    required String accountId,
+    required String namespaceId,
+    required String keyName,
+  }) async {
+    await _ref
+        .read(cfApiProvider)
+        .workers
+        .deleteKvValue(
+          accountId: accountId,
+          namespaceId: namespaceId,
+          keyName: keyName,
+        );
+  }
 }
+
+final kvActionsProvider = Provider<KvActions>(KvActions.new);
+
+/// Runs SQL against a D1 database.
+///
+/// An action rather than a provider: a query has side effects, so caching or
+/// auto-retrying it would be wrong.
+class D1Actions {
+  const D1Actions(this._ref);
+
+  final Ref _ref;
+
+  Future<CfPage<QueryResultResponse>> query({
+    required String accountId,
+    required String databaseId,
+    required String sql,
+    List<String> params = const [],
+  }) {
+    return _ref
+        .read(cfApiProvider)
+        .workers
+        .queryD1(
+          accountId: accountId,
+          databaseId: databaseId,
+          // D1 takes bound parameters as strings. Using them rather than
+          // interpolating into the statement is the only sane defence against
+          // a value the user typed.
+          body: BatchQuery(sql: sql, params: params),
+        );
+  }
+}
+
+final d1ActionsProvider = Provider<D1Actions>(D1Actions.new);

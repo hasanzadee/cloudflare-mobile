@@ -32,6 +32,20 @@ void main() {
       final again = AccountSettings.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('AdaptiveRouting', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = AdaptiveRouting.fromJson(json);
+      final encoded = model.toJson();
+      final again = AdaptiveRouting.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Addresses', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Addresses.fromJson(json);
+      final encoded = model.toJson();
+      final again = Addresses.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('AppPolicyResponse', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = AppPolicyResponse.fromJson(json);
@@ -161,6 +175,34 @@ void main() {
       final again = CacheOptions.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('CertificatePack', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = CertificatePack.fromJson(json);
+      final encoded = model.toJson();
+      final again = CertificatePack.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('CertificatePackCertificate', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = CertificatePackCertificate.fromJson(json);
+      final encoded = model.toJson();
+      final again = CertificatePackCertificate.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('CertificatePackCertificateGeoRestrictions', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = CertificatePackCertificateGeoRestrictions.fromJson(json);
+      final encoded = model.toJson();
+      final again = CertificatePackCertificateGeoRestrictions.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('CertificatePackValidationErrorsItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = CertificatePackValidationErrorsItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = CertificatePackValidationErrorsItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('CfdTunnel', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = CfdTunnel.fromJson(json);
@@ -187,6 +229,13 @@ void main() {
       final model = ConnectionRulesRdp.fromJson(json);
       final encoded = model.toJson();
       final again = ConnectionRulesRdp.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('CookieAttributes', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = CookieAttributes.fromJson(json);
+      final encoded = model.toJson();
+      final again = CookieAttributes.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('CorsHeaders', () {
@@ -222,6 +271,13 @@ void main() {
       final model = CreateZoneRulesetRuleResult.fromJson(json);
       final encoded = model.toJson();
       final again = CreateZoneRulesetRuleResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('CustomHostname', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = CustomHostname.fromJson(json);
+      final encoded = model.toJson();
+      final again = CustomHostname.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('DatabaseResponse', () {
@@ -329,6 +385,20 @@ void main() {
       final again = DnsResolverSettingsV6.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Dnssec', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Dnssec.fromJson(json);
+      final encoded = model.toJson();
+      final again = Dnssec.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('DnssecEditDnssecStatusBody', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = DnssecEditDnssecStatusBody.fromJson(json);
+      final encoded = model.toJson();
+      final again = DnssecEditDnssecStatusBody.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('Expiration', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = Expiration.fromJson(json);
@@ -371,6 +441,27 @@ void main() {
       final again = ExportsReconciliationWarning.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('FilterOptions', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = FilterOptions.fromJson(json);
+      final encoded = model.toJson();
+      final again = FilterOptions.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Filters', () {
+      final json = jsonDecode(r'''{"slo":["99.9"]}''') as Map<String, Object?>;
+      final model = Filters.fromJson(json);
+      final encoded = model.toJson();
+      final again = Filters.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('FixedResponse', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = FixedResponse.fromJson(json);
+      final encoded = model.toJson();
+      final again = FixedResponse.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('GetZoneEntrypointRulesetResult', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = GetZoneEntrypointRulesetResult.fromJson(json);
@@ -383,6 +474,13 @@ void main() {
       final model = GetZoneRulesetResult.fromJson(json);
       final encoded = model.toJson();
       final again = GetZoneRulesetResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('History', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = History.fromJson(json);
+      final encoded = model.toJson();
+      final again = History.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('IpAccessRulesForAZoneCreateAnIpAccessRuleBody', () {
@@ -418,6 +516,13 @@ void main() {
       );
       expect(again.toJson(), encoded);
     });
+    test('Key', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Key.fromJson(json);
+      final encoded = model.toJson();
+      final again = Key.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('LandingPageDesign', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = LandingPageDesign.fromJson(json);
@@ -437,6 +542,73 @@ void main() {
       final model = ListZoneRulesetsItem.fromJson(json);
       final encoded = model.toJson();
       final again = ListZoneRulesetsItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('LoadBalancer', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = LoadBalancer.fromJson(json);
+      final encoded = model.toJson();
+      final again = LoadBalancer.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('LoadBalancerRulesItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = LoadBalancerRulesItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = LoadBalancerRulesItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('LoadShedding', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = LoadShedding.fromJson(json);
+      final encoded = model.toJson();
+      final again = LoadShedding.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('LocationStrategy', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = LocationStrategy.fromJson(json);
+      final encoded = model.toJson();
+      final again = LocationStrategy.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Match', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Match.fromJson(json);
+      final encoded = model.toJson();
+      final again = Match.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Mechanisms', () {
+      final json =
+          jsonDecode(
+                r'''{"email":[{"id":"test@example.com"}],"pagerduty":[{"id":"e8133a15-00a4-4d69-aec1-32f70c51f6e5"}],"webhooks":[{"id":"14cc1190-5d2b-4b98-a696-c424cb2ad05f"}]}''',
+              )
+              as Map<String, Object?>;
+      final model = Mechanisms.fromJson(json);
+      final encoded = model.toJson();
+      final again = Mechanisms.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('MechanismsEmailItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = MechanismsEmailItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = MechanismsEmailItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('MechanismsPagerdutyItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = MechanismsPagerdutyItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = MechanismsPagerdutyItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('MechanismsWebhooksItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = MechanismsWebhooksItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = MechanismsWebhooksItem.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('MfaConfig', () {
@@ -467,11 +639,29 @@ void main() {
       final again = MigrationStepTransferredClassesItem.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Monitor', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Monitor.fromJson(json);
+      final encoded = model.toJson();
+      final again = Monitor.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('Namespace', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = Namespace.fromJson(json);
       final encoded = model.toJson();
       final again = Namespace.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('NotificationFilter', () {
+      final json =
+          jsonDecode(
+                r'''{"origin":{"disable":true},"pool":{"healthy":false}}''',
+              )
+              as Map<String, Object?>;
+      final model = NotificationFilter.fromJson(json);
+      final encoded = model.toJson();
+      final again = NotificationFilter.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('OauthConfiguration', () {
@@ -525,6 +715,69 @@ void main() {
       final again = Organization.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Origin', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Origin.fromJson(json);
+      final encoded = model.toJson();
+      final again = Origin.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('OriginSteering', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = OriginSteering.fromJson(json);
+      final encoded = model.toJson();
+      final again = OriginSteering.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('OwnershipVerification', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = OwnershipVerification.fromJson(json);
+      final encoded = model.toJson();
+      final again = OwnershipVerification.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('OwnershipVerificationHttp', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = OwnershipVerificationHttp.fromJson(json);
+      final encoded = model.toJson();
+      final again = OwnershipVerificationHttp.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PageRule', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = PageRule.fromJson(json);
+      final encoded = model.toJson();
+      final again = PageRule.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PageRuleActionsItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = PageRuleActionsItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = PageRuleActionsItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PageRulesDeleteAPageRuleResult', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = PageRulesDeleteAPageRuleResult.fromJson(json);
+      final encoded = model.toJson();
+      final again = PageRulesDeleteAPageRuleResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PageRulesEditAPageRuleBody', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = PageRulesEditAPageRuleBody.fromJson(json);
+      final encoded = model.toJson();
+      final again = PageRulesEditAPageRuleBody.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PageRulesEditAPageRuleBodyActionsItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = PageRulesEditAPageRuleBodyActionsItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = PageRulesEditAPageRuleBodyActionsItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('PermissionGroupsListPermissionGroupsItem', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = PermissionGroupsListPermissionGroupsItem.fromJson(json);
@@ -544,6 +797,38 @@ void main() {
       final model = PlacementTarget.fromJson(json);
       final encoded = model.toJson();
       final again = PlacementTarget.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Policies', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Policies.fromJson(json);
+      final encoded = model.toJson();
+      final again = Policies.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Pool', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Pool.fromJson(json);
+      final encoded = model.toJson();
+      final again = Pool.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PoolSet', () {
+      final json =
+          jsonDecode(
+                r'''{"match":{"topology":{"regions":["WNAM"]}},"name":"wnam-primary","overrides":{"fallback_pool":"9290f38c5d07c2e2f4df57b1f61d4196","pools":["17b5962d775c646f3f9725cbc7a53df4"],"steering_policy":"random"}}''',
+              )
+              as Map<String, Object?>;
+      final model = PoolSet.fromJson(json);
+      final encoded = model.toJson();
+      final again = PoolSet.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('PoolSetOverrides', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = PoolSetOverrides.fromJson(json);
+      final encoded = model.toJson();
+      final again = PoolSetOverrides.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('Project', () {
@@ -680,6 +965,13 @@ void main() {
       final model = R2ListBucketsResult.fromJson(json);
       final encoded = model.toJson();
       final again = R2ListBucketsResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('RandomSteering', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RandomSteering.fromJson(json);
+      final encoded = model.toJson();
+      final again = RandomSteering.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('ResponseRule', () {
@@ -878,6 +1170,13 @@ void main() {
       final again = Rule2UserRiskScore.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('RuleAction', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RuleAction.fromJson(json);
+      final encoded = model.toJson();
+      final again = RuleAction.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('RuleExposedCredentialCheck', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = RuleExposedCredentialCheck.fromJson(json);
@@ -890,6 +1189,20 @@ void main() {
       final model = RuleLogging.fromJson(json);
       final encoded = model.toJson();
       final again = RuleLogging.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('RuleMatcher', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RuleMatcher.fromJson(json);
+      final encoded = model.toJson();
+      final again = RuleMatcher.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('RuleOverrides', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RuleOverrides.fromJson(json);
+      final encoded = model.toJson();
+      final again = RuleOverrides.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('RuleRatelimit', () {
@@ -1011,6 +1324,13 @@ void main() {
       final again = Rules.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Rules2', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Rules2.fromJson(json);
+      final encoded = model.toJson();
+      final again = Rules2.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('Schedule', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = Schedule.fromJson(json);
@@ -1030,6 +1350,13 @@ void main() {
       final model = SchemasConnection.fromJson(json);
       final encoded = model.toJson();
       final again = SchemasConnection.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('SchemasHeader', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = SchemasHeader.fromJson(json);
+      final encoded = model.toJson();
+      final again = SchemasHeader.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('ScimConfig', () {
@@ -1125,6 +1452,13 @@ void main() {
       final again = ScriptAndVersionSettingsItemPlacement.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('SessionAffinityAttributes', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = SessionAffinityAttributes.fromJson(json);
+      final encoded = model.toJson();
+      final again = SessionAffinityAttributes.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('Setting', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = Setting.fromJson(json);
@@ -1153,6 +1487,13 @@ void main() {
       final again = Settings.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Settings2', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Settings2.fromJson(json);
+      final encoded = model.toJson();
+      final again = Settings2.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('SingleQuery', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = SingleQuery.fromJson(json);
@@ -1174,6 +1515,27 @@ void main() {
       final again = SourceConfig.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Ssl', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Ssl.fromJson(json);
+      final encoded = model.toJson();
+      final again = Ssl.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('SslValidationErrorsItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = SslValidationErrorsItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = SslValidationErrorsItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Sslsettings', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Sslsettings.fromJson(json);
+      final encoded = model.toJson();
+      final again = Sslsettings.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('Stage', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = Stage.fromJson(json);
@@ -1188,6 +1550,20 @@ void main() {
       final again = TailConsumersScript.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Target', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Target.fromJson(json);
+      final encoded = model.toJson();
+      final again = Target.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('TargetConstraint', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetConstraint.fromJson(json);
+      final encoded = model.toJson();
+      final again = TargetConstraint.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('TargetCriteriaSelfHostedApp', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = TargetCriteriaSelfHostedApp.fromJson(json);
@@ -1195,11 +1571,25 @@ void main() {
       final again = TargetCriteriaSelfHostedApp.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('TopologyMatch', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TopologyMatch.fromJson(json);
+      final encoded = model.toJson();
+      final again = TopologyMatch.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('TunnelClient', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = TunnelClient.fromJson(json);
       final encoded = model.toJson();
       final again = TunnelClient.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Universal', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Universal.fromJson(json);
+      final encoded = model.toJson();
+      final again = Universal.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('UpdateZoneRulesetRuleBody', () {
@@ -1244,11 +1634,46 @@ void main() {
       final again = UserUserDetailsResult.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('ValidationRecord', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ValidationRecord.fromJson(json);
+      final encoded = model.toJson();
+      final again = ValidationRecord.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Waitingroom', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Waitingroom.fromJson(json);
+      final encoded = model.toJson();
+      final again = Waitingroom.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('WaitingroomAdditionalRoutesItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = WaitingroomAdditionalRoutesItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = WaitingroomAdditionalRoutesItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('WidgetList', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = WidgetList.fromJson(json);
+      final encoded = model.toJson();
+      final again = WidgetList.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('WorkerCronTriggerGetCronTriggersResult', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = WorkerCronTriggerGetCronTriggersResult.fromJson(json);
       final encoded = model.toJson();
       final again = WorkerCronTriggerGetCronTriggersResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('WorkerCronTriggerUpdateCronTriggersResult', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = WorkerCronTriggerUpdateCronTriggersResult.fromJson(json);
+      final encoded = model.toJson();
+      final again = WorkerCronTriggerUpdateCronTriggersResult.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('WorkerScriptListWorkersItem', () {

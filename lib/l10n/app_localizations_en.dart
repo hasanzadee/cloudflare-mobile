@@ -80,6 +80,81 @@ class LEn extends L {
   String get devR2 => 'R2 buckets';
 
   @override
+  String get kvSearchHint => 'Filter keys';
+
+  @override
+  String get kvValue => 'Value';
+
+  @override
+  String get kvExpires => 'Expires';
+
+  @override
+  String get kvMoreKeys => 'More keys exist — narrow the filter';
+
+  @override
+  String get d1Query => 'SQL';
+
+  @override
+  String get d1Run => 'Run';
+
+  @override
+  String get d1OneStatement => 'One statement at a time';
+
+  @override
+  String get d1NoRows => 'No rows returned';
+
+  @override
+  String get d1DestructiveWarning => 'This statement changes or removes data.';
+
+  @override
+  String get d1ConfirmTitle => 'Run a destructive statement?';
+
+  @override
+  String get d1ConfirmHint => 'Type RUN to confirm';
+
+  @override
+  String get zoneTrafficSubtitle => 'Page rules, load balancers, waiting rooms';
+
+  @override
+  String get zoneTlsSubtitle => 'Certificates, custom hostnames, DNSSEC';
+
+  @override
+  String get zoneEmailSubtitle => 'Routing rules and destination addresses';
+
+  @override
+  String get trafficPageRules => 'Page rules';
+
+  @override
+  String get trafficLoadBalancers => 'Load balancers';
+
+  @override
+  String get trafficWaitingRooms => 'Waiting rooms';
+
+  @override
+  String get tlsCertificates => 'Certificate packs';
+
+  @override
+  String get tlsCustomHostnames => 'Custom hostnames';
+
+  @override
+  String get tlsDnssec => 'DNSSEC';
+
+  @override
+  String get tlsUniversal => 'Universal SSL';
+
+  @override
+  String get emailRules => 'Routing rules';
+
+  @override
+  String get emailAddresses => 'Destination addresses';
+
+  @override
+  String get moreAlerts => 'Alerts';
+
+  @override
+  String get moreTurnstile => 'Turnstile';
+
+  @override
   String get ztTunnels => 'Tunnels';
 
   @override

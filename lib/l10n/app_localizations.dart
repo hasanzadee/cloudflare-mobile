@@ -235,6 +235,156 @@ abstract class L {
   /// **'R2 buckets'**
   String get devR2;
 
+  /// No description provided for @kvSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter keys'**
+  String get kvSearchHint;
+
+  /// No description provided for @kvValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get kvValue;
+
+  /// No description provided for @kvExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get kvExpires;
+
+  /// No description provided for @kvMoreKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'More keys exist — narrow the filter'**
+  String get kvMoreKeys;
+
+  /// No description provided for @d1Query.
+  ///
+  /// In en, this message translates to:
+  /// **'SQL'**
+  String get d1Query;
+
+  /// No description provided for @d1Run.
+  ///
+  /// In en, this message translates to:
+  /// **'Run'**
+  String get d1Run;
+
+  /// No description provided for @d1OneStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'One statement at a time'**
+  String get d1OneStatement;
+
+  /// No description provided for @d1NoRows.
+  ///
+  /// In en, this message translates to:
+  /// **'No rows returned'**
+  String get d1NoRows;
+
+  /// No description provided for @d1DestructiveWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This statement changes or removes data.'**
+  String get d1DestructiveWarning;
+
+  /// No description provided for @d1ConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run a destructive statement?'**
+  String get d1ConfirmTitle;
+
+  /// No description provided for @d1ConfirmHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type RUN to confirm'**
+  String get d1ConfirmHint;
+
+  /// No description provided for @zoneTrafficSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Page rules, load balancers, waiting rooms'**
+  String get zoneTrafficSubtitle;
+
+  /// No description provided for @zoneTlsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificates, custom hostnames, DNSSEC'**
+  String get zoneTlsSubtitle;
+
+  /// No description provided for @zoneEmailSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Routing rules and destination addresses'**
+  String get zoneEmailSubtitle;
+
+  /// No description provided for @trafficPageRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Page rules'**
+  String get trafficPageRules;
+
+  /// No description provided for @trafficLoadBalancers.
+  ///
+  /// In en, this message translates to:
+  /// **'Load balancers'**
+  String get trafficLoadBalancers;
+
+  /// No description provided for @trafficWaitingRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting rooms'**
+  String get trafficWaitingRooms;
+
+  /// No description provided for @tlsCertificates.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate packs'**
+  String get tlsCertificates;
+
+  /// No description provided for @tlsCustomHostnames.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom hostnames'**
+  String get tlsCustomHostnames;
+
+  /// No description provided for @tlsDnssec.
+  ///
+  /// In en, this message translates to:
+  /// **'DNSSEC'**
+  String get tlsDnssec;
+
+  /// No description provided for @tlsUniversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Universal SSL'**
+  String get tlsUniversal;
+
+  /// No description provided for @emailRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Routing rules'**
+  String get emailRules;
+
+  /// No description provided for @emailAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination addresses'**
+  String get emailAddresses;
+
+  /// No description provided for @moreAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get moreAlerts;
+
+  /// No description provided for @moreTurnstile.
+  ///
+  /// In en, this message translates to:
+  /// **'Turnstile'**
+  String get moreTurnstile;
+
   /// No description provided for @ztTunnels.
   ///
   /// In en, this message translates to:

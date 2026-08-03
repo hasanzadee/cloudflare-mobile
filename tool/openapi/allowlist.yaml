@@ -21,6 +21,9 @@ groups:
   waf: WAF, rate limiting and IP access rules
   workers: Workers, Pages, KV, D1 and R2
   zeroTrust: Tunnels, Access and Gateway
+  traffic: Page rules, load balancing and waiting rooms
+  tls: Certificates, custom hostnames and DNSSEC
+  email: Email routing, Turnstile and alerts
 
 operations:
   # --- Accounts / identity -------------------------------------------------
@@ -257,3 +260,144 @@ operations:
     as: listGatewayRules
     group: zeroTrust
     perms: [Zero Trust Read]
+
+  # --- KV keys and values ---------------------------------------------------
+  # The only cursor-paginated listing in the app.
+  - id: workers-kv-namespace-list-a-namespace'-s-keys
+    as: listKvKeys
+    group: workers
+    perms: [Workers KV Storage Read]
+
+  - id: workers-kv-namespace-read-key-value-pair
+    as: readKvValue
+    group: workers
+    perms: [Workers KV Storage Read]
+
+  - id: workers-kv-namespace-write-key-value-pair-with-metadata
+    as: writeKvValue
+    group: workers
+    perms: [Workers KV Storage Write]
+
+  - id: workers-kv-namespace-delete-key-value-pair
+    as: deleteKvValue
+    group: workers
+    perms: [Workers KV Storage Write]
+
+  # --- Workers / Pages writes ----------------------------------------------
+  - id: worker-cron-trigger-update-cron-triggers
+    as: updateCronTriggers
+    group: workers
+    perms: [Workers Scripts Write]
+
+  - id: pages-deployment-retry-deployment
+    as: retryDeployment
+    group: workers
+    perms: [Pages Write]
+
+  - id: pages-deployment-rollback-deployment
+    as: rollbackDeployment
+    group: workers
+    perms: [Pages Write]
+
+  # --- Traffic: page rules, load balancing, waiting rooms -------------------
+  - id: page-rules-list-page-rules
+    as: listPageRules
+    group: traffic
+    perms: [Page Rules Read]
+
+  - id: page-rules-edit-a-page-rule
+    as: editPageRule
+    group: traffic
+    perms: [Page Rules Write]
+
+  - id: page-rules-delete-a-page-rule
+    as: deletePageRule
+    group: traffic
+    perms: [Page Rules Write]
+
+  - id: load-balancers-list-load-balancers
+    as: listLoadBalancers
+    group: traffic
+    perms: [Load Balancers Read]
+
+  - id: account-load-balancer-pools-list-pools
+    as: listPools
+    group: traffic
+    perms: [Load Balancers Read]
+
+  - id: account-load-balancer-monitors-list-monitors
+    as: listMonitors
+    group: traffic
+    perms: [Load Balancers Read]
+
+  - id: waiting-room-list-waiting-rooms
+    as: listWaitingRooms
+    group: traffic
+    perms: [Waiting Room Read]
+
+  # --- TLS: certificates, custom hostnames, DNSSEC --------------------------
+  - id: certificate-packs-list-certificate-packs
+    as: listCertificatePacks
+    group: tls
+    perms: [SSL and Certificates Read]
+
+  - id: universal-ssl-settings-for-a-zone-universal-ssl-settings-details
+    as: getUniversalSsl
+    group: tls
+    perms: [SSL and Certificates Read]
+
+  - id: universal-ssl-settings-for-a-zone-edit-universal-ssl-settings
+    as: editUniversalSsl
+    group: tls
+    perms: [SSL and Certificates Write]
+
+  - id: ssl-verification-ssl-verification-details
+    as: getSslVerification
+    group: tls
+    perms: [SSL and Certificates Read]
+
+  - id: custom-hostname-for-a-zone-list-custom-hostnames
+    as: listCustomHostnames
+    group: tls
+    perms: [SSL and Certificates Read]
+
+  - id: dnssec-dnssec-details
+    as: getDnssec
+    group: tls
+    perms: [DNS Read]
+
+  - id: dnssec-edit-dnssec-status
+    as: editDnssec
+    group: tls
+    perms: [DNS Write]
+
+  # --- Email routing, Turnstile, alerts -------------------------------------
+  - id: email-routing-settings-get-email-routing-settings
+    as: getEmailRouting
+    group: email
+    perms: [Email Routing Read]
+
+  - id: email-routing-routing-rules-list-routing-rules
+    as: listEmailRules
+    group: email
+    perms: [Email Routing Read]
+
+  - id: email-routing-destination-addresses-list-destination-addresses
+    as: listDestinationAddresses
+    group: email
+    perms: [Email Routing Read]
+
+  - id: accounts-turnstile-widgets-list
+    as: listTurnstileWidgets
+    group: email
+    perms: [Turnstile Read]
+
+  - id: notification-policies-list-notification-policies
+    as: listAlertPolicies
+    group: email
+    perms: [Notifications Read]
+
+  - id: notification-history-list-history
+    as: listAlertHistory
+    group: email
+    perms: [Notifications Read]

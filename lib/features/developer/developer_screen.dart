@@ -11,7 +11,9 @@ import '../../l10n/app_localizations.dart';
 import '../../ui/async_view.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
+import 'd1_console_screen.dart';
 import 'developer_providers.dart';
+import 'kv_screen.dart';
 
 class DeveloperScreen extends ConsumerStatefulWidget {
   const DeveloperScreen({super.key});
@@ -308,6 +310,18 @@ class _Storage extends ConsumerWidget {
                         leading: const Icon(Icons.storage_outlined),
                         title: Text(n.title ?? '—'),
                         subtitle: Text(n.id ?? ''),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: n.id == null
+                            ? null
+                            : () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => KvScreen(
+                                    accountId: accountId,
+                                    namespaceId: n.id!,
+                                    title: n.title ?? 'KV',
+                                  ),
+                                ),
+                              ),
                       ),
                   ],
           ),
@@ -323,6 +337,18 @@ class _Storage extends ConsumerWidget {
                         leading: const Icon(Icons.table_chart_outlined),
                         title: Text(db.name ?? '—'),
                         subtitle: Text(db.uuid ?? ''),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: db.uuid == null
+                            ? null
+                            : () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => D1ConsoleScreen(
+                                    accountId: accountId,
+                                    databaseId: db.uuid!,
+                                    name: db.name ?? 'D1',
+                                  ),
+                                ),
+                              ),
                       ),
                   ],
           ),
