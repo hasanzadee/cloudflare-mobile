@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../explorer/explorer_screen.dart';
 import '../settings/settings_screen.dart';
 import '../zerotrust/zerotrust_screen.dart';
+import 'account_extras_screen.dart';
 
 /// Landing tab for everything that does not deserve its own bottom-bar slot.
 class MoreScreen extends ConsumerWidget {
@@ -30,6 +31,13 @@ class MoreScreen extends ConsumerWidget {
             subtitle: Text('${l.ztTunnels} · ${l.ztAccess} · ${l.ztGateway}'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => open(const ZeroTrustScreen()),
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications_outlined),
+            title: Text('${l.moreAlerts} · ${l.moreTurnstile}'),
+            subtitle: const Text('Notification policies, recent alerts'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => open(const AccountExtrasScreen()),
           ),
           ListTile(
             leading: const Icon(Icons.terminal_outlined),

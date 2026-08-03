@@ -80,6 +80,82 @@ class LRu extends L {
   String get devR2 => 'Бакеты R2';
 
   @override
+  String get kvSearchHint => 'Фильтр по ключам';
+
+  @override
+  String get kvValue => 'Значение';
+
+  @override
+  String get kvExpires => 'Истекает';
+
+  @override
+  String get kvMoreKeys => 'Ключей больше — уточните фильтр';
+
+  @override
+  String get d1Query => 'SQL';
+
+  @override
+  String get d1Run => 'Выполнить';
+
+  @override
+  String get d1OneStatement => 'По одному запросу за раз';
+
+  @override
+  String get d1NoRows => 'Строк не вернулось';
+
+  @override
+  String get d1DestructiveWarning => 'Этот запрос меняет или удаляет данные.';
+
+  @override
+  String get d1ConfirmTitle => 'Выполнить изменяющий запрос?';
+
+  @override
+  String get d1ConfirmHint => 'Введите RUN для подтверждения';
+
+  @override
+  String get zoneTrafficSubtitle =>
+      'Page Rules, балансировщики, комнаты ожидания';
+
+  @override
+  String get zoneTlsSubtitle => 'Сертификаты, свои хостнеймы, DNSSEC';
+
+  @override
+  String get zoneEmailSubtitle => 'Правила пересылки и адреса получателей';
+
+  @override
+  String get trafficPageRules => 'Page Rules';
+
+  @override
+  String get trafficLoadBalancers => 'Балансировщики';
+
+  @override
+  String get trafficWaitingRooms => 'Комнаты ожидания';
+
+  @override
+  String get tlsCertificates => 'Пакеты сертификатов';
+
+  @override
+  String get tlsCustomHostnames => 'Свои хостнеймы';
+
+  @override
+  String get tlsDnssec => 'DNSSEC';
+
+  @override
+  String get tlsUniversal => 'Universal SSL';
+
+  @override
+  String get emailRules => 'Правила пересылки';
+
+  @override
+  String get emailAddresses => 'Адреса получателей';
+
+  @override
+  String get moreAlerts => 'Оповещения';
+
+  @override
+  String get moreTurnstile => 'Turnstile';
+
+  @override
   String get ztTunnels => 'Туннели';
 
   @override

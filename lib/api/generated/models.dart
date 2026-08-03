@@ -182,6 +182,138 @@ class AccountSettings {
   );
 }
 
+/// Controls features that modify the routing of requests to pools and origins
+/// in response to dynamic conditions, such as during the interval between
+/// active health monitoring requests. For example, zero-downtime failover
+/// occurs immediately when an origin becomes unavailable due to HTTP 521, 522,
+/// or 523 response codes. If there is another healthy origin in the same pool,
+/// the request is retried once against this alternate origin.
+class AdaptiveRouting {
+  const AdaptiveRouting({
+    this.failoverAcrossPools,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory AdaptiveRouting.fromJson(Map<String, Object?> json) =>
+      AdaptiveRouting(
+        failoverAcrossPools: asBool(json['failover_across_pools']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Extends zero-downtime failover of requests to healthy origins from alternate
+  /// pools, when no healthy alternate exists in the same pool, according to the
+  /// failover order defined by traffic and origin steering. When set false (the
+  /// default) zero-downtime failover will only occur between origins within the
+  /// same pool. See `session_affinity_attributes` for control over when sessions
+  /// are broken or reassigned.
+  final bool? failoverAcrossPools;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'failover_across_pools'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (failoverAcrossPools != null)
+      'failover_across_pools': failoverAcrossPools!,
+  };
+
+  AdaptiveRouting copyWith({
+    bool? failoverAcrossPools,
+    Map<String, Object?>? extra,
+  }) => AdaptiveRouting(
+    failoverAcrossPools: failoverAcrossPools ?? this.failoverAcrossPools,
+    extra: extra ?? this.extra,
+  );
+}
+
+class Addresses {
+  const Addresses({
+    this.created,
+    this.email,
+    this.id,
+    this.modified,
+    this.tag,
+    this.verified,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Addresses.fromJson(Map<String, Object?> json) => Addresses(
+    created: asString(json['created']),
+    email: asString(json['email']),
+    id: asString(json['id']),
+    modified: asString(json['modified']),
+    tag: asString(json['tag']),
+    verified: asString(json['verified']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The date and time the destination address has been created.
+  final String? created;
+
+  /// The contact email address of the user.
+  final String? email;
+
+  /// Destination address identifier.
+  final String? id;
+
+  /// The date and time the destination address was last modified.
+  final String? modified;
+
+  /// Destination address tag. (Deprecated, replaced by destination address
+  /// identifier)
+  final String? tag;
+
+  /// The date and time the destination address has been verified. Null means not
+  /// verified yet.
+  final String? verified;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'created',
+    'email',
+    'id',
+    'modified',
+    'tag',
+    'verified',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (created != null) 'created': created!,
+    if (email != null) 'email': email!,
+    if (id != null) 'id': id!,
+    if (modified != null) 'modified': modified!,
+    if (tag != null) 'tag': tag!,
+    if (verified != null) 'verified': verified!,
+  };
+
+  Addresses copyWith({
+    String? created,
+    String? email,
+    String? id,
+    String? modified,
+    String? tag,
+    String? verified,
+    Map<String, Object?>? extra,
+  }) => Addresses(
+    created: created ?? this.created,
+    email: email ?? this.email,
+    id: id ?? this.id,
+    modified: modified ?? this.modified,
+    tag: tag ?? this.tag,
+    verified: verified ?? this.verified,
+    extra: extra ?? this.extra,
+  );
+}
+
 class AppPolicyResponse {
   const AppPolicyResponse({
     this.createdAt,
@@ -2034,6 +2166,406 @@ class CacheOptions {
   );
 }
 
+/// A certificate pack with all its properties.
+class CertificatePack {
+  const CertificatePack({
+    this.certificateAuthority,
+    this.certificates,
+    this.cloudflareBranding,
+    this.dcvDelegationRecords,
+    this.hosts,
+    this.id,
+    this.primaryCertificate,
+    this.status,
+    this.type_,
+    this.validationErrors,
+    this.validationMethod,
+    this.validationRecords,
+    this.validityDays,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory CertificatePack.fromJson(Map<String, Object?> json) =>
+      CertificatePack(
+        certificateAuthority: asString(json['certificate_authority']),
+        certificates: asModelList(
+          json['certificates'],
+          CertificatePackCertificate.fromJson,
+        ),
+        cloudflareBranding: asBool(json['cloudflare_branding']),
+        dcvDelegationRecords: asModelList(
+          json['dcv_delegation_records'],
+          ValidationRecord.fromJson,
+        ),
+        hosts: asPrimitiveList<String>(json['hosts'], asString),
+        id: asString(json['id']),
+        primaryCertificate: asString(json['primary_certificate']),
+        status: asString(json['status']),
+        type_: asString(json['type']),
+        validationErrors: asModelList(
+          json['validation_errors'],
+          CertificatePackValidationErrorsItem.fromJson,
+        ),
+        validationMethod: asString(json['validation_method']),
+        validationRecords: asModelList(
+          json['validation_records'],
+          ValidationRecord.fromJson,
+        ),
+        validityDays: asInt(json['validity_days']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Certificate Authority selected for the order. For information on any
+  /// certificate authority specific details or restrictions [see this page for
+  /// more
+  /// details](https://developers.cloudflare.com/ssl/reference/certificate-authorities).
+  /// Allowed values: `google`, `lets_encrypt`, `ssl_com`.
+  final String? certificateAuthority;
+
+  /// Array of certificates in this pack.
+  final List<CertificatePackCertificate>? certificates;
+
+  /// Whether or not to add Cloudflare Branding for the order. This will add a
+  /// subdomain of sni.cloudflaressl.com as the Common Name if set to true.
+  final bool? cloudflareBranding;
+
+  /// DCV Delegation records for domain validation.
+  final List<ValidationRecord>? dcvDelegationRecords;
+
+  /// Comma separated list of valid host names for the certificate packs. Must
+  /// contain the zone apex, may not contain more than 50 hosts, and may not be
+  /// empty.
+  final List<String>? hosts;
+
+  /// Identifier.
+  final String? id;
+
+  /// Identifier of the primary certificate in a pack.
+  final String? primaryCertificate;
+
+  /// Status of certificate pack. Allowed values: `initializing`,
+  /// `pending_validation`, `deleted`, `pending_issuance`, `pending_deployment`,
+  /// `pending_deletion`, `pending_expiration`, `expired`, `active`,
+  /// `initializing_timed_out`, `validation_timed_out`, `issuance_timed_out`,
+  /// `deployment_timed_out`, `deletion_timed_out`, `pending_cleanup`,
+  /// `staging_deployment`, `staging_active`, `deactivating`, `inactive`,
+  /// `backup_issued`, `holding_deployment`.
+  final String? status;
+
+  /// Type of certificate pack. Allowed values: `mh_custom`, `managed_hostname`,
+  /// `sni_custom`, `universal`, `advanced`, `total_tls`, `keyless`,
+  /// `legacy_custom`.
+  final String? type_;
+
+  /// Domain validation errors that have been received by the certificate
+  /// authority (CA).
+  final List<CertificatePackValidationErrorsItem>? validationErrors;
+
+  /// Validation Method selected for the order. Allowed values: `txt`, `http`,
+  /// `email`.
+  final String? validationMethod;
+
+  /// Certificates' validation records.
+  final List<ValidationRecord>? validationRecords;
+
+  /// Validity Days selected for the order. Allowed values: `14`, `30`, `90`,
+  /// `365`.
+  final int? validityDays;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'certificate_authority',
+    'certificates',
+    'cloudflare_branding',
+    'dcv_delegation_records',
+    'hosts',
+    'id',
+    'primary_certificate',
+    'status',
+    'type',
+    'validation_errors',
+    'validation_method',
+    'validation_records',
+    'validity_days',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (certificateAuthority != null)
+      'certificate_authority': certificateAuthority!,
+    if (certificates != null)
+      'certificates': certificates!.map((e) => e.toJson()).toList(),
+    if (cloudflareBranding != null) 'cloudflare_branding': cloudflareBranding!,
+    if (dcvDelegationRecords != null)
+      'dcv_delegation_records': dcvDelegationRecords!
+          .map((e) => e.toJson())
+          .toList(),
+    if (hosts != null) 'hosts': hosts!,
+    if (id != null) 'id': id!,
+    if (primaryCertificate != null) 'primary_certificate': primaryCertificate!,
+    if (status != null) 'status': status!,
+    if (type_ != null) 'type': type_!,
+    if (validationErrors != null)
+      'validation_errors': validationErrors!.map((e) => e.toJson()).toList(),
+    if (validationMethod != null) 'validation_method': validationMethod!,
+    if (validationRecords != null)
+      'validation_records': validationRecords!.map((e) => e.toJson()).toList(),
+    if (validityDays != null) 'validity_days': validityDays!,
+  };
+
+  CertificatePack copyWith({
+    String? certificateAuthority,
+    List<CertificatePackCertificate>? certificates,
+    bool? cloudflareBranding,
+    List<ValidationRecord>? dcvDelegationRecords,
+    List<String>? hosts,
+    String? id,
+    String? primaryCertificate,
+    String? status,
+    String? type_,
+    List<CertificatePackValidationErrorsItem>? validationErrors,
+    String? validationMethod,
+    List<ValidationRecord>? validationRecords,
+    int? validityDays,
+    Map<String, Object?>? extra,
+  }) => CertificatePack(
+    certificateAuthority: certificateAuthority ?? this.certificateAuthority,
+    certificates: certificates ?? this.certificates,
+    cloudflareBranding: cloudflareBranding ?? this.cloudflareBranding,
+    dcvDelegationRecords: dcvDelegationRecords ?? this.dcvDelegationRecords,
+    hosts: hosts ?? this.hosts,
+    id: id ?? this.id,
+    primaryCertificate: primaryCertificate ?? this.primaryCertificate,
+    status: status ?? this.status,
+    type_: type_ ?? this.type_,
+    validationErrors: validationErrors ?? this.validationErrors,
+    validationMethod: validationMethod ?? this.validationMethod,
+    validationRecords: validationRecords ?? this.validationRecords,
+    validityDays: validityDays ?? this.validityDays,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// An individual certificate within a certificate pack.
+class CertificatePackCertificate {
+  const CertificatePackCertificate({
+    this.bundleMethod,
+    this.expiresOn,
+    this.geoRestrictions,
+    this.hosts,
+    this.id,
+    this.issuer,
+    this.modifiedOn,
+    this.priority,
+    this.signature,
+    this.status,
+    this.uploadedOn,
+    this.zoneId,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory CertificatePackCertificate.fromJson(Map<String, Object?> json) =>
+      CertificatePackCertificate(
+        bundleMethod: asString(json['bundle_method']),
+        expiresOn: asString(json['expires_on']),
+        geoRestrictions: asModel(
+          json['geo_restrictions'],
+          CertificatePackCertificateGeoRestrictions.fromJson,
+        ),
+        hosts: asPrimitiveList<String>(json['hosts'], asString),
+        id: asString(json['id']),
+        issuer: asString(json['issuer']),
+        modifiedOn: asString(json['modified_on']),
+        priority: asNum(json['priority']),
+        signature: asString(json['signature']),
+        status: asString(json['status']),
+        uploadedOn: asString(json['uploaded_on']),
+        zoneId: asString(json['zone_id']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Certificate bundle method.
+  final String? bundleMethod;
+
+  /// When the certificate from the authority expires.
+  final String? expiresOn;
+
+  /// Specify the region where your private key can be held locally.
+  final CertificatePackCertificateGeoRestrictions? geoRestrictions;
+
+  /// Hostnames covered by this certificate.
+  final List<String>? hosts;
+
+  /// Certificate identifier.
+  final String? id;
+
+  /// The certificate authority that issued the certificate.
+  final String? issuer;
+
+  /// When the certificate was last modified.
+  final String? modifiedOn;
+
+  /// The order/priority in which the certificate will be used.
+  final num? priority;
+
+  /// The type of hash used for the certificate.
+  final String? signature;
+
+  /// Certificate status.
+  final String? status;
+
+  /// When the certificate was uploaded to Cloudflare.
+  final String? uploadedOn;
+
+  /// Identifier.
+  final String? zoneId;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'bundle_method',
+    'expires_on',
+    'geo_restrictions',
+    'hosts',
+    'id',
+    'issuer',
+    'modified_on',
+    'priority',
+    'signature',
+    'status',
+    'uploaded_on',
+    'zone_id',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (bundleMethod != null) 'bundle_method': bundleMethod!,
+    if (expiresOn != null) 'expires_on': expiresOn!,
+    if (geoRestrictions != null) 'geo_restrictions': geoRestrictions!.toJson(),
+    if (hosts != null) 'hosts': hosts!,
+    if (id != null) 'id': id!,
+    if (issuer != null) 'issuer': issuer!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (priority != null) 'priority': priority!,
+    if (signature != null) 'signature': signature!,
+    if (status != null) 'status': status!,
+    if (uploadedOn != null) 'uploaded_on': uploadedOn!,
+    if (zoneId != null) 'zone_id': zoneId!,
+  };
+
+  CertificatePackCertificate copyWith({
+    String? bundleMethod,
+    String? expiresOn,
+    CertificatePackCertificateGeoRestrictions? geoRestrictions,
+    List<String>? hosts,
+    String? id,
+    String? issuer,
+    String? modifiedOn,
+    num? priority,
+    String? signature,
+    String? status,
+    String? uploadedOn,
+    String? zoneId,
+    Map<String, Object?>? extra,
+  }) => CertificatePackCertificate(
+    bundleMethod: bundleMethod ?? this.bundleMethod,
+    expiresOn: expiresOn ?? this.expiresOn,
+    geoRestrictions: geoRestrictions ?? this.geoRestrictions,
+    hosts: hosts ?? this.hosts,
+    id: id ?? this.id,
+    issuer: issuer ?? this.issuer,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    priority: priority ?? this.priority,
+    signature: signature ?? this.signature,
+    status: status ?? this.status,
+    uploadedOn: uploadedOn ?? this.uploadedOn,
+    zoneId: zoneId ?? this.zoneId,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Specify the region where your private key can be held locally.
+class CertificatePackCertificateGeoRestrictions {
+  const CertificatePackCertificateGeoRestrictions({
+    this.label,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory CertificatePackCertificateGeoRestrictions.fromJson(
+    Map<String, Object?> json,
+  ) => CertificatePackCertificateGeoRestrictions(
+    label: asString(json['label']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Allowed values: `us`, `eu`, `highest_security`.
+  final String? label;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'label'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (label != null) 'label': label!,
+  };
+
+  CertificatePackCertificateGeoRestrictions copyWith({
+    String? label,
+    Map<String, Object?>? extra,
+  }) => CertificatePackCertificateGeoRestrictions(
+    label: label ?? this.label,
+    extra: extra ?? this.extra,
+  );
+}
+
+class CertificatePackValidationErrorsItem {
+  const CertificatePackValidationErrorsItem({
+    this.message,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory CertificatePackValidationErrorsItem.fromJson(
+    Map<String, Object?> json,
+  ) => CertificatePackValidationErrorsItem(
+    message: asString(json['message']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// A domain validation error.
+  final String? message;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'message'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (message != null) 'message': message!,
+  };
+
+  CertificatePackValidationErrorsItem copyWith({
+    String? message,
+    Map<String, Object?>? extra,
+  }) => CertificatePackValidationErrorsItem(
+    message: message ?? this.message,
+    extra: extra ?? this.extra,
+  );
+}
+
 /// A Cloudflare Tunnel that connects your origin to Cloudflare's edge.
 class CfdTunnel {
   const CfdTunnel({
@@ -2333,6 +2865,59 @@ class ConnectionRulesRdp {
     allowedClipboardRemoteToLocalFormats:
         allowedClipboardRemoteToLocalFormats ??
         this.allowedClipboardRemoteToLocalFormats,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Configures cookie attributes for the waiting room cookie. This encrypted
+/// cookie stores a user's status in the waiting room, such as queue position.
+class CookieAttributes {
+  const CookieAttributes({
+    this.samesite,
+    this.secure,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory CookieAttributes.fromJson(Map<String, Object?> json) =>
+      CookieAttributes(
+        samesite: asString(json['samesite']),
+        secure: asString(json['secure']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Configures the SameSite attribute on the waiting room cookie. Value `auto`
+  /// will be translated to `lax` or `none` depending if **Always Use HTTPS** is
+  /// enabled. Note that when using value `none`, the secure attribute cannot be
+  /// set to `never`. Allowed values: `auto`, `lax`, `none`, `strict`.
+  final String? samesite;
+
+  /// Configures the Secure attribute on the waiting room cookie. Value `always`
+  /// indicates that the Secure attribute will be set in the Set-Cookie header,
+  /// `never` indicates that the Secure attribute will not be set, and `auto` will
+  /// set the Secure attribute depending if **Always Use HTTPS** is enabled.
+  /// Allowed values: `auto`, `always`, `never`.
+  final String? secure;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'samesite', 'secure'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (samesite != null) 'samesite': samesite!,
+    if (secure != null) 'secure': secure!,
+  };
+
+  CookieAttributes copyWith({
+    String? samesite,
+    String? secure,
+    Map<String, Object?>? extra,
+  }) => CookieAttributes(
+    samesite: samesite ?? this.samesite,
+    secure: secure ?? this.secure,
     extra: extra ?? this.extra,
   );
 }
@@ -2794,6 +3379,156 @@ class CreateZoneRulesetRuleResult {
     kind: kind ?? this.kind,
     phase: phase ?? this.phase,
     rules: rules ?? this.rules,
+    extra: extra ?? this.extra,
+  );
+}
+
+class CustomHostname {
+  const CustomHostname({
+    this.createdAt,
+    this.customMetadata,
+    this.customOriginServer,
+    this.customOriginSni,
+    this.hostname,
+    this.id,
+    this.ownershipVerification,
+    this.ownershipVerificationHttp,
+    this.ssl,
+    this.status,
+    this.verificationErrors,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory CustomHostname.fromJson(Map<String, Object?> json) => CustomHostname(
+    createdAt: asString(json['created_at']),
+    customMetadata: asMap(json['custom_metadata']),
+    customOriginServer: asString(json['custom_origin_server']),
+    customOriginSni: asString(json['custom_origin_sni']),
+    hostname: asString(json['hostname']),
+    id: asString(json['id']),
+    ownershipVerification: asModel(
+      json['ownership_verification'],
+      OwnershipVerification.fromJson,
+    ),
+    ownershipVerificationHttp: asModel(
+      json['ownership_verification_http'],
+      OwnershipVerificationHttp.fromJson,
+    ),
+    ssl: asModel(json['ssl'], Ssl.fromJson),
+    status: asString(json['status']),
+    verificationErrors: asPrimitiveList<String>(
+      json['verification_errors'],
+      asString,
+    ),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// This is the time the hostname was created.
+  final String? createdAt;
+
+  /// Unique key/value metadata for this hostname. These are per-hostname
+  /// (customer) settings.
+  final Map<String, Object?>? customMetadata;
+
+  /// a valid hostname that’s been added to your DNS zone as an A, AAAA, or CNAME
+  /// record.
+  final String? customOriginServer;
+
+  /// A hostname that will be sent to your custom origin server as SNI for TLS
+  /// handshake. This can be a valid subdomain of the zone or custom origin server
+  /// name or the string ':request_host_header:' which will cause the host header
+  /// in the request to be used as SNI. Not configurable with default/fallback
+  /// origin server.
+  final String? customOriginSni;
+
+  /// The custom hostname that will point to your hostname via CNAME.
+  final String? hostname;
+
+  /// Identifier.
+  final String? id;
+
+  /// This is a record which can be placed to activate a hostname.
+  final OwnershipVerification? ownershipVerification;
+
+  /// This presents the token to be served by the given http url to activate a
+  /// hostname.
+  final OwnershipVerificationHttp? ownershipVerificationHttp;
+
+  /// SSL properties for the custom hostname.
+  final Ssl? ssl;
+
+  /// Status of the hostname's activation. Allowed values: `active`, `pending`,
+  /// `active_redeploying`, `moved`, `pending_deletion`, `deleted`,
+  /// `pending_blocked`, `pending_migration`, `pending_provisioned`,
+  /// `test_pending`, `test_active`, `test_active_apex`, `test_blocked`,
+  /// `test_failed`, `provisioned`, `blocked`.
+  final String? status;
+
+  /// These are errors that were encountered while trying to activate a hostname.
+  final List<String>? verificationErrors;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'created_at',
+    'custom_metadata',
+    'custom_origin_server',
+    'custom_origin_sni',
+    'hostname',
+    'id',
+    'ownership_verification',
+    'ownership_verification_http',
+    'ssl',
+    'status',
+    'verification_errors',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (createdAt != null) 'created_at': createdAt!,
+    if (customMetadata != null) 'custom_metadata': customMetadata!,
+    if (customOriginServer != null) 'custom_origin_server': customOriginServer!,
+    if (customOriginSni != null) 'custom_origin_sni': customOriginSni!,
+    if (hostname != null) 'hostname': hostname!,
+    if (id != null) 'id': id!,
+    if (ownershipVerification != null)
+      'ownership_verification': ownershipVerification!.toJson(),
+    if (ownershipVerificationHttp != null)
+      'ownership_verification_http': ownershipVerificationHttp!.toJson(),
+    if (ssl != null) 'ssl': ssl!.toJson(),
+    if (status != null) 'status': status!,
+    if (verificationErrors != null) 'verification_errors': verificationErrors!,
+  };
+
+  CustomHostname copyWith({
+    String? createdAt,
+    Map<String, Object?>? customMetadata,
+    String? customOriginServer,
+    String? customOriginSni,
+    String? hostname,
+    String? id,
+    OwnershipVerification? ownershipVerification,
+    OwnershipVerificationHttp? ownershipVerificationHttp,
+    Ssl? ssl,
+    String? status,
+    List<String>? verificationErrors,
+    Map<String, Object?>? extra,
+  }) => CustomHostname(
+    createdAt: createdAt ?? this.createdAt,
+    customMetadata: customMetadata ?? this.customMetadata,
+    customOriginServer: customOriginServer ?? this.customOriginServer,
+    customOriginSni: customOriginSni ?? this.customOriginSni,
+    hostname: hostname ?? this.hostname,
+    id: id ?? this.id,
+    ownershipVerification: ownershipVerification ?? this.ownershipVerification,
+    ownershipVerificationHttp:
+        ownershipVerificationHttp ?? this.ownershipVerificationHttp,
+    ssl: ssl ?? this.ssl,
+    status: status ?? this.status,
+    verificationErrors: verificationErrors ?? this.verificationErrors,
     extra: extra ?? this.extra,
   );
 }
@@ -4156,6 +4891,260 @@ class DnsResolverSettingsV6 {
   );
 }
 
+class Dnssec {
+  const Dnssec({
+    this.algorithm,
+    this.digest,
+    this.digestAlgorithm,
+    this.digestType,
+    this.dnssecMultiSigner,
+    this.dnssecPresigned,
+    this.dnssecUseNsec3,
+    this.ds,
+    this.flags,
+    this.keyTag,
+    this.keyType,
+    this.modifiedOn,
+    this.publicKey,
+    this.status,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Dnssec.fromJson(Map<String, Object?> json) => Dnssec(
+    algorithm: asString(json['algorithm']),
+    digest: asString(json['digest']),
+    digestAlgorithm: asString(json['digest_algorithm']),
+    digestType: asString(json['digest_type']),
+    dnssecMultiSigner: asBool(json['dnssec_multi_signer']),
+    dnssecPresigned: asBool(json['dnssec_presigned']),
+    dnssecUseNsec3: asBool(json['dnssec_use_nsec3']),
+    ds: asString(json['ds']),
+    flags: asNum(json['flags']),
+    keyTag: asNum(json['key_tag']),
+    keyType: asString(json['key_type']),
+    modifiedOn: asString(json['modified_on']),
+    publicKey: asString(json['public_key']),
+    status: json['status'],
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Algorithm key code.
+  final String? algorithm;
+
+  /// Digest hash.
+  final String? digest;
+
+  /// Type of digest algorithm.
+  final String? digestAlgorithm;
+
+  /// Coded type for digest algorithm.
+  final String? digestType;
+
+  /// If true, multi-signer DNSSEC is enabled on the zone, allowing multiple
+  /// providers to serve a DNSSEC-signed zone at the same time. This is required
+  /// for DNSKEY records (except those automatically generated by Cloudflare) to
+  /// be added to the zone. See [Multi-signer
+  /// DNSSEC](https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/)
+  /// for details.
+  final bool? dnssecMultiSigner;
+
+  /// If true, allows Cloudflare to transfer in a DNSSEC-signed zone including
+  /// signatures from an external provider, without requiring Cloudflare to sign
+  /// any records on the fly. Note that this feature has some limitations. See
+  /// [Cloudflare as
+  /// Secondary](https://developers.cloudflare.com/dns/zone-setups/zone-transfers/cloudflare-as-secondary/setup/#dnssec)
+  /// for details.
+  final bool? dnssecPresigned;
+
+  /// If true, enables the use of NSEC3 together with DNSSEC on the zone. Combined
+  /// with setting dnssec_presigned to true, this enables the use of NSEC3 records
+  /// when transferring in from an external provider. If dnssec_presigned is
+  /// instead set to false (default), NSEC3 records will be generated and signed
+  /// at request time. See [DNSSEC with
+  /// NSEC3](https://developers.cloudflare.com/dns/dnssec/enable-nsec3/) for
+  /// details.
+  final bool? dnssecUseNsec3;
+
+  /// Full DS record.
+  final String? ds;
+
+  /// Flag for DNSSEC record.
+  final num? flags;
+
+  /// Code for key tag.
+  final num? keyTag;
+
+  /// Algorithm key type.
+  final String? keyType;
+
+  /// When DNSSEC was last modified.
+  final String? modifiedOn;
+
+  /// Public key for DS record.
+  final String? publicKey;
+
+  /// Status of DNSSEC, based on user-desired state and presence of necessary
+  /// records. Allowed values: `active`, `pending`, `disabled`,
+  /// `pending-disabled`, `error`.
+  final Object? status;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'algorithm',
+    'digest',
+    'digest_algorithm',
+    'digest_type',
+    'dnssec_multi_signer',
+    'dnssec_presigned',
+    'dnssec_use_nsec3',
+    'ds',
+    'flags',
+    'key_tag',
+    'key_type',
+    'modified_on',
+    'public_key',
+    'status',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (algorithm != null) 'algorithm': algorithm!,
+    if (digest != null) 'digest': digest!,
+    if (digestAlgorithm != null) 'digest_algorithm': digestAlgorithm!,
+    if (digestType != null) 'digest_type': digestType!,
+    if (dnssecMultiSigner != null) 'dnssec_multi_signer': dnssecMultiSigner!,
+    if (dnssecPresigned != null) 'dnssec_presigned': dnssecPresigned!,
+    if (dnssecUseNsec3 != null) 'dnssec_use_nsec3': dnssecUseNsec3!,
+    if (ds != null) 'ds': ds!,
+    if (flags != null) 'flags': flags!,
+    if (keyTag != null) 'key_tag': keyTag!,
+    if (keyType != null) 'key_type': keyType!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (publicKey != null) 'public_key': publicKey!,
+    if (status != null) 'status': status!,
+  };
+
+  Dnssec copyWith({
+    String? algorithm,
+    String? digest,
+    String? digestAlgorithm,
+    String? digestType,
+    bool? dnssecMultiSigner,
+    bool? dnssecPresigned,
+    bool? dnssecUseNsec3,
+    String? ds,
+    num? flags,
+    num? keyTag,
+    String? keyType,
+    String? modifiedOn,
+    String? publicKey,
+    Object? status,
+    Map<String, Object?>? extra,
+  }) => Dnssec(
+    algorithm: algorithm ?? this.algorithm,
+    digest: digest ?? this.digest,
+    digestAlgorithm: digestAlgorithm ?? this.digestAlgorithm,
+    digestType: digestType ?? this.digestType,
+    dnssecMultiSigner: dnssecMultiSigner ?? this.dnssecMultiSigner,
+    dnssecPresigned: dnssecPresigned ?? this.dnssecPresigned,
+    dnssecUseNsec3: dnssecUseNsec3 ?? this.dnssecUseNsec3,
+    ds: ds ?? this.ds,
+    flags: flags ?? this.flags,
+    keyTag: keyTag ?? this.keyTag,
+    keyType: keyType ?? this.keyType,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    publicKey: publicKey ?? this.publicKey,
+    status: status ?? this.status,
+    extra: extra ?? this.extra,
+  );
+}
+
+class DnssecEditDnssecStatusBody {
+  const DnssecEditDnssecStatusBody({
+    this.dnssecMultiSigner,
+    this.dnssecPresigned,
+    this.dnssecUseNsec3,
+    this.status,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory DnssecEditDnssecStatusBody.fromJson(Map<String, Object?> json) =>
+      DnssecEditDnssecStatusBody(
+        dnssecMultiSigner: asBool(json['dnssec_multi_signer']),
+        dnssecPresigned: asBool(json['dnssec_presigned']),
+        dnssecUseNsec3: asBool(json['dnssec_use_nsec3']),
+        status: asString(json['status']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// If true, multi-signer DNSSEC is enabled on the zone, allowing multiple
+  /// providers to serve a DNSSEC-signed zone at the same time. This is required
+  /// for DNSKEY records (except those automatically generated by Cloudflare) to
+  /// be added to the zone. See [Multi-signer
+  /// DNSSEC](https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/)
+  /// for details.
+  final bool? dnssecMultiSigner;
+
+  /// If true, allows Cloudflare to transfer in a DNSSEC-signed zone including
+  /// signatures from an external provider, without requiring Cloudflare to sign
+  /// any records on the fly. Note that this feature has some limitations. See
+  /// [Cloudflare as
+  /// Secondary](https://developers.cloudflare.com/dns/zone-setups/zone-transfers/cloudflare-as-secondary/setup/#dnssec)
+  /// for details.
+  final bool? dnssecPresigned;
+
+  /// If true, enables the use of NSEC3 together with DNSSEC on the zone. Combined
+  /// with setting dnssec_presigned to true, this enables the use of NSEC3 records
+  /// when transferring in from an external provider. If dnssec_presigned is
+  /// instead set to false (default), NSEC3 records will be generated and signed
+  /// at request time. See [DNSSEC with
+  /// NSEC3](https://developers.cloudflare.com/dns/dnssec/enable-nsec3/) for
+  /// details.
+  final bool? dnssecUseNsec3;
+
+  /// Status of DNSSEC, based on user-desired state and presence of necessary
+  /// records. Allowed values: `active`, `disabled`.
+  final String? status;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'dnssec_multi_signer',
+    'dnssec_presigned',
+    'dnssec_use_nsec3',
+    'status',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (dnssecMultiSigner != null) 'dnssec_multi_signer': dnssecMultiSigner!,
+    if (dnssecPresigned != null) 'dnssec_presigned': dnssecPresigned!,
+    if (dnssecUseNsec3 != null) 'dnssec_use_nsec3': dnssecUseNsec3!,
+    if (status != null) 'status': status!,
+  };
+
+  DnssecEditDnssecStatusBody copyWith({
+    bool? dnssecMultiSigner,
+    bool? dnssecPresigned,
+    bool? dnssecUseNsec3,
+    String? status,
+    Map<String, Object?>? extra,
+  }) => DnssecEditDnssecStatusBody(
+    dnssecMultiSigner: dnssecMultiSigner ?? this.dnssecMultiSigner,
+    dnssecPresigned: dnssecPresigned ?? this.dnssecPresigned,
+    dnssecUseNsec3: dnssecUseNsec3 ?? this.dnssecUseNsec3,
+    status: status ?? this.status,
+    extra: extra ?? this.extra,
+  );
+}
+
 /// Defines the expiration time stamp and default duration of a DNS policy.
 /// Takes precedence over the policy's `schedule` configuration, if any. This
 /// does not apply to HTTP or network policies. Settable only for `dns` rules.
@@ -4552,6 +5541,566 @@ class ExportsReconciliationWarning {
   );
 }
 
+/// Filter options for a particular resource type (pool or origin). Use null to
+/// reset.
+class FilterOptions {
+  const FilterOptions({
+    this.disable,
+    this.healthy,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory FilterOptions.fromJson(Map<String, Object?> json) => FilterOptions(
+    disable: asBool(json['disable']),
+    healthy: asBool(json['healthy']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// If set true, disable notifications for this type of resource (pool or
+  /// origin).
+  final bool? disable;
+
+  /// If present, send notifications only for this health status (e.g. false for
+  /// only DOWN events). Use null to reset (all events).
+  final bool? healthy;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'disable', 'healthy'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (disable != null) 'disable': disable!,
+    if (healthy != null) 'healthy': healthy!,
+  };
+
+  FilterOptions copyWith({
+    bool? disable,
+    bool? healthy,
+    Map<String, Object?>? extra,
+  }) => FilterOptions(
+    disable: disable ?? this.disable,
+    healthy: healthy ?? this.healthy,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Optional filters that allow you to be alerted only on a subset of events for
+/// that alert type based on some criteria. This is only available for select
+/// alert types. See alert type documentation for more details.
+class Filters {
+  const Filters({
+    this.actions,
+    this.affectedAsns,
+    this.affectedComponents,
+    this.affectedLocations,
+    this.airportCode,
+    this.alertTriggerPreferences,
+    this.alertTriggerPreferencesValue,
+    this.enabled,
+    this.environment,
+    this.event,
+    this.eventSource,
+    this.eventType,
+    this.groupBy,
+    this.healthCheckId,
+    this.incidentImpact,
+    this.inputId,
+    this.insightClass,
+    this.limit,
+    this.logoTag,
+    this.megabitsPerSecond,
+    this.newHealth,
+    this.newStatus,
+    this.packetsPerSecond,
+    this.poolId,
+    this.popNames,
+    this.product,
+    this.projectId,
+    this.protocol,
+    this.queryTag,
+    this.requestsPerSecond,
+    this.selectors,
+    this.services,
+    this.slo,
+    this.status,
+    this.targetHostname,
+    this.targetIp,
+    this.targetZoneName,
+    this.trafficExclusions,
+    this.tunnelId,
+    this.tunnelName,
+    this.type_,
+    this.where,
+    this.zones,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Filters.fromJson(Map<String, Object?> json) => Filters(
+    actions: asPrimitiveList<String>(json['actions'], asString),
+    affectedAsns: asPrimitiveList<String>(json['affected_asns'], asString),
+    affectedComponents: asPrimitiveList<String>(
+      json['affected_components'],
+      asString,
+    ),
+    affectedLocations: asPrimitiveList<String>(
+      json['affected_locations'],
+      asString,
+    ),
+    airportCode: asPrimitiveList<String>(json['airport_code'], asString),
+    alertTriggerPreferences: asPrimitiveList<String>(
+      json['alert_trigger_preferences'],
+      asString,
+    ),
+    alertTriggerPreferencesValue: asPrimitiveList<String>(
+      json['alert_trigger_preferences_value'],
+      asString,
+    ),
+    enabled: asPrimitiveList<String>(json['enabled'], asString),
+    environment: asPrimitiveList<String>(json['environment'], asString),
+    event: asPrimitiveList<String>(json['event'], asString),
+    eventSource: asPrimitiveList<String>(json['event_source'], asString),
+    eventType: asPrimitiveList<String>(json['event_type'], asString),
+    groupBy: asPrimitiveList<String>(json['group_by'], asString),
+    healthCheckId: asPrimitiveList<String>(json['health_check_id'], asString),
+    incidentImpact: asPrimitiveList<String>(json['incident_impact'], asString),
+    inputId: asPrimitiveList<String>(json['input_id'], asString),
+    insightClass: asPrimitiveList<String>(json['insight_class'], asString),
+    limit: asPrimitiveList<String>(json['limit'], asString),
+    logoTag: asPrimitiveList<String>(json['logo_tag'], asString),
+    megabitsPerSecond: asPrimitiveList<String>(
+      json['megabits_per_second'],
+      asString,
+    ),
+    newHealth: asPrimitiveList<String>(json['new_health'], asString),
+    newStatus: asPrimitiveList<String>(json['new_status'], asString),
+    packetsPerSecond: asPrimitiveList<String>(
+      json['packets_per_second'],
+      asString,
+    ),
+    poolId: asPrimitiveList<String>(json['pool_id'], asString),
+    popNames: asPrimitiveList<String>(json['pop_names'], asString),
+    product: asPrimitiveList<String>(json['product'], asString),
+    projectId: asPrimitiveList<String>(json['project_id'], asString),
+    protocol: asPrimitiveList<String>(json['protocol'], asString),
+    queryTag: asPrimitiveList<String>(json['query_tag'], asString),
+    requestsPerSecond: asPrimitiveList<String>(
+      json['requests_per_second'],
+      asString,
+    ),
+    selectors: asPrimitiveList<String>(json['selectors'], asString),
+    services: asPrimitiveList<String>(json['services'], asString),
+    slo: asPrimitiveList<String>(json['slo'], asString),
+    status: asPrimitiveList<String>(json['status'], asString),
+    targetHostname: asPrimitiveList<String>(json['target_hostname'], asString),
+    targetIp: asPrimitiveList<String>(json['target_ip'], asString),
+    targetZoneName: asPrimitiveList<String>(json['target_zone_name'], asString),
+    trafficExclusions: asPrimitiveList<String>(
+      json['traffic_exclusions'],
+      asString,
+    ),
+    tunnelId: asPrimitiveList<String>(json['tunnel_id'], asString),
+    tunnelName: asPrimitiveList<String>(json['tunnel_name'], asString),
+    type_: asPrimitiveList<String>(json['type'], asString),
+    where: asPrimitiveList<String>(json['where'], asString),
+    zones: asPrimitiveList<String>(json['zones'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Usage depends on specific alert type
+  final List<String>? actions;
+
+  /// Used for configuring radar_notification
+  final List<String>? affectedAsns;
+
+  /// Used for configuring incident_alert
+  final List<String>? affectedComponents;
+
+  /// Used for configuring radar_notification
+  final List<String>? affectedLocations;
+
+  /// Used for configuring maintenance_event_notification
+  final List<String>? airportCode;
+
+  /// Usage depends on specific alert type
+  final List<String>? alertTriggerPreferences;
+
+  /// Usage depends on specific alert type
+  final List<String>? alertTriggerPreferencesValue;
+
+  /// Used for configuring load_balancing_pool_enablement_alert
+  final List<String>? enabled;
+
+  /// Used for configuring pages_event_alert
+  final List<String>? environment;
+
+  /// Used for configuring pages_event_alert
+  final List<String>? event;
+
+  /// Used for configuring load_balancing_health_alert
+  final List<String>? eventSource;
+
+  /// Usage depends on specific alert type
+  final List<String>? eventType;
+
+  /// Usage depends on specific alert type
+  final List<String>? groupBy;
+
+  /// Used for configuring health_check_status_notification
+  final List<String>? healthCheckId;
+
+  /// Used for configuring incident_alert
+  final List<String>? incidentImpact;
+
+  /// Used for configuring stream_live_notifications
+  final List<String>? inputId;
+
+  /// Used for configuring security_insights_alert
+  final List<String>? insightClass;
+
+  /// Used for configuring billing_usage_alert
+  final List<String>? limit;
+
+  /// Used for configuring logo_match_alert
+  final List<String>? logoTag;
+
+  /// Used for configuring advanced_ddos_attack_l4_alert
+  final List<String>? megabitsPerSecond;
+
+  /// Used for configuring load_balancing_health_alert
+  final List<String>? newHealth;
+
+  /// Used for configuring tunnel_health_event
+  final List<String>? newStatus;
+
+  /// Used for configuring advanced_ddos_attack_l4_alert
+  final List<String>? packetsPerSecond;
+
+  /// Usage depends on specific alert type
+  final List<String>? poolId;
+
+  /// Usage depends on specific alert type
+  final List<String>? popNames;
+
+  /// Used for configuring billing_usage_alert
+  final List<String>? product;
+
+  /// Used for configuring pages_event_alert
+  final List<String>? projectId;
+
+  /// Used for configuring advanced_ddos_attack_l4_alert
+  final List<String>? protocol;
+
+  /// Usage depends on specific alert type
+  final List<String>? queryTag;
+
+  /// Used for configuring advanced_ddos_attack_l7_alert
+  final List<String>? requestsPerSecond;
+
+  /// Usage depends on specific alert type
+  final List<String>? selectors;
+
+  /// Used for configuring clickhouse_alert_fw_ent_anomaly
+  final List<String>? services;
+
+  /// Usage depends on specific alert type
+  final List<String>? slo;
+
+  /// Used for configuring health_check_status_notification
+  final List<String>? status;
+
+  /// Used for configuring advanced_ddos_attack_l7_alert
+  final List<String>? targetHostname;
+
+  /// Used for configuring advanced_ddos_attack_l4_alert
+  final List<String>? targetIp;
+
+  /// Used for configuring advanced_ddos_attack_l7_alert
+  final List<String>? targetZoneName;
+
+  /// Used for configuring traffic_anomalies_alert
+  final List<String>? trafficExclusions;
+
+  /// Used for configuring tunnel_health_event
+  final List<String>? tunnelId;
+
+  /// Usage depends on specific alert type
+  final List<String>? tunnelName;
+
+  /// Usage depends on specific alert type
+  final List<String>? type_;
+
+  /// Usage depends on specific alert type
+  final List<String>? where;
+
+  /// Usage depends on specific alert type
+  final List<String>? zones;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'actions',
+    'affected_asns',
+    'affected_components',
+    'affected_locations',
+    'airport_code',
+    'alert_trigger_preferences',
+    'alert_trigger_preferences_value',
+    'enabled',
+    'environment',
+    'event',
+    'event_source',
+    'event_type',
+    'group_by',
+    'health_check_id',
+    'incident_impact',
+    'input_id',
+    'insight_class',
+    'limit',
+    'logo_tag',
+    'megabits_per_second',
+    'new_health',
+    'new_status',
+    'packets_per_second',
+    'pool_id',
+    'pop_names',
+    'product',
+    'project_id',
+    'protocol',
+    'query_tag',
+    'requests_per_second',
+    'selectors',
+    'services',
+    'slo',
+    'status',
+    'target_hostname',
+    'target_ip',
+    'target_zone_name',
+    'traffic_exclusions',
+    'tunnel_id',
+    'tunnel_name',
+    'type',
+    'where',
+    'zones',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (actions != null) 'actions': actions!,
+    if (affectedAsns != null) 'affected_asns': affectedAsns!,
+    if (affectedComponents != null) 'affected_components': affectedComponents!,
+    if (affectedLocations != null) 'affected_locations': affectedLocations!,
+    if (airportCode != null) 'airport_code': airportCode!,
+    if (alertTriggerPreferences != null)
+      'alert_trigger_preferences': alertTriggerPreferences!,
+    if (alertTriggerPreferencesValue != null)
+      'alert_trigger_preferences_value': alertTriggerPreferencesValue!,
+    if (enabled != null) 'enabled': enabled!,
+    if (environment != null) 'environment': environment!,
+    if (event != null) 'event': event!,
+    if (eventSource != null) 'event_source': eventSource!,
+    if (eventType != null) 'event_type': eventType!,
+    if (groupBy != null) 'group_by': groupBy!,
+    if (healthCheckId != null) 'health_check_id': healthCheckId!,
+    if (incidentImpact != null) 'incident_impact': incidentImpact!,
+    if (inputId != null) 'input_id': inputId!,
+    if (insightClass != null) 'insight_class': insightClass!,
+    if (limit != null) 'limit': limit!,
+    if (logoTag != null) 'logo_tag': logoTag!,
+    if (megabitsPerSecond != null) 'megabits_per_second': megabitsPerSecond!,
+    if (newHealth != null) 'new_health': newHealth!,
+    if (newStatus != null) 'new_status': newStatus!,
+    if (packetsPerSecond != null) 'packets_per_second': packetsPerSecond!,
+    if (poolId != null) 'pool_id': poolId!,
+    if (popNames != null) 'pop_names': popNames!,
+    if (product != null) 'product': product!,
+    if (projectId != null) 'project_id': projectId!,
+    if (protocol != null) 'protocol': protocol!,
+    if (queryTag != null) 'query_tag': queryTag!,
+    if (requestsPerSecond != null) 'requests_per_second': requestsPerSecond!,
+    if (selectors != null) 'selectors': selectors!,
+    if (services != null) 'services': services!,
+    if (slo != null) 'slo': slo!,
+    if (status != null) 'status': status!,
+    if (targetHostname != null) 'target_hostname': targetHostname!,
+    if (targetIp != null) 'target_ip': targetIp!,
+    if (targetZoneName != null) 'target_zone_name': targetZoneName!,
+    if (trafficExclusions != null) 'traffic_exclusions': trafficExclusions!,
+    if (tunnelId != null) 'tunnel_id': tunnelId!,
+    if (tunnelName != null) 'tunnel_name': tunnelName!,
+    if (type_ != null) 'type': type_!,
+    if (where != null) 'where': where!,
+    if (zones != null) 'zones': zones!,
+  };
+
+  Filters copyWith({
+    List<String>? actions,
+    List<String>? affectedAsns,
+    List<String>? affectedComponents,
+    List<String>? affectedLocations,
+    List<String>? airportCode,
+    List<String>? alertTriggerPreferences,
+    List<String>? alertTriggerPreferencesValue,
+    List<String>? enabled,
+    List<String>? environment,
+    List<String>? event,
+    List<String>? eventSource,
+    List<String>? eventType,
+    List<String>? groupBy,
+    List<String>? healthCheckId,
+    List<String>? incidentImpact,
+    List<String>? inputId,
+    List<String>? insightClass,
+    List<String>? limit,
+    List<String>? logoTag,
+    List<String>? megabitsPerSecond,
+    List<String>? newHealth,
+    List<String>? newStatus,
+    List<String>? packetsPerSecond,
+    List<String>? poolId,
+    List<String>? popNames,
+    List<String>? product,
+    List<String>? projectId,
+    List<String>? protocol,
+    List<String>? queryTag,
+    List<String>? requestsPerSecond,
+    List<String>? selectors,
+    List<String>? services,
+    List<String>? slo,
+    List<String>? status,
+    List<String>? targetHostname,
+    List<String>? targetIp,
+    List<String>? targetZoneName,
+    List<String>? trafficExclusions,
+    List<String>? tunnelId,
+    List<String>? tunnelName,
+    List<String>? type_,
+    List<String>? where,
+    List<String>? zones,
+    Map<String, Object?>? extra,
+  }) => Filters(
+    actions: actions ?? this.actions,
+    affectedAsns: affectedAsns ?? this.affectedAsns,
+    affectedComponents: affectedComponents ?? this.affectedComponents,
+    affectedLocations: affectedLocations ?? this.affectedLocations,
+    airportCode: airportCode ?? this.airportCode,
+    alertTriggerPreferences:
+        alertTriggerPreferences ?? this.alertTriggerPreferences,
+    alertTriggerPreferencesValue:
+        alertTriggerPreferencesValue ?? this.alertTriggerPreferencesValue,
+    enabled: enabled ?? this.enabled,
+    environment: environment ?? this.environment,
+    event: event ?? this.event,
+    eventSource: eventSource ?? this.eventSource,
+    eventType: eventType ?? this.eventType,
+    groupBy: groupBy ?? this.groupBy,
+    healthCheckId: healthCheckId ?? this.healthCheckId,
+    incidentImpact: incidentImpact ?? this.incidentImpact,
+    inputId: inputId ?? this.inputId,
+    insightClass: insightClass ?? this.insightClass,
+    limit: limit ?? this.limit,
+    logoTag: logoTag ?? this.logoTag,
+    megabitsPerSecond: megabitsPerSecond ?? this.megabitsPerSecond,
+    newHealth: newHealth ?? this.newHealth,
+    newStatus: newStatus ?? this.newStatus,
+    packetsPerSecond: packetsPerSecond ?? this.packetsPerSecond,
+    poolId: poolId ?? this.poolId,
+    popNames: popNames ?? this.popNames,
+    product: product ?? this.product,
+    projectId: projectId ?? this.projectId,
+    protocol: protocol ?? this.protocol,
+    queryTag: queryTag ?? this.queryTag,
+    requestsPerSecond: requestsPerSecond ?? this.requestsPerSecond,
+    selectors: selectors ?? this.selectors,
+    services: services ?? this.services,
+    slo: slo ?? this.slo,
+    status: status ?? this.status,
+    targetHostname: targetHostname ?? this.targetHostname,
+    targetIp: targetIp ?? this.targetIp,
+    targetZoneName: targetZoneName ?? this.targetZoneName,
+    trafficExclusions: trafficExclusions ?? this.trafficExclusions,
+    tunnelId: tunnelId ?? this.tunnelId,
+    tunnelName: tunnelName ?? this.tunnelName,
+    type_: type_ ?? this.type_,
+    where: where ?? this.where,
+    zones: zones ?? this.zones,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// A collection of fields used to directly respond to the client instead of
+/// routing to a pool. When supplied on a rule, that rule stops further rule
+/// evaluation.
+class FixedResponse {
+  const FixedResponse({
+    this.contentType,
+    this.location,
+    this.messageBody,
+    this.statusCode,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory FixedResponse.fromJson(Map<String, Object?> json) => FixedResponse(
+    contentType: asString(json['content_type']),
+    location: asString(json['location']),
+    messageBody: asString(json['message_body']),
+    statusCode: asInt(json['status_code']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The http 'Content-Type' header to include in the response.
+  final String? contentType;
+
+  /// The http 'Location' header to include in the response.
+  final String? location;
+
+  /// Text to include as the http body.
+  final String? messageBody;
+
+  /// The http status code to respond with.
+  final int? statusCode;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'content_type',
+    'location',
+    'message_body',
+    'status_code',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (contentType != null) 'content_type': contentType!,
+    if (location != null) 'location': location!,
+    if (messageBody != null) 'message_body': messageBody!,
+    if (statusCode != null) 'status_code': statusCode!,
+  };
+
+  FixedResponse copyWith({
+    String? contentType,
+    String? location,
+    String? messageBody,
+    int? statusCode,
+    Map<String, Object?>? extra,
+  }) => FixedResponse(
+    contentType: contentType ?? this.contentType,
+    location: location ?? this.location,
+    messageBody: messageBody ?? this.messageBody,
+    statusCode: statusCode ?? this.statusCode,
+    extra: extra ?? this.extra,
+  );
+}
+
 class GetZoneEntrypointRulesetResult {
   const GetZoneEntrypointRulesetResult({
     this.description,
@@ -4768,6 +6317,117 @@ class GetZoneRulesetResult {
   );
 }
 
+class History {
+  const History({
+    this.alertBody,
+    this.alertType,
+    this.description,
+    this.id,
+    this.mechanism,
+    this.mechanismType,
+    this.name,
+    this.policyId,
+    this.sent,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory History.fromJson(Map<String, Object?> json) => History(
+    alertBody: asString(json['alert_body']),
+    alertType: asString(json['alert_type']),
+    description: asString(json['description']),
+    id: asString(json['id']),
+    mechanism: asString(json['mechanism']),
+    mechanismType: asString(json['mechanism_type']),
+    name: asString(json['name']),
+    policyId: asString(json['policy_id']),
+    sent: asString(json['sent']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Message body included in the notification sent.
+  final String? alertBody;
+
+  /// Type of notification that has been dispatched.
+  final String? alertType;
+
+  /// Description of the notification policy (if present).
+  final String? description;
+
+  /// UUID
+  final String? id;
+
+  /// The mechanism to which the notification has been dispatched.
+  final String? mechanism;
+
+  /// The type of mechanism to which the notification has been dispatched. This
+  /// can be email/pagerduty/webhook based on the mechanism configured. Allowed
+  /// values: `email`, `pagerduty`, `webhook`.
+  final String? mechanismType;
+
+  /// Name of the policy.
+  final String? name;
+
+  /// The unique identifier of a notification policy
+  final String? policyId;
+
+  /// Timestamp of when the notification was dispatched in ISO 8601 format.
+  final String? sent;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'alert_body',
+    'alert_type',
+    'description',
+    'id',
+    'mechanism',
+    'mechanism_type',
+    'name',
+    'policy_id',
+    'sent',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (alertBody != null) 'alert_body': alertBody!,
+    if (alertType != null) 'alert_type': alertType!,
+    if (description != null) 'description': description!,
+    if (id != null) 'id': id!,
+    if (mechanism != null) 'mechanism': mechanism!,
+    if (mechanismType != null) 'mechanism_type': mechanismType!,
+    if (name != null) 'name': name!,
+    if (policyId != null) 'policy_id': policyId!,
+    if (sent != null) 'sent': sent!,
+  };
+
+  History copyWith({
+    String? alertBody,
+    String? alertType,
+    String? description,
+    String? id,
+    String? mechanism,
+    String? mechanismType,
+    String? name,
+    String? policyId,
+    String? sent,
+    Map<String, Object?>? extra,
+  }) => History(
+    alertBody: alertBody ?? this.alertBody,
+    alertType: alertType ?? this.alertType,
+    description: description ?? this.description,
+    id: id ?? this.id,
+    mechanism: mechanism ?? this.mechanism,
+    mechanismType: mechanismType ?? this.mechanismType,
+    name: name ?? this.name,
+    policyId: policyId ?? this.policyId,
+    sent: sent ?? this.sent,
+    extra: extra ?? this.extra,
+  );
+}
+
 class IpAccessRulesForAZoneCreateAnIpAccessRuleBody {
   const IpAccessRulesForAZoneCreateAnIpAccessRuleBody({
     this.configuration,
@@ -4894,6 +6554,60 @@ class IpAccessRulesForAZoneDeleteAnIpAccessRuleResult {
     Map<String, Object?>? extra,
   }) => IpAccessRulesForAZoneDeleteAnIpAccessRuleResult(
     id: id ?? this.id,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// A name for a value. A value stored under a given key may be retrieved via
+/// the same key.
+class Key {
+  const Key({
+    this.expiration,
+    this.metadata,
+    this.name,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Key.fromJson(Map<String, Object?> json) => Key(
+    expiration: asNum(json['expiration']),
+    metadata: asMap(json['metadata']),
+    name: asString(json['name']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The time, measured in number of seconds since the UNIX epoch, at which the
+  /// key will expire. This property is omitted for keys that will not expire.
+  final num? expiration;
+  final Map<String, Object?>? metadata;
+
+  /// A key's name. The name may be at most 512 bytes. All printable,
+  /// non-whitespace characters are valid. Use percent-encoding to define key
+  /// names as part of a URL.
+  final String? name;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'expiration', 'metadata', 'name'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (expiration != null) 'expiration': expiration!,
+    if (metadata != null) 'metadata': metadata!,
+    if (name != null) 'name': name!,
+  };
+
+  Key copyWith({
+    num? expiration,
+    Map<String, Object?>? metadata,
+    String? name,
+    Map<String, Object?>? extra,
+  }) => Key(
+    expiration: expiration ?? this.expiration,
+    metadata: metadata ?? this.metadata,
+    name: name ?? this.name,
     extra: extra ?? this.extra,
   );
 }
@@ -5114,6 +6828,752 @@ class ListZoneRulesetsItem {
     phase: phase ?? this.phase,
     extra: extra ?? this.extra,
   );
+}
+
+class LoadBalancer {
+  const LoadBalancer({
+    this.adaptiveRouting,
+    this.countryPools,
+    this.createdOn,
+    this.defaultPools,
+    this.description,
+    this.enabled,
+    this.fallbackPool,
+    this.id,
+    this.locationStrategy,
+    this.modifiedOn,
+    this.name,
+    this.networks,
+    this.poolSets,
+    this.popPools,
+    this.proxied,
+    this.randomSteering,
+    this.regionPools,
+    this.rules,
+    this.sessionAffinity,
+    this.sessionAffinityAttributes,
+    this.sessionAffinityTtl,
+    this.steeringPolicy,
+    this.ttl,
+    this.zoneName,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory LoadBalancer.fromJson(Map<String, Object?> json) => LoadBalancer(
+    adaptiveRouting: asModel(
+      json['adaptive_routing'],
+      AdaptiveRouting.fromJson,
+    ),
+    countryPools: asMap(json['country_pools']),
+    createdOn: asString(json['created_on']),
+    defaultPools: asPrimitiveList<String>(json['default_pools'], asString),
+    description: asString(json['description']),
+    enabled: asBool(json['enabled']),
+    fallbackPool: asString(json['fallback_pool']),
+    id: asString(json['id']),
+    locationStrategy: asModel(
+      json['location_strategy'],
+      LocationStrategy.fromJson,
+    ),
+    modifiedOn: asString(json['modified_on']),
+    name: asString(json['name']),
+    networks: asPrimitiveList<String>(json['networks'], asString),
+    poolSets: asModelList(json['pool_sets'], PoolSet.fromJson),
+    popPools: asMap(json['pop_pools']),
+    proxied: asBool(json['proxied']),
+    randomSteering: asModel(json['random_steering'], RandomSteering.fromJson),
+    regionPools: asMap(json['region_pools']),
+    rules: asModelList(json['rules'], LoadBalancerRulesItem.fromJson),
+    sessionAffinity: asString(json['session_affinity']),
+    sessionAffinityAttributes: asModel(
+      json['session_affinity_attributes'],
+      SessionAffinityAttributes.fromJson,
+    ),
+    sessionAffinityTtl: asNum(json['session_affinity_ttl']),
+    steeringPolicy: asString(json['steering_policy']),
+    ttl: asNum(json['ttl']),
+    zoneName: asString(json['zone_name']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Controls features that modify the routing of requests to pools and origins
+  /// in response to dynamic conditions, such as during the interval between
+  /// active health monitoring requests. For example, zero-downtime failover
+  /// occurs immediately when an origin becomes unavailable due to HTTP 521, 522,
+  /// or 523 response codes. If there is another healthy origin in the same pool,
+  /// the request is retried once against this alternate origin.
+  final AdaptiveRouting? adaptiveRouting;
+
+  /// A mapping of country codes to a list of pool IDs (ordered by their failover
+  /// priority) for the given country. Any country not explicitly defined will
+  /// fall back to using the corresponding region_pool mapping if it exists else
+  /// to default_pools.
+  final Map<String, Object?>? countryPools;
+  final String? createdOn;
+
+  /// A list of pool IDs ordered by their failover priority. Pools defined here
+  /// are used by default, or when region_pools are not configured for a given
+  /// region.
+  final List<String>? defaultPools;
+
+  /// Object description.
+  final String? description;
+
+  /// Whether to enable (the default) this load balancer.
+  final bool? enabled;
+
+  /// The pool ID to use when all other pools are detected as unhealthy.
+  final String? fallbackPool;
+  final String? id;
+
+  /// Controls location-based steering for non-proxied requests. See
+  /// `steering_policy` to learn how steering is affected.
+  final LocationStrategy? locationStrategy;
+  final String? modifiedOn;
+
+  /// The DNS hostname to associate with your Load Balancer. If this hostname
+  /// already exists as a DNS record in Cloudflare's DNS, the Load Balancer will
+  /// take precedence and the DNS record will not be used.
+  final String? name;
+
+  /// List of networks where Load Balancer or Pool is enabled.
+  final List<String>? networks;
+
+  /// An optional list of pool sets, evaluated in array order with first match
+  /// wins. Pool sets are independent from the standard steering fields
+  /// (`region_pools` / `country_pools` / `pop_pools` / `default_pools` /
+  /// `steering_policy` / `random_steering` / `fallback_pool` / `rules`). On a
+  /// PATCH, an empty array (`pool_sets: []`) clears all pool sets, while omitting
+  /// the field leaves existing pool sets unchanged.
+  final List<PoolSet>? poolSets;
+
+  /// Enterprise only: A mapping of Cloudflare PoP identifiers to a list of pool
+  /// IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs
+  /// not explicitly defined will fall back to using the corresponding
+  /// country_pool, then region_pool mapping if it exists else to default_pools.
+  final Map<String, Object?>? popPools;
+
+  /// Whether the hostname should be gray clouded (false) or orange clouded
+  /// (true).
+  final bool? proxied;
+
+  /// Configures pool weights. - `steering_policy="random"`: A random pool is
+  /// selected with probability proportional to pool weights. -
+  /// `steering_policy="least_outstanding_requests"`: Use pool weights to scale
+  /// each pool's outstanding requests. - `steering_policy="least_connections"`:
+  /// Use pool weights to scale each pool's open connections.
+  final RandomSteering? randomSteering;
+
+  /// A mapping of region codes to a list of pool IDs (ordered by their failover
+  /// priority) for the given region. Any regions not explicitly defined will fall
+  /// back to using default_pools.
+  final Map<String, Object?>? regionPools;
+
+  /// BETA Field Not General Access: A list of rules for this load balancer to
+  /// execute.
+  final List<LoadBalancerRulesItem>? rules;
+
+  /// Specifies the type of session affinity the load balancer should use unless
+  /// specified as `"none"`. The supported types are: - `"cookie"`: On the first
+  /// request to a proxied load balancer, a cookie is generated, encoding
+  /// information of which origin the request will be forwarded to. Subsequent
+  /// requests, by the same client to the same load balancer, will be sent to the
+  /// origin server the cookie encodes, for the duration of the cookie and as long
+  /// as the origin server remains healthy. If the cookie has expired or the
+  /// origin server is unhealthy, then a new origin server is calculated and used.
+  /// - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin
+  /// selection is stable and based on the client's ip address. - `"header"`: On
+  /// the first request to a proxied load balancer, a session key based on the
+  /// configured HTTP headers (see `session_affinity_attributes.headers`) is
+  /// generated, encoding the request headers used for storing in the load
+  /// balancer session state which origin the request will be forwarded to.
+  /// Subsequent requests to the load balancer with the same headers will be sent
+  /// to the same origin server, for the duration of the session and as long as
+  /// the origin server remains healthy. If the session has been idle for the
+  /// duration of `session_affinity_ttl` seconds or the origin server is
+  /// unhealthy, then a new origin server is calculated and used. See `headers` in
+  /// `session_affinity_attributes` for additional required configuration. Allowed
+  /// values: `none`, `cookie`, `ip_cookie`, `header`.
+  final String? sessionAffinity;
+
+  /// Configures attributes for session affinity.
+  final SessionAffinityAttributes? sessionAffinityAttributes;
+
+  /// Time, in seconds, until a client's session expires after being created. Once
+  /// the expiry time has been reached, subsequent requests may get sent to a
+  /// different origin server. The accepted ranges per `session_affinity` policy
+  /// are: - `"cookie"` / `"ip_cookie"`: The current default of 23 hours will be
+  /// used unless explicitly set. The accepted range of values is between [1800,
+  /// 604800]. - `"header"`: The current default of 1800 seconds will be used
+  /// unless explicitly set. The accepted range of values is between [30, 3600].
+  /// Note: With session affinity by header, sessions only expire after they
+  /// haven't been used for the number of seconds specified.
+  final num? sessionAffinityTtl;
+
+  /// Steering Policy for this load balancer. - `"off"`: Use `default_pools`. -
+  /// `"geo"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied
+  /// requests, the country for `country_pools` is determined by
+  /// `location_strategy`. - `"random"`: Select a pool randomly. -
+  /// `"dynamic_latency"`: Use round trip time to select the closest pool in
+  /// default_pools (requires pool health checks). - `"proximity"`: Use the pools'
+  /// latitude and longitude to select the closest pool using the Cloudflare PoP
+  /// location for proxied requests or the location determined by
+  /// `location_strategy` for non-proxied requests. -
+  /// `"least_outstanding_requests"`: Select a pool by taking into consideration
+  /// `random_steering` weights, as well as each pool's number of outstanding
+  /// requests. Pools with more pending requests are weighted proportionately less
+  /// relative to others. - `"least_connections"`: Select a pool by taking into
+  /// consideration `random_steering` weights, as well as each pool's number of
+  /// open connections. Pools with more open connections are weighted
+  /// proportionately less relative to others. Supported for HTTP/1 and HTTP/2
+  /// connections. - `""`: Will map to `"geo"` if you use
+  /// `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`. Allowed
+  /// values: `off`, `geo`, `random`, `dynamic_latency`, `proximity`,
+  /// `least_outstanding_requests`, `least_connections`, ``.
+  final String? steeringPolicy;
+
+  /// Time to live (TTL) of the DNS entry for the IP address returned by this load
+  /// balancer. This only applies to gray-clouded (unproxied) load balancers.
+  final num? ttl;
+  final String? zoneName;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'adaptive_routing',
+    'country_pools',
+    'created_on',
+    'default_pools',
+    'description',
+    'enabled',
+    'fallback_pool',
+    'id',
+    'location_strategy',
+    'modified_on',
+    'name',
+    'networks',
+    'pool_sets',
+    'pop_pools',
+    'proxied',
+    'random_steering',
+    'region_pools',
+    'rules',
+    'session_affinity',
+    'session_affinity_attributes',
+    'session_affinity_ttl',
+    'steering_policy',
+    'ttl',
+    'zone_name',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (adaptiveRouting != null) 'adaptive_routing': adaptiveRouting!.toJson(),
+    if (countryPools != null) 'country_pools': countryPools!,
+    if (createdOn != null) 'created_on': createdOn!,
+    if (defaultPools != null) 'default_pools': defaultPools!,
+    if (description != null) 'description': description!,
+    if (enabled != null) 'enabled': enabled!,
+    if (fallbackPool != null) 'fallback_pool': fallbackPool!,
+    if (id != null) 'id': id!,
+    if (locationStrategy != null)
+      'location_strategy': locationStrategy!.toJson(),
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (name != null) 'name': name!,
+    if (networks != null) 'networks': networks!,
+    if (poolSets != null)
+      'pool_sets': poolSets!.map((e) => e.toJson()).toList(),
+    if (popPools != null) 'pop_pools': popPools!,
+    if (proxied != null) 'proxied': proxied!,
+    if (randomSteering != null) 'random_steering': randomSteering!.toJson(),
+    if (regionPools != null) 'region_pools': regionPools!,
+    if (rules != null) 'rules': rules!.map((e) => e.toJson()).toList(),
+    if (sessionAffinity != null) 'session_affinity': sessionAffinity!,
+    if (sessionAffinityAttributes != null)
+      'session_affinity_attributes': sessionAffinityAttributes!.toJson(),
+    if (sessionAffinityTtl != null) 'session_affinity_ttl': sessionAffinityTtl!,
+    if (steeringPolicy != null) 'steering_policy': steeringPolicy!,
+    if (ttl != null) 'ttl': ttl!,
+    if (zoneName != null) 'zone_name': zoneName!,
+  };
+
+  LoadBalancer copyWith({
+    AdaptiveRouting? adaptiveRouting,
+    Map<String, Object?>? countryPools,
+    String? createdOn,
+    List<String>? defaultPools,
+    String? description,
+    bool? enabled,
+    String? fallbackPool,
+    String? id,
+    LocationStrategy? locationStrategy,
+    String? modifiedOn,
+    String? name,
+    List<String>? networks,
+    List<PoolSet>? poolSets,
+    Map<String, Object?>? popPools,
+    bool? proxied,
+    RandomSteering? randomSteering,
+    Map<String, Object?>? regionPools,
+    List<LoadBalancerRulesItem>? rules,
+    String? sessionAffinity,
+    SessionAffinityAttributes? sessionAffinityAttributes,
+    num? sessionAffinityTtl,
+    String? steeringPolicy,
+    num? ttl,
+    String? zoneName,
+    Map<String, Object?>? extra,
+  }) => LoadBalancer(
+    adaptiveRouting: adaptiveRouting ?? this.adaptiveRouting,
+    countryPools: countryPools ?? this.countryPools,
+    createdOn: createdOn ?? this.createdOn,
+    defaultPools: defaultPools ?? this.defaultPools,
+    description: description ?? this.description,
+    enabled: enabled ?? this.enabled,
+    fallbackPool: fallbackPool ?? this.fallbackPool,
+    id: id ?? this.id,
+    locationStrategy: locationStrategy ?? this.locationStrategy,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    name: name ?? this.name,
+    networks: networks ?? this.networks,
+    poolSets: poolSets ?? this.poolSets,
+    popPools: popPools ?? this.popPools,
+    proxied: proxied ?? this.proxied,
+    randomSteering: randomSteering ?? this.randomSteering,
+    regionPools: regionPools ?? this.regionPools,
+    rules: rules ?? this.rules,
+    sessionAffinity: sessionAffinity ?? this.sessionAffinity,
+    sessionAffinityAttributes:
+        sessionAffinityAttributes ?? this.sessionAffinityAttributes,
+    sessionAffinityTtl: sessionAffinityTtl ?? this.sessionAffinityTtl,
+    steeringPolicy: steeringPolicy ?? this.steeringPolicy,
+    ttl: ttl ?? this.ttl,
+    zoneName: zoneName ?? this.zoneName,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// A rule object containing conditions and overrides for this load balancer to
+/// evaluate.
+class LoadBalancerRulesItem {
+  const LoadBalancerRulesItem({
+    this.condition,
+    this.disabled,
+    this.fixedResponse,
+    this.name,
+    this.overrides,
+    this.priority,
+    this.terminates,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory LoadBalancerRulesItem.fromJson(Map<String, Object?> json) =>
+      LoadBalancerRulesItem(
+        condition: asString(json['condition']),
+        disabled: asBool(json['disabled']),
+        fixedResponse: asModel(json['fixed_response'], FixedResponse.fromJson),
+        name: asString(json['name']),
+        overrides: asModel(json['overrides'], RuleOverrides.fromJson),
+        priority: asInt(json['priority']),
+        terminates: asBool(json['terminates']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The condition expressions to evaluate. If the condition evaluates to true,
+  /// the overrides or fixed_response in this rule will be applied. An empty
+  /// condition is always true. For more details on condition expressions, please
+  /// see
+  /// https://developers.cloudflare.com/load-balancing/understand-basics/load-balancing-rules/expressions.
+  final String? condition;
+
+  /// Disable this specific rule. It will no longer be evaluated by this load
+  /// balancer.
+  final bool? disabled;
+
+  /// A collection of fields used to directly respond to the client instead of
+  /// routing to a pool. When supplied on a rule, that rule stops further rule
+  /// evaluation.
+  final FixedResponse? fixedResponse;
+
+  /// Name of this rule. Only used for human readability.
+  final String? name;
+
+  /// A collection of overrides to apply when this rule's condition (or a pool
+  /// set's `match`) is true. All fields are optional.
+  final RuleOverrides? overrides;
+
+  /// The order in which rules should be executed in relation to each other. Lower
+  /// values are executed first. Values do not need to be sequential. If no value
+  /// is provided for any rule the array order of the rules field will be used to
+  /// assign a priority.
+  final int? priority;
+
+  /// If this rule's condition is true, this causes rule evaluation to stop after
+  /// processing this rule.
+  final bool? terminates;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'condition',
+    'disabled',
+    'fixed_response',
+    'name',
+    'overrides',
+    'priority',
+    'terminates',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (condition != null) 'condition': condition!,
+    if (disabled != null) 'disabled': disabled!,
+    if (fixedResponse != null) 'fixed_response': fixedResponse!.toJson(),
+    if (name != null) 'name': name!,
+    if (overrides != null) 'overrides': overrides!.toJson(),
+    if (priority != null) 'priority': priority!,
+    if (terminates != null) 'terminates': terminates!,
+  };
+
+  LoadBalancerRulesItem copyWith({
+    String? condition,
+    bool? disabled,
+    FixedResponse? fixedResponse,
+    String? name,
+    RuleOverrides? overrides,
+    int? priority,
+    bool? terminates,
+    Map<String, Object?>? extra,
+  }) => LoadBalancerRulesItem(
+    condition: condition ?? this.condition,
+    disabled: disabled ?? this.disabled,
+    fixedResponse: fixedResponse ?? this.fixedResponse,
+    name: name ?? this.name,
+    overrides: overrides ?? this.overrides,
+    priority: priority ?? this.priority,
+    terminates: terminates ?? this.terminates,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Configures load shedding policies and percentages for the pool.
+class LoadShedding {
+  const LoadShedding({
+    this.defaultPercent,
+    this.defaultPolicy,
+    this.sessionPercent,
+    this.sessionPolicy,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory LoadShedding.fromJson(Map<String, Object?> json) => LoadShedding(
+    defaultPercent: asNum(json['default_percent']),
+    defaultPolicy: asString(json['default_policy']),
+    sessionPercent: asNum(json['session_percent']),
+    sessionPolicy: asString(json['session_policy']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The percent of traffic to shed from the pool, according to the default
+  /// policy. Applies to new sessions and traffic without session affinity.
+  final num? defaultPercent;
+
+  /// The default policy to use when load shedding. A random policy randomly sheds
+  /// a given percent of requests. A hash policy computes a hash over the
+  /// CF-Connecting-IP address and sheds all requests originating from a percent
+  /// of IPs. Allowed values: `random`, `hash`.
+  final String? defaultPolicy;
+
+  /// The percent of existing sessions to shed from the pool, according to the
+  /// session policy.
+  final num? sessionPercent;
+
+  /// Only the hash policy is supported for existing sessions (to avoid
+  /// exponential decay). Allowed values: `hash`.
+  final String? sessionPolicy;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'default_percent',
+    'default_policy',
+    'session_percent',
+    'session_policy',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (defaultPercent != null) 'default_percent': defaultPercent!,
+    if (defaultPolicy != null) 'default_policy': defaultPolicy!,
+    if (sessionPercent != null) 'session_percent': sessionPercent!,
+    if (sessionPolicy != null) 'session_policy': sessionPolicy!,
+  };
+
+  LoadShedding copyWith({
+    num? defaultPercent,
+    String? defaultPolicy,
+    num? sessionPercent,
+    String? sessionPolicy,
+    Map<String, Object?>? extra,
+  }) => LoadShedding(
+    defaultPercent: defaultPercent ?? this.defaultPercent,
+    defaultPolicy: defaultPolicy ?? this.defaultPolicy,
+    sessionPercent: sessionPercent ?? this.sessionPercent,
+    sessionPolicy: sessionPolicy ?? this.sessionPolicy,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Controls location-based steering for non-proxied requests. See
+/// `steering_policy` to learn how steering is affected.
+class LocationStrategy {
+  const LocationStrategy({
+    this.mode,
+    this.preferEcs,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory LocationStrategy.fromJson(Map<String, Object?> json) =>
+      LocationStrategy(
+        mode: asString(json['mode']),
+        preferEcs: asString(json['prefer_ecs']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Determines the authoritative location when ECS is not preferred, does not
+  /// exist in the request, or its GeoIP lookup is unsuccessful. - `"pop"`: Use
+  /// the Cloudflare PoP location. - `"resolver_ip"`: Use the DNS resolver GeoIP
+  /// location. If the GeoIP lookup is unsuccessful, use the Cloudflare PoP
+  /// location. Allowed values: `pop`, `resolver_ip`.
+  final String? mode;
+
+  /// Whether the EDNS Client Subnet (ECS) GeoIP should be preferred as the
+  /// authoritative location. - `"always"`: Always prefer ECS. - `"never"`: Never
+  /// prefer ECS. - `"proximity"`: Prefer ECS only when
+  /// `steering_policy="proximity"`. - `"geo"`: Prefer ECS only when
+  /// `steering_policy="geo"`. Allowed values: `always`, `never`, `proximity`,
+  /// `geo`.
+  final String? preferEcs;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'mode', 'prefer_ecs'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (mode != null) 'mode': mode!,
+    if (preferEcs != null) 'prefer_ecs': preferEcs!,
+  };
+
+  LocationStrategy copyWith({
+    String? mode,
+    String? preferEcs,
+    Map<String, Object?>? extra,
+  }) => LocationStrategy(
+    mode: mode ?? this.mode,
+    preferEcs: preferEcs ?? this.preferEcs,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Determines which requests a pool set applies to. Set `topology` to match by
+/// location or `default: true` to match all requests; the two are mutually
+/// exclusive. A pool set with no `match` matches all requests.
+class Match {
+  const Match({
+    this.default_,
+    this.topology,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Match.fromJson(Map<String, Object?> json) => Match(
+    default_: asBool(json['default']),
+    topology: asModel(json['topology'], TopologyMatch.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// When true, matches every request. Cannot be combined with `topology`.
+  final bool? default_;
+
+  /// Matches requests by location. Set any combination of `pops`, `countries`,
+  /// and `regions` (at least one is required); a request matches when its value
+  /// appears in any populated list (e.g. `regions: ["WNAM"]` with `countries:
+  /// ["US"]` matches a request in either WNAM or the US).
+  final TopologyMatch? topology;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'default', 'topology'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (default_ != null) 'default': default_!,
+    if (topology != null) 'topology': topology!.toJson(),
+  };
+
+  Match copyWith({
+    bool? default_,
+    TopologyMatch? topology,
+    Map<String, Object?>? extra,
+  }) => Match(
+    default_: default_ ?? this.default_,
+    topology: topology ?? this.topology,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// List of IDs that will be used when dispatching a notification. IDs for email
+/// type will be the email address.
+class Mechanisms {
+  const Mechanisms({
+    this.email,
+    this.pagerduty,
+    this.webhooks,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Mechanisms.fromJson(Map<String, Object?> json) => Mechanisms(
+    email: asModelList(json['email'], MechanismsEmailItem.fromJson),
+    pagerduty: asModelList(json['pagerduty'], MechanismsPagerdutyItem.fromJson),
+    webhooks: asModelList(json['webhooks'], MechanismsWebhooksItem.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  final List<MechanismsEmailItem>? email;
+  final List<MechanismsPagerdutyItem>? pagerduty;
+  final List<MechanismsWebhooksItem>? webhooks;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'email', 'pagerduty', 'webhooks'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (email != null) 'email': email!.map((e) => e.toJson()).toList(),
+    if (pagerduty != null)
+      'pagerduty': pagerduty!.map((e) => e.toJson()).toList(),
+    if (webhooks != null) 'webhooks': webhooks!.map((e) => e.toJson()).toList(),
+  };
+
+  Mechanisms copyWith({
+    List<MechanismsEmailItem>? email,
+    List<MechanismsPagerdutyItem>? pagerduty,
+    List<MechanismsWebhooksItem>? webhooks,
+    Map<String, Object?>? extra,
+  }) => Mechanisms(
+    email: email ?? this.email,
+    pagerduty: pagerduty ?? this.pagerduty,
+    webhooks: webhooks ?? this.webhooks,
+    extra: extra ?? this.extra,
+  );
+}
+
+class MechanismsEmailItem {
+  const MechanismsEmailItem({this.id, this.extra = const <String, Object?>{}});
+
+  factory MechanismsEmailItem.fromJson(Map<String, Object?> json) =>
+      MechanismsEmailItem(
+        id: asString(json['id']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The email address
+  final String? id;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'id'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (id != null) 'id': id!,
+  };
+
+  MechanismsEmailItem copyWith({String? id, Map<String, Object?>? extra}) =>
+      MechanismsEmailItem(id: id ?? this.id, extra: extra ?? this.extra);
+}
+
+class MechanismsPagerdutyItem {
+  const MechanismsPagerdutyItem({
+    this.id,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory MechanismsPagerdutyItem.fromJson(Map<String, Object?> json) =>
+      MechanismsPagerdutyItem(
+        id: asString(json['id']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// UUID
+  final String? id;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'id'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (id != null) 'id': id!,
+  };
+
+  MechanismsPagerdutyItem copyWith({String? id, Map<String, Object?>? extra}) =>
+      MechanismsPagerdutyItem(id: id ?? this.id, extra: extra ?? this.extra);
+}
+
+class MechanismsWebhooksItem {
+  const MechanismsWebhooksItem({
+    this.id,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory MechanismsWebhooksItem.fromJson(Map<String, Object?> json) =>
+      MechanismsWebhooksItem(
+        id: asString(json['id']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// UUID
+  final String? id;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'id'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (id != null) 'id': id!,
+  };
+
+  MechanismsWebhooksItem copyWith({String? id, Map<String, Object?>? extra}) =>
+      MechanismsWebhooksItem(id: id ?? this.id, extra: extra ?? this.extra);
 }
 
 /// Configures multi-factor authentication (MFA) settings.
@@ -5354,6 +7814,219 @@ class MigrationStepTransferredClassesItem {
   );
 }
 
+class Monitor {
+  const Monitor({
+    this.allowInsecure,
+    this.consecutiveDown,
+    this.consecutiveUp,
+    this.description,
+    this.expectedBody,
+    this.expectedCodes,
+    this.followRedirects,
+    this.header,
+    this.interval,
+    this.method,
+    this.path,
+    this.port,
+    this.probeZone,
+    this.retries,
+    this.timeout,
+    this.type_,
+    this.createdOn,
+    this.id,
+    this.modifiedOn,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Monitor.fromJson(Map<String, Object?> json) => Monitor(
+    allowInsecure: asBool(json['allow_insecure']),
+    consecutiveDown: asInt(json['consecutive_down']),
+    consecutiveUp: asInt(json['consecutive_up']),
+    description: asString(json['description']),
+    expectedBody: asString(json['expected_body']),
+    expectedCodes: asString(json['expected_codes']),
+    followRedirects: asBool(json['follow_redirects']),
+    header: asMap(json['header']),
+    interval: asInt(json['interval']),
+    method: asString(json['method']),
+    path: asString(json['path']),
+    port: asInt(json['port']),
+    probeZone: asString(json['probe_zone']),
+    retries: asInt(json['retries']),
+    timeout: asInt(json['timeout']),
+    type_: asString(json['type']),
+    createdOn: asString(json['created_on']),
+    id: asString(json['id']),
+    modifiedOn: asString(json['modified_on']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Do not validate the certificate when monitor use HTTPS. This parameter is
+  /// currently only valid for HTTP and HTTPS monitors.
+  final bool? allowInsecure;
+
+  /// To be marked unhealthy the monitored origin must fail this healthcheck N
+  /// consecutive times.
+  final int? consecutiveDown;
+
+  /// To be marked healthy the monitored origin must pass this healthcheck N
+  /// consecutive times.
+  final int? consecutiveUp;
+
+  /// Object description.
+  final String? description;
+
+  /// A case-insensitive sub-string to look for in the response body. If this
+  /// string is not found, the origin will be marked as unhealthy. This parameter
+  /// is only valid for HTTP and HTTPS monitors.
+  final String? expectedBody;
+
+  /// The expected HTTP response code or code range of the health check. This
+  /// parameter is only valid for HTTP and HTTPS monitors.
+  final String? expectedCodes;
+
+  /// Follow redirects if returned by the origin. This parameter is only valid for
+  /// HTTP and HTTPS monitors.
+  final bool? followRedirects;
+
+  /// The HTTP request headers to send in the health check. It is recommended you
+  /// set a Host header by default. The User-Agent header cannot be overridden.
+  /// This parameter is only valid for HTTP and HTTPS monitors.
+  final Map<String, Object?>? header;
+
+  /// The interval between each health check. Shorter intervals may improve
+  /// failover time, but will increase load on the origins as we check from
+  /// multiple locations.
+  final int? interval;
+
+  /// The method to use for the health check. This defaults to 'GET' for
+  /// HTTP/HTTPS based checks and 'connection_established' for TCP based health
+  /// checks.
+  final String? method;
+
+  /// The endpoint path you want to conduct a health check against. This parameter
+  /// is only valid for HTTP and HTTPS monitors.
+  final String? path;
+
+  /// The port number to connect to for the health check. Required for TCP, UDP,
+  /// and SMTP checks. HTTP and HTTPS checks should only define the port when
+  /// using a non-standard port (HTTP: default 80, HTTPS: default 443).
+  final int? port;
+
+  /// Assign this monitor to emulate the specified zone while probing. This
+  /// parameter is only valid for HTTP and HTTPS monitors.
+  final String? probeZone;
+
+  /// The number of retries to attempt in case of a timeout before marking the
+  /// origin as unhealthy. Retries are attempted immediately.
+  final int? retries;
+
+  /// The timeout (in seconds) before marking the health check as failed.
+  final int? timeout;
+
+  /// The protocol to use for the health check. Currently supported protocols are
+  /// 'HTTP','HTTPS', 'TCP', 'ICMP-PING', 'UDP-ICMP', and 'SMTP'. Allowed values:
+  /// `http`, `https`, `tcp`, `udp_icmp`, `icmp_ping`, `smtp`.
+  final String? type_;
+  final String? createdOn;
+  final String? id;
+  final String? modifiedOn;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'allow_insecure',
+    'consecutive_down',
+    'consecutive_up',
+    'description',
+    'expected_body',
+    'expected_codes',
+    'follow_redirects',
+    'header',
+    'interval',
+    'method',
+    'path',
+    'port',
+    'probe_zone',
+    'retries',
+    'timeout',
+    'type',
+    'created_on',
+    'id',
+    'modified_on',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (allowInsecure != null) 'allow_insecure': allowInsecure!,
+    if (consecutiveDown != null) 'consecutive_down': consecutiveDown!,
+    if (consecutiveUp != null) 'consecutive_up': consecutiveUp!,
+    if (description != null) 'description': description!,
+    if (expectedBody != null) 'expected_body': expectedBody!,
+    if (expectedCodes != null) 'expected_codes': expectedCodes!,
+    if (followRedirects != null) 'follow_redirects': followRedirects!,
+    if (header != null) 'header': header!,
+    if (interval != null) 'interval': interval!,
+    if (method != null) 'method': method!,
+    if (path != null) 'path': path!,
+    if (port != null) 'port': port!,
+    if (probeZone != null) 'probe_zone': probeZone!,
+    if (retries != null) 'retries': retries!,
+    if (timeout != null) 'timeout': timeout!,
+    if (type_ != null) 'type': type_!,
+    if (createdOn != null) 'created_on': createdOn!,
+    if (id != null) 'id': id!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+  };
+
+  Monitor copyWith({
+    bool? allowInsecure,
+    int? consecutiveDown,
+    int? consecutiveUp,
+    String? description,
+    String? expectedBody,
+    String? expectedCodes,
+    bool? followRedirects,
+    Map<String, Object?>? header,
+    int? interval,
+    String? method,
+    String? path,
+    int? port,
+    String? probeZone,
+    int? retries,
+    int? timeout,
+    String? type_,
+    String? createdOn,
+    String? id,
+    String? modifiedOn,
+    Map<String, Object?>? extra,
+  }) => Monitor(
+    allowInsecure: allowInsecure ?? this.allowInsecure,
+    consecutiveDown: consecutiveDown ?? this.consecutiveDown,
+    consecutiveUp: consecutiveUp ?? this.consecutiveUp,
+    description: description ?? this.description,
+    expectedBody: expectedBody ?? this.expectedBody,
+    expectedCodes: expectedCodes ?? this.expectedCodes,
+    followRedirects: followRedirects ?? this.followRedirects,
+    header: header ?? this.header,
+    interval: interval ?? this.interval,
+    method: method ?? this.method,
+    path: path ?? this.path,
+    port: port ?? this.port,
+    probeZone: probeZone ?? this.probeZone,
+    retries: retries ?? this.retries,
+    timeout: timeout ?? this.timeout,
+    type_: type_ ?? this.type_,
+    createdOn: createdOn ?? this.createdOn,
+    id: id ?? this.id,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    extra: extra ?? this.extra,
+  );
+}
+
 class Namespace {
   const Namespace({
     this.id,
@@ -5408,6 +8081,54 @@ class Namespace {
     id: id ?? this.id,
     supportsUrlEncoding: supportsUrlEncoding ?? this.supportsUrlEncoding,
     title: title ?? this.title,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Filter pool and origin health notifications by resource type or health
+/// status. Use null to reset.
+class NotificationFilter {
+  const NotificationFilter({
+    this.origin,
+    this.pool,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory NotificationFilter.fromJson(Map<String, Object?> json) =>
+      NotificationFilter(
+        origin: asModel(json['origin'], FilterOptions.fromJson),
+        pool: asModel(json['pool'], FilterOptions.fromJson),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Filter options for a particular resource type (pool or origin). Use null to
+  /// reset.
+  final FilterOptions? origin;
+
+  /// Filter options for a particular resource type (pool or origin). Use null to
+  /// reset.
+  final FilterOptions? pool;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'origin', 'pool'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (origin != null) 'origin': origin!.toJson(),
+    if (pool != null) 'pool': pool!.toJson(),
+  };
+
+  NotificationFilter copyWith({
+    FilterOptions? origin,
+    FilterOptions? pool,
+    Map<String, Object?>? extra,
+  }) => NotificationFilter(
+    origin: origin ?? this.origin,
+    pool: pool ?? this.pool,
     extra: extra ?? this.extra,
   );
 }
@@ -5900,6 +8621,574 @@ class Organization {
   );
 }
 
+class Origin {
+  const Origin({
+    this.address,
+    this.disabledAt,
+    this.enabled,
+    this.flattenCname,
+    this.header,
+    this.name,
+    this.port,
+    this.virtualNetworkId,
+    this.weight,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Origin.fromJson(Map<String, Object?> json) => Origin(
+    address: asString(json['address']),
+    disabledAt: asString(json['disabled_at']),
+    enabled: asBool(json['enabled']),
+    flattenCname: asBool(json['flatten_cname']),
+    header: asModel(json['header'], SchemasHeader.fromJson),
+    name: asString(json['name']),
+    port: asInt(json['port']),
+    virtualNetworkId: asString(json['virtual_network_id']),
+    weight: asNum(json['weight']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The IP address (IPv4 or IPv6) of the origin, or its publicly addressable
+  /// hostname. Hostnames entered here should resolve directly to the origin, and
+  /// not be a hostname proxied by Cloudflare. To set an internal/reserved
+  /// address, virtual_network_id must also be set.
+  final String? address;
+
+  /// This field shows up only if the origin is disabled. This field is set with
+  /// the time the origin was disabled.
+  final String? disabledAt;
+
+  /// Whether to enable (the default) this origin within the pool. Disabled
+  /// origins will not receive traffic and are excluded from health checks. The
+  /// origin will only be disabled for the current pool.
+  final bool? enabled;
+
+  /// Whether to flatten CNAME records for this origin, resolving them to A/AAAA
+  /// records before returning to the client. When true (the default), the
+  /// director resolves CNAME addresses to their underlying A/AAAA records. When
+  /// false, the origin address is returned as a raw CNAME record without
+  /// resolution. This setting mirrors the DNS API record flatten_cname setting.
+  final bool? flattenCname;
+
+  /// The request header is used to pass additional information with an HTTP
+  /// request. Currently supported header is 'Host'.
+  final SchemasHeader? header;
+
+  /// A human-identifiable name for the origin.
+  final String? name;
+
+  /// The port for upstream connections. A value of 0 means the default port for
+  /// the protocol will be used.
+  final int? port;
+
+  /// The virtual network subnet ID the origin belongs in. Virtual network must
+  /// also belong to the account.
+  final String? virtualNetworkId;
+
+  /// The weight of this origin relative to other origins in the pool. Based on
+  /// the configured weight the total traffic is distributed among origins within
+  /// the pool. - `origin_steering.policy="least_outstanding_requests"`: Use
+  /// weight to scale the origin's outstanding requests. -
+  /// `origin_steering.policy="least_connections"`: Use weight to scale the
+  /// origin's open connections.
+  final num? weight;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'address',
+    'disabled_at',
+    'enabled',
+    'flatten_cname',
+    'header',
+    'name',
+    'port',
+    'virtual_network_id',
+    'weight',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (address != null) 'address': address!,
+    if (disabledAt != null) 'disabled_at': disabledAt!,
+    if (enabled != null) 'enabled': enabled!,
+    if (flattenCname != null) 'flatten_cname': flattenCname!,
+    if (header != null) 'header': header!.toJson(),
+    if (name != null) 'name': name!,
+    if (port != null) 'port': port!,
+    if (virtualNetworkId != null) 'virtual_network_id': virtualNetworkId!,
+    if (weight != null) 'weight': weight!,
+  };
+
+  Origin copyWith({
+    String? address,
+    String? disabledAt,
+    bool? enabled,
+    bool? flattenCname,
+    SchemasHeader? header,
+    String? name,
+    int? port,
+    String? virtualNetworkId,
+    num? weight,
+    Map<String, Object?>? extra,
+  }) => Origin(
+    address: address ?? this.address,
+    disabledAt: disabledAt ?? this.disabledAt,
+    enabled: enabled ?? this.enabled,
+    flattenCname: flattenCname ?? this.flattenCname,
+    header: header ?? this.header,
+    name: name ?? this.name,
+    port: port ?? this.port,
+    virtualNetworkId: virtualNetworkId ?? this.virtualNetworkId,
+    weight: weight ?? this.weight,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Configures origin steering for the pool. Controls how origins are selected
+/// for new sessions and traffic without session affinity.
+class OriginSteering {
+  const OriginSteering({this.policy, this.extra = const <String, Object?>{}});
+
+  factory OriginSteering.fromJson(Map<String, Object?> json) => OriginSteering(
+    policy: asString(json['policy']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The type of origin steering policy to use. - `"random"`: Select an origin
+  /// randomly. - `"hash"`: Select an origin by computing a hash over the
+  /// CF-Connecting-IP address. - `"least_outstanding_requests"`: Select an origin
+  /// by taking into consideration origin weights, as well as each origin's number
+  /// of outstanding requests. Origins with more pending requests are weighted
+  /// proportionately less relative to others. - `"least_connections"`: Select an
+  /// origin by taking into consideration origin weights, as well as each origin's
+  /// number of open connections. Origins with more open connections are weighted
+  /// proportionately less relative to others. Supported for HTTP/1 and HTTP/2
+  /// connections. Allowed values: `random`, `hash`, `least_outstanding_requests`,
+  /// `least_connections`.
+  final String? policy;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'policy'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (policy != null) 'policy': policy!,
+  };
+
+  OriginSteering copyWith({String? policy, Map<String, Object?>? extra}) =>
+      OriginSteering(policy: policy ?? this.policy, extra: extra ?? this.extra);
+}
+
+/// This is a record which can be placed to activate a hostname.
+class OwnershipVerification {
+  const OwnershipVerification({
+    this.name,
+    this.type_,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory OwnershipVerification.fromJson(Map<String, Object?> json) =>
+      OwnershipVerification(
+        name: asString(json['name']),
+        type_: asString(json['type']),
+        value: asString(json['value']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// DNS Name for record.
+  final String? name;
+
+  /// DNS Record type. Allowed values: `txt`.
+  final String? type_;
+
+  /// Content for the record.
+  final String? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'name', 'type', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (name != null) 'name': name!,
+    if (type_ != null) 'type': type_!,
+    if (value != null) 'value': value!,
+  };
+
+  OwnershipVerification copyWith({
+    String? name,
+    String? type_,
+    String? value,
+    Map<String, Object?>? extra,
+  }) => OwnershipVerification(
+    name: name ?? this.name,
+    type_: type_ ?? this.type_,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// This presents the token to be served by the given http url to activate a
+/// hostname.
+class OwnershipVerificationHttp {
+  const OwnershipVerificationHttp({
+    this.httpBody,
+    this.httpUrl,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory OwnershipVerificationHttp.fromJson(Map<String, Object?> json) =>
+      OwnershipVerificationHttp(
+        httpBody: asString(json['http_body']),
+        httpUrl: asString(json['http_url']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Token to be served.
+  final String? httpBody;
+
+  /// The HTTP URL that will be checked during custom hostname verification and
+  /// where the customer should host the token.
+  final String? httpUrl;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'http_body', 'http_url'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (httpBody != null) 'http_body': httpBody!,
+    if (httpUrl != null) 'http_url': httpUrl!,
+  };
+
+  OwnershipVerificationHttp copyWith({
+    String? httpBody,
+    String? httpUrl,
+    Map<String, Object?>? extra,
+  }) => OwnershipVerificationHttp(
+    httpBody: httpBody ?? this.httpBody,
+    httpUrl: httpUrl ?? this.httpUrl,
+    extra: extra ?? this.extra,
+  );
+}
+
+class PageRule {
+  const PageRule({
+    this.actions,
+    this.createdOn,
+    this.id,
+    this.modifiedOn,
+    this.priority,
+    this.status,
+    this.targets,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PageRule.fromJson(Map<String, Object?> json) => PageRule(
+    actions: asModelList(json['actions'], PageRuleActionsItem.fromJson),
+    createdOn: asString(json['created_on']),
+    id: asString(json['id']),
+    modifiedOn: asString(json['modified_on']),
+    priority: asInt(json['priority']),
+    status: asString(json['status']),
+    targets: asModelList(json['targets'], Target.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The set of actions to perform if the targets of this rule match the request.
+  /// Actions can redirect to another URL or override settings, but not both.
+  final List<PageRuleActionsItem>? actions;
+
+  /// The timestamp of when the Page Rule was created.
+  final String? createdOn;
+
+  /// Identifier.
+  final String? id;
+
+  /// The timestamp of when the Page Rule was last modified.
+  final String? modifiedOn;
+
+  /// The priority of the rule, used to define which Page Rule is processed over
+  /// another. A higher number indicates a higher priority. For example, if you
+  /// have a catch-all Page Rule (rule A: `/images/*`) but want a more specific
+  /// Page Rule to take precedence (rule B: `/images/special/*`), specify a higher
+  /// priority for rule B so it overrides rule A.
+  final int? priority;
+
+  /// The status of the Page Rule. Allowed values: `active`, `disabled`.
+  final String? status;
+
+  /// The rule targets to evaluate on each request.
+  final List<Target>? targets;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'actions',
+    'created_on',
+    'id',
+    'modified_on',
+    'priority',
+    'status',
+    'targets',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (actions != null) 'actions': actions!.map((e) => e.toJson()).toList(),
+    if (createdOn != null) 'created_on': createdOn!,
+    if (id != null) 'id': id!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (priority != null) 'priority': priority!,
+    if (status != null) 'status': status!,
+    if (targets != null) 'targets': targets!.map((e) => e.toJson()).toList(),
+  };
+
+  PageRule copyWith({
+    List<PageRuleActionsItem>? actions,
+    String? createdOn,
+    String? id,
+    String? modifiedOn,
+    int? priority,
+    String? status,
+    List<Target>? targets,
+    Map<String, Object?>? extra,
+  }) => PageRule(
+    actions: actions ?? this.actions,
+    createdOn: createdOn ?? this.createdOn,
+    id: id ?? this.id,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    priority: priority ?? this.priority,
+    status: status ?? this.status,
+    targets: targets ?? this.targets,
+    extra: extra ?? this.extra,
+  );
+}
+
+class PageRuleActionsItem {
+  const PageRuleActionsItem({
+    this.id,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PageRuleActionsItem.fromJson(Map<String, Object?> json) =>
+      PageRuleActionsItem(
+        id: asString(json['id']),
+        value: asString(json['value']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Turn on or off [WAF managed rules (previous version,
+  /// deprecated)](https://developers.cloudflare.com/waf/reference/legacy/old-waf-managed-rules/).
+  /// You cannot enable or disable individual WAF managed rules via Page Rules.
+  /// Allowed values: `waf`.
+  final String? id;
+
+  /// The status of WAF managed rules (previous version). Allowed values: `on`,
+  /// `off`.
+  final String? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'id', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (id != null) 'id': id!,
+    if (value != null) 'value': value!,
+  };
+
+  PageRuleActionsItem copyWith({
+    String? id,
+    String? value,
+    Map<String, Object?>? extra,
+  }) => PageRuleActionsItem(
+    id: id ?? this.id,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
+class PageRulesDeleteAPageRuleResult {
+  const PageRulesDeleteAPageRuleResult({
+    this.id,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PageRulesDeleteAPageRuleResult.fromJson(Map<String, Object?> json) =>
+      PageRulesDeleteAPageRuleResult(
+        id: asString(json['id']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Identifier.
+  final String? id;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'id'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (id != null) 'id': id!,
+  };
+
+  PageRulesDeleteAPageRuleResult copyWith({
+    String? id,
+    Map<String, Object?>? extra,
+  }) => PageRulesDeleteAPageRuleResult(
+    id: id ?? this.id,
+    extra: extra ?? this.extra,
+  );
+}
+
+class PageRulesEditAPageRuleBody {
+  const PageRulesEditAPageRuleBody({
+    this.actions,
+    this.priority,
+    this.status,
+    this.targets,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PageRulesEditAPageRuleBody.fromJson(Map<String, Object?> json) =>
+      PageRulesEditAPageRuleBody(
+        actions: asModelList(
+          json['actions'],
+          PageRulesEditAPageRuleBodyActionsItem.fromJson,
+        ),
+        priority: asInt(json['priority']),
+        status: asString(json['status']),
+        targets: asModelList(json['targets'], Target.fromJson),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The set of actions to perform if the targets of this rule match the request.
+  /// Actions can redirect to another URL or override settings, but not both.
+  final List<PageRulesEditAPageRuleBodyActionsItem>? actions;
+
+  /// The priority of the rule, used to define which Page Rule is processed over
+  /// another. A higher number indicates a higher priority. For example, if you
+  /// have a catch-all Page Rule (rule A: `/images/*`) but want a more specific
+  /// Page Rule to take precedence (rule B: `/images/special/*`), specify a higher
+  /// priority for rule B so it overrides rule A.
+  final int? priority;
+
+  /// The status of the Page Rule. Allowed values: `active`, `disabled`.
+  final String? status;
+
+  /// The rule targets to evaluate on each request.
+  final List<Target>? targets;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'actions',
+    'priority',
+    'status',
+    'targets',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (actions != null) 'actions': actions!.map((e) => e.toJson()).toList(),
+    if (priority != null) 'priority': priority!,
+    if (status != null) 'status': status!,
+    if (targets != null) 'targets': targets!.map((e) => e.toJson()).toList(),
+  };
+
+  PageRulesEditAPageRuleBody copyWith({
+    List<PageRulesEditAPageRuleBodyActionsItem>? actions,
+    int? priority,
+    String? status,
+    List<Target>? targets,
+    Map<String, Object?>? extra,
+  }) => PageRulesEditAPageRuleBody(
+    actions: actions ?? this.actions,
+    priority: priority ?? this.priority,
+    status: status ?? this.status,
+    targets: targets ?? this.targets,
+    extra: extra ?? this.extra,
+  );
+}
+
+class PageRulesEditAPageRuleBodyActionsItem {
+  const PageRulesEditAPageRuleBodyActionsItem({
+    this.id,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PageRulesEditAPageRuleBodyActionsItem.fromJson(
+    Map<String, Object?> json,
+  ) => PageRulesEditAPageRuleBodyActionsItem(
+    id: asString(json['id']),
+    value: asString(json['value']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Turn on or off [WAF managed rules (previous version,
+  /// deprecated)](https://developers.cloudflare.com/waf/reference/legacy/old-waf-managed-rules/).
+  /// You cannot enable or disable individual WAF managed rules via Page Rules.
+  /// Allowed values: `waf`.
+  final String? id;
+
+  /// The status of WAF managed rules (previous version). Allowed values: `on`,
+  /// `off`.
+  final String? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'id', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (id != null) 'id': id!,
+    if (value != null) 'value': value!,
+  };
+
+  PageRulesEditAPageRuleBodyActionsItem copyWith({
+    String? id,
+    String? value,
+    Map<String, Object?>? extra,
+  }) => PageRulesEditAPageRuleBodyActionsItem(
+    id: id ?? this.id,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
 class PermissionGroupsListPermissionGroupsItem {
   const PermissionGroupsListPermissionGroupsItem({
     this.category,
@@ -6112,6 +9401,567 @@ class PlacementTarget {
     region: region ?? this.region,
     hostname: hostname ?? this.hostname,
     host: host ?? this.host,
+    extra: extra ?? this.extra,
+  );
+}
+
+class Policies {
+  const Policies({
+    this.alertInterval,
+    this.alertType,
+    this.created,
+    this.description,
+    this.enabled,
+    this.filters,
+    this.id,
+    this.mechanisms,
+    this.modified,
+    this.name,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Policies.fromJson(Map<String, Object?> json) => Policies(
+    alertInterval: asString(json['alert_interval']),
+    alertType: asString(json['alert_type']),
+    created: asString(json['created']),
+    description: asString(json['description']),
+    enabled: asBool(json['enabled']),
+    filters: asModel(json['filters'], Filters.fromJson),
+    id: asString(json['id']),
+    mechanisms: asModel(json['mechanisms'], Mechanisms.fromJson),
+    modified: asString(json['modified']),
+    name: asString(json['name']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Optional specification of how often to re-alert from the same incident, not
+  /// support on all alert types.
+  final String? alertInterval;
+
+  /// Refers to which event will trigger a Notification dispatch. You can use the
+  /// endpoint to get available alert types which then will give you a list of
+  /// possible values. Allowed values: `abuse_report_alert`,
+  /// `access_custom_certificate_expiration_type`,
+  /// `advanced_ddos_attack_l4_alert`, `advanced_ddos_attack_l7_alert`,
+  /// `advanced_http_alert_error`, `bgp_hijack_notification`,
+  /// `billing_usage_alert`, `block_notification_block_removed`,
+  /// `block_notification_new_block`, `block_notification_review_rejected`,
+  /// `bot_traffic_basic_alert`, `brand_protection_alert`,
+  /// `brand_protection_digest`, `clickhouse_alert_fw_anomaly`,
+  /// `clickhouse_alert_fw_ent_anomaly`, `cloudforce_one_request_notification`,
+  /// `cni_maintenance_notification`, `custom_analytics`,
+  /// `custom_bot_detection_alert`, `custom_ssl_certificate_event_type`,
+  /// `dedicated_ssl_certificate_event_type`, `device_connectivity_anomaly_alert`,
+  /// `dos_attack_l4`, `dos_attack_l7`, `expiring_service_token_alert`,
+  /// `failing_logpush_job_disabled_alert`, `fbm_auto_advertisement`,
+  /// `fbm_dosd_attack`, `fbm_volumetric_attack`,
+  /// `health_check_status_notification`,
+  /// `hostname_aop_custom_certificate_expiration_type`, `http_alert_edge_error`,
+  /// `http_alert_origin_error`, `image_notification`,
+  /// `image_resizing_notification`, `incident_alert`,
+  /// `load_balancing_health_alert`, `load_balancing_pool_enablement_alert`,
+  /// `logo_match_alert`, `magic_tunnel_health_check_event`,
+  /// `magic_wan_tunnel_health`, `maintenance_event_notification`,
+  /// `mtls_certificate_store_certificate_expiration_type`, `pages_event_alert`,
+  /// `radar_notification`, `real_origin_monitoring`,
+  /// `scriptmonitor_alert_new_code_change_detections`,
+  /// `scriptmonitor_alert_new_hosts`, `scriptmonitor_alert_new_malicious_hosts`,
+  /// `scriptmonitor_alert_new_malicious_scripts`,
+  /// `scriptmonitor_alert_new_malicious_url`,
+  /// `scriptmonitor_alert_new_max_length_resource_url`,
+  /// `scriptmonitor_alert_new_resources`, `secondary_dns_all_primaries_failing`,
+  /// `secondary_dns_primaries_failing`, `secondary_dns_warning`,
+  /// `secondary_dns_zone_successfully_updated`,
+  /// `secondary_dns_zone_validation_warning`, `security_insights_alert`,
+  /// `sentinel_alert`, `stream_live_notifications`,
+  /// `synthetic_test_latency_alert`, `synthetic_test_low_availability_alert`,
+  /// `traffic_anomalies_alert`, `tunnel_health_event`, `tunnel_update_event`,
+  /// `universal_ssl_event_type`, `web_analytics_metrics_update`,
+  /// `zone_aop_custom_certificate_expiration_type`.
+  final String? alertType;
+  final String? created;
+
+  /// Optional description for the Notification policy.
+  final String? description;
+
+  /// Whether or not the Notification policy is enabled.
+  final bool? enabled;
+
+  /// Optional filters that allow you to be alerted only on a subset of events for
+  /// that alert type based on some criteria. This is only available for select
+  /// alert types. See alert type documentation for more details.
+  final Filters? filters;
+
+  /// The unique identifier of a notification policy
+  final String? id;
+
+  /// List of IDs that will be used when dispatching a notification. IDs for email
+  /// type will be the email address.
+  final Mechanisms? mechanisms;
+  final String? modified;
+
+  /// Name of the policy.
+  final String? name;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'alert_interval',
+    'alert_type',
+    'created',
+    'description',
+    'enabled',
+    'filters',
+    'id',
+    'mechanisms',
+    'modified',
+    'name',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (alertInterval != null) 'alert_interval': alertInterval!,
+    if (alertType != null) 'alert_type': alertType!,
+    if (created != null) 'created': created!,
+    if (description != null) 'description': description!,
+    if (enabled != null) 'enabled': enabled!,
+    if (filters != null) 'filters': filters!.toJson(),
+    if (id != null) 'id': id!,
+    if (mechanisms != null) 'mechanisms': mechanisms!.toJson(),
+    if (modified != null) 'modified': modified!,
+    if (name != null) 'name': name!,
+  };
+
+  Policies copyWith({
+    String? alertInterval,
+    String? alertType,
+    String? created,
+    String? description,
+    bool? enabled,
+    Filters? filters,
+    String? id,
+    Mechanisms? mechanisms,
+    String? modified,
+    String? name,
+    Map<String, Object?>? extra,
+  }) => Policies(
+    alertInterval: alertInterval ?? this.alertInterval,
+    alertType: alertType ?? this.alertType,
+    created: created ?? this.created,
+    description: description ?? this.description,
+    enabled: enabled ?? this.enabled,
+    filters: filters ?? this.filters,
+    id: id ?? this.id,
+    mechanisms: mechanisms ?? this.mechanisms,
+    modified: modified ?? this.modified,
+    name: name ?? this.name,
+    extra: extra ?? this.extra,
+  );
+}
+
+class Pool {
+  const Pool({
+    this.checkRegions,
+    this.createdOn,
+    this.description,
+    this.disabledAt,
+    this.enabled,
+    this.id,
+    this.latitude,
+    this.loadShedding,
+    this.longitude,
+    this.minimumOrigins,
+    this.modifiedOn,
+    this.monitor,
+    this.monitorGroup,
+    this.name,
+    this.networks,
+    this.notificationEmail,
+    this.notificationFilter,
+    this.originSteering,
+    this.origins,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Pool.fromJson(Map<String, Object?> json) => Pool(
+    checkRegions: asPrimitiveList<String>(json['check_regions'], asString),
+    createdOn: asString(json['created_on']),
+    description: asString(json['description']),
+    disabledAt: asString(json['disabled_at']),
+    enabled: asBool(json['enabled']),
+    id: asString(json['id']),
+    latitude: asNum(json['latitude']),
+    loadShedding: asModel(json['load_shedding'], LoadShedding.fromJson),
+    longitude: asNum(json['longitude']),
+    minimumOrigins: asInt(json['minimum_origins']),
+    modifiedOn: asString(json['modified_on']),
+    monitor: asString(json['monitor']),
+    monitorGroup: asString(json['monitor_group']),
+    name: asString(json['name']),
+    networks: asPrimitiveList<String>(json['networks'], asString),
+    notificationEmail: asString(json['notification_email']),
+    notificationFilter: asModel(
+      json['notification_filter'],
+      NotificationFilter.fromJson,
+    ),
+    originSteering: asModel(json['origin_steering'], OriginSteering.fromJson),
+    origins: asModelList(json['origins'], Origin.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// A list of regions from which to run health checks. Null means every
+  /// Cloudflare data center.
+  final List<String>? checkRegions;
+  final String? createdOn;
+
+  /// A human-readable description of the pool.
+  final String? description;
+
+  /// This field shows up only if the pool is disabled. This field is set with the
+  /// time the pool was disabled at.
+  final String? disabledAt;
+
+  /// Whether to enable (the default) or disable this pool. Disabled pools will
+  /// not receive traffic and are excluded from health checks. Disabling a pool
+  /// will cause any load balancers using it to failover to the next pool (if
+  /// any).
+  final bool? enabled;
+  final String? id;
+
+  /// The latitude of the data center containing the origins used in this pool in
+  /// decimal degrees. If this is set, longitude must also be set.
+  final num? latitude;
+
+  /// Configures load shedding policies and percentages for the pool.
+  final LoadShedding? loadShedding;
+
+  /// The longitude of the data center containing the origins used in this pool in
+  /// decimal degrees. If this is set, latitude must also be set.
+  final num? longitude;
+
+  /// The minimum number of origins that must be healthy for this pool to serve
+  /// traffic. If the number of healthy origins falls below this number, the pool
+  /// will be marked unhealthy and will failover to the next available pool.
+  final int? minimumOrigins;
+  final String? modifiedOn;
+
+  /// The ID of the Monitor to use for checking the health of origins within this
+  /// pool.
+  final String? monitor;
+
+  /// The ID of the Monitor Group to use for checking the health of origins within
+  /// this pool.
+  final String? monitorGroup;
+
+  /// A short name (tag) for the pool. Only alphanumeric characters, hyphens, and
+  /// underscores are allowed.
+  final String? name;
+
+  /// List of networks where Load Balancer or Pool is enabled.
+  final List<String>? networks;
+
+  /// This field is now deprecated. It has been moved to Cloudflare's Centralized
+  /// Notification service
+  /// https://developers.cloudflare.com/fundamentals/notifications/. The email
+  /// address to send health status notifications to. This can be an individual
+  /// mailbox or a mailing list. Multiple emails can be supplied as a comma
+  /// delimited list.
+  final String? notificationEmail;
+
+  /// Filter pool and origin health notifications by resource type or health
+  /// status. Use null to reset.
+  final NotificationFilter? notificationFilter;
+
+  /// Configures origin steering for the pool. Controls how origins are selected
+  /// for new sessions and traffic without session affinity.
+  final OriginSteering? originSteering;
+
+  /// The list of origins within this pool. Traffic directed at this pool is
+  /// balanced across all currently healthy origins, provided the pool itself is
+  /// healthy.
+  final List<Origin>? origins;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'check_regions',
+    'created_on',
+    'description',
+    'disabled_at',
+    'enabled',
+    'id',
+    'latitude',
+    'load_shedding',
+    'longitude',
+    'minimum_origins',
+    'modified_on',
+    'monitor',
+    'monitor_group',
+    'name',
+    'networks',
+    'notification_email',
+    'notification_filter',
+    'origin_steering',
+    'origins',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (checkRegions != null) 'check_regions': checkRegions!,
+    if (createdOn != null) 'created_on': createdOn!,
+    if (description != null) 'description': description!,
+    if (disabledAt != null) 'disabled_at': disabledAt!,
+    if (enabled != null) 'enabled': enabled!,
+    if (id != null) 'id': id!,
+    if (latitude != null) 'latitude': latitude!,
+    if (loadShedding != null) 'load_shedding': loadShedding!.toJson(),
+    if (longitude != null) 'longitude': longitude!,
+    if (minimumOrigins != null) 'minimum_origins': minimumOrigins!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (monitor != null) 'monitor': monitor!,
+    if (monitorGroup != null) 'monitor_group': monitorGroup!,
+    if (name != null) 'name': name!,
+    if (networks != null) 'networks': networks!,
+    if (notificationEmail != null) 'notification_email': notificationEmail!,
+    if (notificationFilter != null)
+      'notification_filter': notificationFilter!.toJson(),
+    if (originSteering != null) 'origin_steering': originSteering!.toJson(),
+    if (origins != null) 'origins': origins!.map((e) => e.toJson()).toList(),
+  };
+
+  Pool copyWith({
+    List<String>? checkRegions,
+    String? createdOn,
+    String? description,
+    String? disabledAt,
+    bool? enabled,
+    String? id,
+    num? latitude,
+    LoadShedding? loadShedding,
+    num? longitude,
+    int? minimumOrigins,
+    String? modifiedOn,
+    String? monitor,
+    String? monitorGroup,
+    String? name,
+    List<String>? networks,
+    String? notificationEmail,
+    NotificationFilter? notificationFilter,
+    OriginSteering? originSteering,
+    List<Origin>? origins,
+    Map<String, Object?>? extra,
+  }) => Pool(
+    checkRegions: checkRegions ?? this.checkRegions,
+    createdOn: createdOn ?? this.createdOn,
+    description: description ?? this.description,
+    disabledAt: disabledAt ?? this.disabledAt,
+    enabled: enabled ?? this.enabled,
+    id: id ?? this.id,
+    latitude: latitude ?? this.latitude,
+    loadShedding: loadShedding ?? this.loadShedding,
+    longitude: longitude ?? this.longitude,
+    minimumOrigins: minimumOrigins ?? this.minimumOrigins,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    monitor: monitor ?? this.monitor,
+    monitorGroup: monitorGroup ?? this.monitorGroup,
+    name: name ?? this.name,
+    networks: networks ?? this.networks,
+    notificationEmail: notificationEmail ?? this.notificationEmail,
+    notificationFilter: notificationFilter ?? this.notificationFilter,
+    originSteering: originSteering ?? this.originSteering,
+    origins: origins ?? this.origins,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// One entry in a load balancer's `pool_sets`. Pool sets are evaluated in array
+/// order; the first whose `match` succeeds applies its `overrides` (or
+/// `fixed_response`), and evaluation stops there.
+class PoolSet {
+  const PoolSet({
+    this.disabled,
+    this.fixedResponse,
+    this.match,
+    this.name,
+    this.overrides,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PoolSet.fromJson(Map<String, Object?> json) => PoolSet(
+    disabled: asBool(json['disabled']),
+    fixedResponse: asModel(json['fixed_response'], FixedResponse.fromJson),
+    match: asModel(json['match'], Match.fromJson),
+    name: asString(json['name']),
+    overrides: asModel(json['overrides'], PoolSetOverrides.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Disable this specific pool set. It will no longer be evaluated.
+  final bool? disabled;
+
+  /// A collection of fields used to directly respond to the client instead of
+  /// routing to a pool. When supplied on a rule, that rule stops further rule
+  /// evaluation.
+  final FixedResponse? fixedResponse;
+
+  /// Determines which requests a pool set applies to. Set `topology` to match by
+  /// location or `default: true` to match all requests; the two are mutually
+  /// exclusive. A pool set with no `match` matches all requests.
+  final Match? match;
+
+  /// A human-readable name for this pool set.
+  final String? name;
+
+  /// The behavior a pool set applies when its `match` succeeds. A strict subset
+  /// of a rule's `overrides`: a pool set replaces the topology wholesale with a
+  /// flat pool list (`pools`), so only the declarative pool-routing fields plus
+  /// `fallback_pool` and `steering_policy` are settable. All fields are optional.
+  final PoolSetOverrides? overrides;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'disabled',
+    'fixed_response',
+    'match',
+    'name',
+    'overrides',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (disabled != null) 'disabled': disabled!,
+    if (fixedResponse != null) 'fixed_response': fixedResponse!.toJson(),
+    if (match != null) 'match': match!.toJson(),
+    if (name != null) 'name': name!,
+    if (overrides != null) 'overrides': overrides!.toJson(),
+  };
+
+  PoolSet copyWith({
+    bool? disabled,
+    FixedResponse? fixedResponse,
+    Match? match,
+    String? name,
+    PoolSetOverrides? overrides,
+    Map<String, Object?>? extra,
+  }) => PoolSet(
+    disabled: disabled ?? this.disabled,
+    fixedResponse: fixedResponse ?? this.fixedResponse,
+    match: match ?? this.match,
+    name: name ?? this.name,
+    overrides: overrides ?? this.overrides,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// The behavior a pool set applies when its `match` succeeds. A strict subset
+/// of a rule's `overrides`: a pool set replaces the topology wholesale with a
+/// flat pool list (`pools`), so only the declarative pool-routing fields plus
+/// `fallback_pool` and `steering_policy` are settable. All fields are optional.
+class PoolSetOverrides {
+  const PoolSetOverrides({
+    this.fallbackPool,
+    this.poolDefaultWeight,
+    this.poolWeights,
+    this.pools,
+    this.steeringPolicy,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory PoolSetOverrides.fromJson(Map<String, Object?> json) =>
+      PoolSetOverrides(
+        fallbackPool: asString(json['fallback_pool']),
+        poolDefaultWeight: asNum(json['pool_default_weight']),
+        poolWeights: asMap(json['pool_weights']),
+        pools: asPrimitiveList<String>(json['pools'], asString),
+        steeringPolicy: asString(json['steering_policy']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The pool ID to use when all other pools are detected as unhealthy.
+  final String? fallbackPool;
+
+  /// The default weight for pools not listed in `pool_weights`. The declarative
+  /// alternative to `random_steering.default_weight`; mutually exclusive with
+  /// `random_steering`.
+  final num? poolDefaultWeight;
+
+  /// A mapping of pool IDs to custom weights, relative to the other pools. The
+  /// declarative alternative to `random_steering.pool_weights`; mutually
+  /// exclusive with `random_steering`.
+  final Map<String, Object?>? poolWeights;
+
+  /// A flat, ordered list of pool IDs to route the matched audience to. Replaces
+  /// the resolved topology with exactly these pools. Mutually exclusive with
+  /// `fixed_response`.
+  final List<String>? pools;
+
+  /// Steering Policy for this load balancer. - `"off"`: Use `default_pools`. -
+  /// `"geo"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied
+  /// requests, the country for `country_pools` is determined by
+  /// `location_strategy`. - `"random"`: Select a pool randomly. -
+  /// `"dynamic_latency"`: Use round trip time to select the closest pool in
+  /// default_pools (requires pool health checks). - `"proximity"`: Use the pools'
+  /// latitude and longitude to select the closest pool using the Cloudflare PoP
+  /// location for proxied requests or the location determined by
+  /// `location_strategy` for non-proxied requests. -
+  /// `"least_outstanding_requests"`: Select a pool by taking into consideration
+  /// `random_steering` weights, as well as each pool's number of outstanding
+  /// requests. Pools with more pending requests are weighted proportionately less
+  /// relative to others. - `"least_connections"`: Select a pool by taking into
+  /// consideration `random_steering` weights, as well as each pool's number of
+  /// open connections. Pools with more open connections are weighted
+  /// proportionately less relative to others. Supported for HTTP/1 and HTTP/2
+  /// connections. - `""`: Will map to `"geo"` if you use
+  /// `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`. Allowed
+  /// values: `off`, `geo`, `random`, `dynamic_latency`, `proximity`,
+  /// `least_outstanding_requests`, `least_connections`, ``.
+  final String? steeringPolicy;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'fallback_pool',
+    'pool_default_weight',
+    'pool_weights',
+    'pools',
+    'steering_policy',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (fallbackPool != null) 'fallback_pool': fallbackPool!,
+    if (poolDefaultWeight != null) 'pool_default_weight': poolDefaultWeight!,
+    if (poolWeights != null) 'pool_weights': poolWeights!,
+    if (pools != null) 'pools': pools!,
+    if (steeringPolicy != null) 'steering_policy': steeringPolicy!,
+  };
+
+  PoolSetOverrides copyWith({
+    String? fallbackPool,
+    num? poolDefaultWeight,
+    Map<String, Object?>? poolWeights,
+    List<String>? pools,
+    String? steeringPolicy,
+    Map<String, Object?>? extra,
+  }) => PoolSetOverrides(
+    fallbackPool: fallbackPool ?? this.fallbackPool,
+    poolDefaultWeight: poolDefaultWeight ?? this.poolDefaultWeight,
+    poolWeights: poolWeights ?? this.poolWeights,
+    pools: pools ?? this.pools,
+    steeringPolicy: steeringPolicy ?? this.steeringPolicy,
     extra: extra ?? this.extra,
   );
 }
@@ -7880,6 +11730,56 @@ class R2ListBucketsResult {
   );
 }
 
+/// Configures pool weights. - `steering_policy="random"`: A random pool is
+/// selected with probability proportional to pool weights. -
+/// `steering_policy="least_outstanding_requests"`: Use pool weights to scale
+/// each pool's outstanding requests. - `steering_policy="least_connections"`:
+/// Use pool weights to scale each pool's open connections.
+class RandomSteering {
+  const RandomSteering({
+    this.defaultWeight,
+    this.poolWeights,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RandomSteering.fromJson(Map<String, Object?> json) => RandomSteering(
+    defaultWeight: asNum(json['default_weight']),
+    poolWeights: asMap(json['pool_weights']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The default weight for pools in the load balancer that are not specified in
+  /// the pool_weights map.
+  final num? defaultWeight;
+
+  /// A mapping of pool IDs to custom weights. The weight is relative to other
+  /// pools in the load balancer.
+  final Map<String, Object?>? poolWeights;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'default_weight', 'pool_weights'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (defaultWeight != null) 'default_weight': defaultWeight!,
+    if (poolWeights != null) 'pool_weights': poolWeights!,
+  };
+
+  RandomSteering copyWith({
+    num? defaultWeight,
+    Map<String, Object?>? poolWeights,
+    Map<String, Object?>? extra,
+  }) => RandomSteering(
+    defaultWeight: defaultWeight ?? this.defaultWeight,
+    poolWeights: poolWeights ?? this.poolWeights,
+    extra: extra ?? this.extra,
+  );
+}
+
 class ResponseRule {
   const ResponseRule({
     this.action,
@@ -9302,6 +13202,48 @@ class Rule2UserRiskScore {
   );
 }
 
+/// Actions pattern.
+class RuleAction {
+  const RuleAction({
+    this.type_,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RuleAction.fromJson(Map<String, Object?> json) => RuleAction(
+    type_: asString(json['type']),
+    value: asPrimitiveList<String>(json['value'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Type of supported action. Allowed values: `drop`, `forward`, `worker`.
+  final String? type_;
+  final List<String>? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'type', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (type_ != null) 'type': type_!,
+    if (value != null) 'value': value!,
+  };
+
+  RuleAction copyWith({
+    String? type_,
+    List<String>? value,
+    Map<String, Object?>? extra,
+  }) => RuleAction(
+    type_: type_ ?? this.type_,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
 /// Configuration for exposed credential checking.
 class RuleExposedCredentialCheck {
   const RuleExposedCredentialCheck({
@@ -9376,6 +13318,318 @@ class RuleLogging {
 
   RuleLogging copyWith({bool? enabled, Map<String, Object?>? extra}) =>
       RuleLogging(enabled: enabled ?? this.enabled, extra: extra ?? this.extra);
+}
+
+/// Matching pattern to forward your actions.
+class RuleMatcher {
+  const RuleMatcher({
+    this.field,
+    this.type_,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RuleMatcher.fromJson(Map<String, Object?> json) => RuleMatcher(
+    field: asString(json['field']),
+    type_: asString(json['type']),
+    value: asString(json['value']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Field for type matcher. Allowed values: `to`.
+  final String? field;
+
+  /// Type of matcher. Allowed values: `all`, `literal`.
+  final String? type_;
+
+  /// Value for matcher.
+  final String? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'field', 'type', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (field != null) 'field': field!,
+    if (type_ != null) 'type': type_!,
+    if (value != null) 'value': value!,
+  };
+
+  RuleMatcher copyWith({
+    String? field,
+    String? type_,
+    String? value,
+    Map<String, Object?>? extra,
+  }) => RuleMatcher(
+    field: field ?? this.field,
+    type_: type_ ?? this.type_,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// A collection of overrides to apply when this rule's condition (or a pool
+/// set's `match`) is true. All fields are optional.
+class RuleOverrides {
+  const RuleOverrides({
+    this.adaptiveRouting,
+    this.countryPools,
+    this.defaultPools,
+    this.fallbackPool,
+    this.locationStrategy,
+    this.poolDefaultWeight,
+    this.poolWeights,
+    this.pools,
+    this.popPools,
+    this.randomSteering,
+    this.regionPools,
+    this.sessionAffinity,
+    this.sessionAffinityAttributes,
+    this.sessionAffinityTtl,
+    this.steeringPolicy,
+    this.ttl,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RuleOverrides.fromJson(Map<String, Object?> json) => RuleOverrides(
+    adaptiveRouting: asModel(
+      json['adaptive_routing'],
+      AdaptiveRouting.fromJson,
+    ),
+    countryPools: asMap(json['country_pools']),
+    defaultPools: asPrimitiveList<String>(json['default_pools'], asString),
+    fallbackPool: asString(json['fallback_pool']),
+    locationStrategy: asModel(
+      json['location_strategy'],
+      LocationStrategy.fromJson,
+    ),
+    poolDefaultWeight: asNum(json['pool_default_weight']),
+    poolWeights: asMap(json['pool_weights']),
+    pools: asPrimitiveList<String>(json['pools'], asString),
+    popPools: asMap(json['pop_pools']),
+    randomSteering: asModel(json['random_steering'], RandomSteering.fromJson),
+    regionPools: asMap(json['region_pools']),
+    sessionAffinity: asString(json['session_affinity']),
+    sessionAffinityAttributes: asModel(
+      json['session_affinity_attributes'],
+      SessionAffinityAttributes.fromJson,
+    ),
+    sessionAffinityTtl: asNum(json['session_affinity_ttl']),
+    steeringPolicy: asString(json['steering_policy']),
+    ttl: asNum(json['ttl']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Controls features that modify the routing of requests to pools and origins
+  /// in response to dynamic conditions, such as during the interval between
+  /// active health monitoring requests. For example, zero-downtime failover
+  /// occurs immediately when an origin becomes unavailable due to HTTP 521, 522,
+  /// or 523 response codes. If there is another healthy origin in the same pool,
+  /// the request is retried once against this alternate origin.
+  final AdaptiveRouting? adaptiveRouting;
+
+  /// A mapping of country codes to a list of pool IDs (ordered by their failover
+  /// priority) for the given country. Any country not explicitly defined will
+  /// fall back to using the corresponding region_pool mapping if it exists else
+  /// to default_pools.
+  final Map<String, Object?>? countryPools;
+
+  /// A list of pool IDs ordered by their failover priority. Pools defined here
+  /// are used by default, or when region_pools are not configured for a given
+  /// region.
+  final List<String>? defaultPools;
+
+  /// The pool ID to use when all other pools are detected as unhealthy.
+  final String? fallbackPool;
+
+  /// Controls location-based steering for non-proxied requests. See
+  /// `steering_policy` to learn how steering is affected.
+  final LocationStrategy? locationStrategy;
+
+  /// The default weight for pools not listed in `pool_weights`. The declarative
+  /// alternative to `random_steering.default_weight`; mutually exclusive with
+  /// `random_steering`.
+  final num? poolDefaultWeight;
+
+  /// A mapping of pool IDs to custom weights, relative to the other pools. The
+  /// declarative alternative to `random_steering.pool_weights`; mutually
+  /// exclusive with `random_steering`.
+  final Map<String, Object?>? poolWeights;
+
+  /// A flat, ordered list of pool IDs to route the matched audience to. Replaces
+  /// the resolved topology with exactly these pools. Mutually exclusive with
+  /// `fixed_response`.
+  final List<String>? pools;
+
+  /// Enterprise only: A mapping of Cloudflare PoP identifiers to a list of pool
+  /// IDs (ordered by their failover priority) for the PoP (datacenter). Any PoPs
+  /// not explicitly defined will fall back to using the corresponding
+  /// country_pool, then region_pool mapping if it exists else to default_pools.
+  final Map<String, Object?>? popPools;
+
+  /// Configures pool weights. - `steering_policy="random"`: A random pool is
+  /// selected with probability proportional to pool weights. -
+  /// `steering_policy="least_outstanding_requests"`: Use pool weights to scale
+  /// each pool's outstanding requests. - `steering_policy="least_connections"`:
+  /// Use pool weights to scale each pool's open connections.
+  final RandomSteering? randomSteering;
+
+  /// A mapping of region codes to a list of pool IDs (ordered by their failover
+  /// priority) for the given region. Any regions not explicitly defined will fall
+  /// back to using default_pools.
+  final Map<String, Object?>? regionPools;
+
+  /// Specifies the type of session affinity the load balancer should use unless
+  /// specified as `"none"`. The supported types are: - `"cookie"`: On the first
+  /// request to a proxied load balancer, a cookie is generated, encoding
+  /// information of which origin the request will be forwarded to. Subsequent
+  /// requests, by the same client to the same load balancer, will be sent to the
+  /// origin server the cookie encodes, for the duration of the cookie and as long
+  /// as the origin server remains healthy. If the cookie has expired or the
+  /// origin server is unhealthy, then a new origin server is calculated and used.
+  /// - `"ip_cookie"`: Behaves the same as `"cookie"` except the initial origin
+  /// selection is stable and based on the client's ip address. - `"header"`: On
+  /// the first request to a proxied load balancer, a session key based on the
+  /// configured HTTP headers (see `session_affinity_attributes.headers`) is
+  /// generated, encoding the request headers used for storing in the load
+  /// balancer session state which origin the request will be forwarded to.
+  /// Subsequent requests to the load balancer with the same headers will be sent
+  /// to the same origin server, for the duration of the session and as long as
+  /// the origin server remains healthy. If the session has been idle for the
+  /// duration of `session_affinity_ttl` seconds or the origin server is
+  /// unhealthy, then a new origin server is calculated and used. See `headers` in
+  /// `session_affinity_attributes` for additional required configuration. Allowed
+  /// values: `none`, `cookie`, `ip_cookie`, `header`.
+  final String? sessionAffinity;
+
+  /// Configures attributes for session affinity.
+  final SessionAffinityAttributes? sessionAffinityAttributes;
+
+  /// Time, in seconds, until a client's session expires after being created. Once
+  /// the expiry time has been reached, subsequent requests may get sent to a
+  /// different origin server. The accepted ranges per `session_affinity` policy
+  /// are: - `"cookie"` / `"ip_cookie"`: The current default of 23 hours will be
+  /// used unless explicitly set. The accepted range of values is between [1800,
+  /// 604800]. - `"header"`: The current default of 1800 seconds will be used
+  /// unless explicitly set. The accepted range of values is between [30, 3600].
+  /// Note: With session affinity by header, sessions only expire after they
+  /// haven't been used for the number of seconds specified.
+  final num? sessionAffinityTtl;
+
+  /// Steering Policy for this load balancer. - `"off"`: Use `default_pools`. -
+  /// `"geo"`: Use `region_pools`/`country_pools`/`pop_pools`. For non-proxied
+  /// requests, the country for `country_pools` is determined by
+  /// `location_strategy`. - `"random"`: Select a pool randomly. -
+  /// `"dynamic_latency"`: Use round trip time to select the closest pool in
+  /// default_pools (requires pool health checks). - `"proximity"`: Use the pools'
+  /// latitude and longitude to select the closest pool using the Cloudflare PoP
+  /// location for proxied requests or the location determined by
+  /// `location_strategy` for non-proxied requests. -
+  /// `"least_outstanding_requests"`: Select a pool by taking into consideration
+  /// `random_steering` weights, as well as each pool's number of outstanding
+  /// requests. Pools with more pending requests are weighted proportionately less
+  /// relative to others. - `"least_connections"`: Select a pool by taking into
+  /// consideration `random_steering` weights, as well as each pool's number of
+  /// open connections. Pools with more open connections are weighted
+  /// proportionately less relative to others. Supported for HTTP/1 and HTTP/2
+  /// connections. - `""`: Will map to `"geo"` if you use
+  /// `region_pools`/`country_pools`/`pop_pools` otherwise `"off"`. Allowed
+  /// values: `off`, `geo`, `random`, `dynamic_latency`, `proximity`,
+  /// `least_outstanding_requests`, `least_connections`, ``.
+  final String? steeringPolicy;
+
+  /// Time to live (TTL) of the DNS entry for the IP address returned by this load
+  /// balancer. This only applies to gray-clouded (unproxied) load balancers.
+  final num? ttl;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'adaptive_routing',
+    'country_pools',
+    'default_pools',
+    'fallback_pool',
+    'location_strategy',
+    'pool_default_weight',
+    'pool_weights',
+    'pools',
+    'pop_pools',
+    'random_steering',
+    'region_pools',
+    'session_affinity',
+    'session_affinity_attributes',
+    'session_affinity_ttl',
+    'steering_policy',
+    'ttl',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (adaptiveRouting != null) 'adaptive_routing': adaptiveRouting!.toJson(),
+    if (countryPools != null) 'country_pools': countryPools!,
+    if (defaultPools != null) 'default_pools': defaultPools!,
+    if (fallbackPool != null) 'fallback_pool': fallbackPool!,
+    if (locationStrategy != null)
+      'location_strategy': locationStrategy!.toJson(),
+    if (poolDefaultWeight != null) 'pool_default_weight': poolDefaultWeight!,
+    if (poolWeights != null) 'pool_weights': poolWeights!,
+    if (pools != null) 'pools': pools!,
+    if (popPools != null) 'pop_pools': popPools!,
+    if (randomSteering != null) 'random_steering': randomSteering!.toJson(),
+    if (regionPools != null) 'region_pools': regionPools!,
+    if (sessionAffinity != null) 'session_affinity': sessionAffinity!,
+    if (sessionAffinityAttributes != null)
+      'session_affinity_attributes': sessionAffinityAttributes!.toJson(),
+    if (sessionAffinityTtl != null) 'session_affinity_ttl': sessionAffinityTtl!,
+    if (steeringPolicy != null) 'steering_policy': steeringPolicy!,
+    if (ttl != null) 'ttl': ttl!,
+  };
+
+  RuleOverrides copyWith({
+    AdaptiveRouting? adaptiveRouting,
+    Map<String, Object?>? countryPools,
+    List<String>? defaultPools,
+    String? fallbackPool,
+    LocationStrategy? locationStrategy,
+    num? poolDefaultWeight,
+    Map<String, Object?>? poolWeights,
+    List<String>? pools,
+    Map<String, Object?>? popPools,
+    RandomSteering? randomSteering,
+    Map<String, Object?>? regionPools,
+    String? sessionAffinity,
+    SessionAffinityAttributes? sessionAffinityAttributes,
+    num? sessionAffinityTtl,
+    String? steeringPolicy,
+    num? ttl,
+    Map<String, Object?>? extra,
+  }) => RuleOverrides(
+    adaptiveRouting: adaptiveRouting ?? this.adaptiveRouting,
+    countryPools: countryPools ?? this.countryPools,
+    defaultPools: defaultPools ?? this.defaultPools,
+    fallbackPool: fallbackPool ?? this.fallbackPool,
+    locationStrategy: locationStrategy ?? this.locationStrategy,
+    poolDefaultWeight: poolDefaultWeight ?? this.poolDefaultWeight,
+    poolWeights: poolWeights ?? this.poolWeights,
+    pools: pools ?? this.pools,
+    popPools: popPools ?? this.popPools,
+    randomSteering: randomSteering ?? this.randomSteering,
+    regionPools: regionPools ?? this.regionPools,
+    sessionAffinity: sessionAffinity ?? this.sessionAffinity,
+    sessionAffinityAttributes:
+        sessionAffinityAttributes ?? this.sessionAffinityAttributes,
+    sessionAffinityTtl: sessionAffinityTtl ?? this.sessionAffinityTtl,
+    steeringPolicy: steeringPolicy ?? this.steeringPolicy,
+    ttl: ttl ?? this.ttl,
+    extra: extra ?? this.extra,
+  );
 }
 
 /// An object configuring the rule's rate limit behavior.
@@ -10868,6 +15122,108 @@ class Rules {
   );
 }
 
+class Rules2 {
+  const Rules2({
+    this.actions,
+    this.enabled,
+    this.id,
+    this.matchers,
+    this.name,
+    this.priority,
+    this.source,
+    this.tag,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Rules2.fromJson(Map<String, Object?> json) => Rules2(
+    actions: asModelList(json['actions'], RuleAction.fromJson),
+    enabled: asBool(json['enabled']),
+    id: asString(json['id']),
+    matchers: asModelList(json['matchers'], RuleMatcher.fromJson),
+    name: asString(json['name']),
+    priority: asNum(json['priority']),
+    source: asString(json['source']),
+    tag: asString(json['tag']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// List actions patterns.
+  final List<RuleAction>? actions;
+
+  /// Routing rule status. Allowed values: `true`, `false`.
+  final bool? enabled;
+
+  /// Routing rule identifier.
+  final String? id;
+
+  /// Matching patterns to forward to your actions.
+  final List<RuleMatcher>? matchers;
+
+  /// Routing rule name.
+  final String? name;
+
+  /// Priority of the routing rule.
+  final num? priority;
+
+  /// Who manages the rule. `api` covers dashboard, generic API, and Terraform;
+  /// `wrangler` means the rule is managed by a Worker's wrangler.jsonc. Defaults
+  /// to `api` when omitted on write. Allowed values: `api`, `wrangler`.
+  final String? source;
+
+  /// Routing rule tag. (Deprecated, replaced by routing rule identifier)
+  final String? tag;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'actions',
+    'enabled',
+    'id',
+    'matchers',
+    'name',
+    'priority',
+    'source',
+    'tag',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (actions != null) 'actions': actions!.map((e) => e.toJson()).toList(),
+    if (enabled != null) 'enabled': enabled!,
+    if (id != null) 'id': id!,
+    if (matchers != null) 'matchers': matchers!.map((e) => e.toJson()).toList(),
+    if (name != null) 'name': name!,
+    if (priority != null) 'priority': priority!,
+    if (source != null) 'source': source!,
+    if (tag != null) 'tag': tag!,
+  };
+
+  Rules2 copyWith({
+    List<RuleAction>? actions,
+    bool? enabled,
+    String? id,
+    List<RuleMatcher>? matchers,
+    String? name,
+    num? priority,
+    String? source,
+    String? tag,
+    Map<String, Object?>? extra,
+  }) => Rules2(
+    actions: actions ?? this.actions,
+    enabled: enabled ?? this.enabled,
+    id: id ?? this.id,
+    matchers: matchers ?? this.matchers,
+    name: name ?? this.name,
+    priority: priority ?? this.priority,
+    source: source ?? this.source,
+    tag: tag ?? this.tag,
+    extra: extra ?? this.extra,
+  );
+}
+
 class Schedule {
   const Schedule({
     this.createdOn,
@@ -11145,6 +15501,36 @@ class SchemasConnection {
     uuid: uuid ?? this.uuid,
     extra: extra ?? this.extra,
   );
+}
+
+/// The request header is used to pass additional information with an HTTP
+/// request. Currently supported header is 'Host'.
+class SchemasHeader {
+  const SchemasHeader({this.host, this.extra = const <String, Object?>{}});
+
+  factory SchemasHeader.fromJson(Map<String, Object?> json) => SchemasHeader(
+    host: asPrimitiveList<String>(json['Host'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The 'Host' header allows to override the hostname set in the HTTP request.
+  /// Current support is 1 'Host' header override per origin.
+  final List<String>? host;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'Host'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (host != null) 'Host': host!,
+  };
+
+  SchemasHeader copyWith({List<String>? host, Map<String, Object?>? extra}) =>
+      SchemasHeader(host: host ?? this.host, extra: extra ?? this.extra);
 }
 
 /// Configuration for provisioning to this application via SCIM. This is
@@ -12153,6 +16539,122 @@ class ScriptAndVersionSettingsItemPlacement {
   );
 }
 
+/// Configures attributes for session affinity.
+class SessionAffinityAttributes {
+  const SessionAffinityAttributes({
+    this.drainDuration,
+    this.headers,
+    this.requireAllHeaders,
+    this.samesite,
+    this.secure,
+    this.zeroDowntimeFailover,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory SessionAffinityAttributes.fromJson(Map<String, Object?> json) =>
+      SessionAffinityAttributes(
+        drainDuration: asNum(json['drain_duration']),
+        headers: asPrimitiveList<String>(json['headers'], asString),
+        requireAllHeaders: asBool(json['require_all_headers']),
+        samesite: asString(json['samesite']),
+        secure: asString(json['secure']),
+        zeroDowntimeFailover: asString(json['zero_downtime_failover']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Configures the drain duration in seconds. This field is only used when
+  /// session affinity is enabled on the load balancer.
+  final num? drainDuration;
+
+  /// Configures the names of HTTP headers to base session affinity on when header
+  /// `session_affinity` is enabled. At least one HTTP header name must be
+  /// provided. To specify the exact cookies to be used, include an item in the
+  /// following format: `"cookie:<cookie-name-1>,<cookie-name-2>"` (example) where
+  /// everything after the colon is a comma-separated list of cookie names.
+  /// Providing only `"cookie"` will result in all cookies being used. The default
+  /// max number of HTTP header names that can be provided depends on your plan: 5
+  /// for Enterprise, 1 for all other plans.
+  final List<String>? headers;
+
+  /// When header `session_affinity` is enabled, this option can be used to
+  /// specify how HTTP headers on load balancing requests will be used. The
+  /// supported values are: - `"true"`: Load balancing requests must contain *all*
+  /// of the HTTP headers specified by the `headers` session affinity attribute,
+  /// otherwise sessions aren't created. - `"false"`: Load balancing requests must
+  /// contain *at least one* of the HTTP headers specified by the `headers`
+  /// session affinity attribute, otherwise sessions aren't created.
+  final bool? requireAllHeaders;
+
+  /// Configures the SameSite attribute on session affinity cookie. Value "Auto"
+  /// will be translated to "Lax" or "None" depending if Always Use HTTPS is
+  /// enabled. Note: when using value "None", the secure attribute can not be set
+  /// to "Never". Allowed values: `Auto`, `Lax`, `None`, `Strict`.
+  final String? samesite;
+
+  /// Configures the Secure attribute on session affinity cookie. Value "Always"
+  /// indicates the Secure attribute will be set in the Set-Cookie header, "Never"
+  /// indicates the Secure attribute will not be set, and "Auto" will set the
+  /// Secure attribute depending if Always Use HTTPS is enabled. Allowed values:
+  /// `Auto`, `Always`, `Never`.
+  final String? secure;
+
+  /// Configures the zero-downtime failover between origins within a pool when
+  /// session affinity is enabled. This feature is currently incompatible with
+  /// Argo, Tiered Cache, and Bandwidth Alliance. The supported values are: -
+  /// `"none"`: No failover takes place for sessions pinned to the origin
+  /// (default). - `"temporary"`: Traffic will be sent to another other healthy
+  /// origin until the originally pinned origin is available; note that this can
+  /// potentially result in heavy origin flapping. - `"sticky"`: The session
+  /// affinity cookie is updated and subsequent requests are sent to the new
+  /// origin. Note: Zero-downtime failover with sticky sessions is currently not
+  /// supported for session affinity by header. Allowed values: `none`,
+  /// `temporary`, `sticky`.
+  final String? zeroDowntimeFailover;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'drain_duration',
+    'headers',
+    'require_all_headers',
+    'samesite',
+    'secure',
+    'zero_downtime_failover',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (drainDuration != null) 'drain_duration': drainDuration!,
+    if (headers != null) 'headers': headers!,
+    if (requireAllHeaders != null) 'require_all_headers': requireAllHeaders!,
+    if (samesite != null) 'samesite': samesite!,
+    if (secure != null) 'secure': secure!,
+    if (zeroDowntimeFailover != null)
+      'zero_downtime_failover': zeroDowntimeFailover!,
+  };
+
+  SessionAffinityAttributes copyWith({
+    num? drainDuration,
+    List<String>? headers,
+    bool? requireAllHeaders,
+    String? samesite,
+    String? secure,
+    String? zeroDowntimeFailover,
+    Map<String, Object?>? extra,
+  }) => SessionAffinityAttributes(
+    drainDuration: drainDuration ?? this.drainDuration,
+    headers: headers ?? this.headers,
+    requireAllHeaders: requireAllHeaders ?? this.requireAllHeaders,
+    samesite: samesite ?? this.samesite,
+    secure: secure ?? this.secure,
+    zeroDowntimeFailover: zeroDowntimeFailover ?? this.zeroDowntimeFailover,
+    extra: extra ?? this.extra,
+  );
+}
+
 class Setting {
   const Setting({
     this.editable,
@@ -12475,6 +16977,121 @@ class Settings {
   );
 }
 
+class Settings2 {
+  const Settings2({
+    this.created,
+    this.enabled,
+    this.id,
+    this.modified,
+    this.name,
+    this.skipWizard,
+    this.status,
+    this.supportSubaddress,
+    this.tag,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Settings2.fromJson(Map<String, Object?> json) => Settings2(
+    created: asString(json['created']),
+    enabled: asBool(json['enabled']),
+    id: asString(json['id']),
+    modified: asString(json['modified']),
+    name: asString(json['name']),
+    skipWizard: asBool(json['skip_wizard']),
+    status: asString(json['status']),
+    supportSubaddress: asBool(json['support_subaddress']),
+    tag: asString(json['tag']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The date and time the settings have been created.
+  final String? created;
+
+  /// State of the zone settings for Email Routing. Allowed values: `true`,
+  /// `false`.
+  final bool? enabled;
+
+  /// Email Routing settings identifier.
+  final String? id;
+
+  /// The date and time the settings have been modified.
+  final String? modified;
+
+  /// Domain of your zone.
+  final String? name;
+
+  /// Flag to check if the user skipped the configuration wizard. Allowed values:
+  /// `true`, `false`.
+  final bool? skipWizard;
+
+  /// Show the state of your account, and the type or configuration error. Allowed
+  /// values: `ready`, `unconfigured`, `misconfigured`, `misconfigured/locked`,
+  /// `unlocked`.
+  final String? status;
+
+  /// Whether subaddressing (plus-addressing) is honored when matching incoming
+  /// mail against routing rules. Allowed values: `true`, `false`.
+  final bool? supportSubaddress;
+
+  /// Email Routing settings tag. (Deprecated, replaced by Email Routing settings
+  /// identifier)
+  final String? tag;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'created',
+    'enabled',
+    'id',
+    'modified',
+    'name',
+    'skip_wizard',
+    'status',
+    'support_subaddress',
+    'tag',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (created != null) 'created': created!,
+    if (enabled != null) 'enabled': enabled!,
+    if (id != null) 'id': id!,
+    if (modified != null) 'modified': modified!,
+    if (name != null) 'name': name!,
+    if (skipWizard != null) 'skip_wizard': skipWizard!,
+    if (status != null) 'status': status!,
+    if (supportSubaddress != null) 'support_subaddress': supportSubaddress!,
+    if (tag != null) 'tag': tag!,
+  };
+
+  Settings2 copyWith({
+    String? created,
+    bool? enabled,
+    String? id,
+    String? modified,
+    String? name,
+    bool? skipWizard,
+    String? status,
+    bool? supportSubaddress,
+    String? tag,
+    Map<String, Object?>? extra,
+  }) => Settings2(
+    created: created ?? this.created,
+    enabled: enabled ?? this.enabled,
+    id: id ?? this.id,
+    modified: modified ?? this.modified,
+    name: name ?? this.name,
+    skipWizard: skipWizard ?? this.skipWizard,
+    status: status ?? this.status,
+    supportSubaddress: supportSubaddress ?? this.supportSubaddress,
+    tag: tag ?? this.tag,
+    extra: extra ?? this.extra,
+  );
+}
+
 /// A single query with or without parameters
 class SingleQuery {
   const SingleQuery({
@@ -12731,6 +17348,354 @@ class SourceConfig {
   );
 }
 
+/// SSL properties for the custom hostname.
+class Ssl {
+  const Ssl({
+    this.bundleMethod,
+    this.certificateAuthority,
+    this.customCertificate,
+    this.customCsrId,
+    this.customKey,
+    this.dcvDelegationRecords,
+    this.expiresOn,
+    this.hosts,
+    this.id,
+    this.issuer,
+    this.method,
+    this.serialNumber,
+    this.settings,
+    this.signature,
+    this.status,
+    this.type_,
+    this.uploadedOn,
+    this.validationErrors,
+    this.validationRecords,
+    this.wildcard,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Ssl.fromJson(Map<String, Object?> json) => Ssl(
+    bundleMethod: asString(json['bundle_method']),
+    certificateAuthority: asString(json['certificate_authority']),
+    customCertificate: asString(json['custom_certificate']),
+    customCsrId: asString(json['custom_csr_id']),
+    customKey: asString(json['custom_key']),
+    dcvDelegationRecords: asModelList(
+      json['dcv_delegation_records'],
+      ValidationRecord.fromJson,
+    ),
+    expiresOn: asString(json['expires_on']),
+    hosts: asPrimitiveList<String>(json['hosts'], asString),
+    id: asString(json['id']),
+    issuer: asString(json['issuer']),
+    method: asString(json['method']),
+    serialNumber: asString(json['serial_number']),
+    settings: asModel(json['settings'], Sslsettings.fromJson),
+    signature: asString(json['signature']),
+    status: asString(json['status']),
+    type_: asString(json['type']),
+    uploadedOn: asString(json['uploaded_on']),
+    validationErrors: asModelList(
+      json['validation_errors'],
+      SslValidationErrorsItem.fromJson,
+    ),
+    validationRecords: asModelList(
+      json['validation_records'],
+      ValidationRecord.fromJson,
+    ),
+    wildcard: asBool(json['wildcard']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// A ubiquitous bundle has the highest probability of being verified
+  /// everywhere, even by clients using outdated or unusual trust stores. An
+  /// optimal bundle uses the shortest chain and newest intermediates. And the
+  /// force bundle verifies the chain, but does not otherwise modify it. Allowed
+  /// values: `ubiquitous`, `optimal`, `force`.
+  final String? bundleMethod;
+
+  /// The Certificate Authority that will issue the certificate. Allowed values:
+  /// `digicert`, `google`, `lets_encrypt`, `ssl_com`.
+  final String? certificateAuthority;
+
+  /// If a custom uploaded certificate is used.
+  final String? customCertificate;
+
+  /// The identifier for the Custom CSR that was used.
+  final String? customCsrId;
+
+  /// The key for a custom uploaded certificate.
+  final String? customKey;
+
+  /// DCV Delegation records for domain validation.
+  final List<ValidationRecord>? dcvDelegationRecords;
+
+  /// The time the custom certificate expires on.
+  final String? expiresOn;
+
+  /// A list of Hostnames on a custom uploaded certificate.
+  final List<String>? hosts;
+
+  /// Custom hostname SSL identifier tag.
+  final String? id;
+
+  /// The issuer on a custom uploaded certificate.
+  final String? issuer;
+
+  /// Domain control validation (DCV) method used for this hostname. Allowed
+  /// values: `http`, `txt`, `email`.
+  final String? method;
+
+  /// The serial number on a custom uploaded certificate.
+  final String? serialNumber;
+
+  /// SSL specific settings.
+  final Sslsettings? settings;
+
+  /// The signature on a custom uploaded certificate.
+  final String? signature;
+
+  /// Status of the hostname's SSL certificates. Allowed values: `initializing`,
+  /// `pending_validation`, `deleted`, `pending_issuance`, `pending_deployment`,
+  /// `pending_deletion`, `pending_expiration`, `expired`, `active`,
+  /// `initializing_timed_out`, `validation_timed_out`, `issuance_timed_out`,
+  /// `deployment_timed_out`, `deletion_timed_out`, `pending_cleanup`,
+  /// `staging_deployment`, `staging_active`, `deactivating`, `inactive`,
+  /// `backup_issued`, `holding_deployment`.
+  final String? status;
+
+  /// Level of validation to be used for this hostname. Domain validation (dv)
+  /// must be used. Allowed values: `dv`.
+  final String? type_;
+
+  /// The time the custom certificate was uploaded.
+  final String? uploadedOn;
+
+  /// Domain validation errors that have been received by the certificate
+  /// authority (CA).
+  final List<SslValidationErrorsItem>? validationErrors;
+  final List<ValidationRecord>? validationRecords;
+
+  /// Indicates whether the certificate covers a wildcard.
+  final bool? wildcard;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'bundle_method',
+    'certificate_authority',
+    'custom_certificate',
+    'custom_csr_id',
+    'custom_key',
+    'dcv_delegation_records',
+    'expires_on',
+    'hosts',
+    'id',
+    'issuer',
+    'method',
+    'serial_number',
+    'settings',
+    'signature',
+    'status',
+    'type',
+    'uploaded_on',
+    'validation_errors',
+    'validation_records',
+    'wildcard',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (bundleMethod != null) 'bundle_method': bundleMethod!,
+    if (certificateAuthority != null)
+      'certificate_authority': certificateAuthority!,
+    if (customCertificate != null) 'custom_certificate': customCertificate!,
+    if (customCsrId != null) 'custom_csr_id': customCsrId!,
+    if (customKey != null) 'custom_key': customKey!,
+    if (dcvDelegationRecords != null)
+      'dcv_delegation_records': dcvDelegationRecords!
+          .map((e) => e.toJson())
+          .toList(),
+    if (expiresOn != null) 'expires_on': expiresOn!,
+    if (hosts != null) 'hosts': hosts!,
+    if (id != null) 'id': id!,
+    if (issuer != null) 'issuer': issuer!,
+    if (method != null) 'method': method!,
+    if (serialNumber != null) 'serial_number': serialNumber!,
+    if (settings != null) 'settings': settings!.toJson(),
+    if (signature != null) 'signature': signature!,
+    if (status != null) 'status': status!,
+    if (type_ != null) 'type': type_!,
+    if (uploadedOn != null) 'uploaded_on': uploadedOn!,
+    if (validationErrors != null)
+      'validation_errors': validationErrors!.map((e) => e.toJson()).toList(),
+    if (validationRecords != null)
+      'validation_records': validationRecords!.map((e) => e.toJson()).toList(),
+    if (wildcard != null) 'wildcard': wildcard!,
+  };
+
+  Ssl copyWith({
+    String? bundleMethod,
+    String? certificateAuthority,
+    String? customCertificate,
+    String? customCsrId,
+    String? customKey,
+    List<ValidationRecord>? dcvDelegationRecords,
+    String? expiresOn,
+    List<String>? hosts,
+    String? id,
+    String? issuer,
+    String? method,
+    String? serialNumber,
+    Sslsettings? settings,
+    String? signature,
+    String? status,
+    String? type_,
+    String? uploadedOn,
+    List<SslValidationErrorsItem>? validationErrors,
+    List<ValidationRecord>? validationRecords,
+    bool? wildcard,
+    Map<String, Object?>? extra,
+  }) => Ssl(
+    bundleMethod: bundleMethod ?? this.bundleMethod,
+    certificateAuthority: certificateAuthority ?? this.certificateAuthority,
+    customCertificate: customCertificate ?? this.customCertificate,
+    customCsrId: customCsrId ?? this.customCsrId,
+    customKey: customKey ?? this.customKey,
+    dcvDelegationRecords: dcvDelegationRecords ?? this.dcvDelegationRecords,
+    expiresOn: expiresOn ?? this.expiresOn,
+    hosts: hosts ?? this.hosts,
+    id: id ?? this.id,
+    issuer: issuer ?? this.issuer,
+    method: method ?? this.method,
+    serialNumber: serialNumber ?? this.serialNumber,
+    settings: settings ?? this.settings,
+    signature: signature ?? this.signature,
+    status: status ?? this.status,
+    type_: type_ ?? this.type_,
+    uploadedOn: uploadedOn ?? this.uploadedOn,
+    validationErrors: validationErrors ?? this.validationErrors,
+    validationRecords: validationRecords ?? this.validationRecords,
+    wildcard: wildcard ?? this.wildcard,
+    extra: extra ?? this.extra,
+  );
+}
+
+class SslValidationErrorsItem {
+  const SslValidationErrorsItem({
+    this.message,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory SslValidationErrorsItem.fromJson(Map<String, Object?> json) =>
+      SslValidationErrorsItem(
+        message: asString(json['message']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// A domain validation error.
+  final String? message;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'message'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (message != null) 'message': message!,
+  };
+
+  SslValidationErrorsItem copyWith({
+    String? message,
+    Map<String, Object?>? extra,
+  }) => SslValidationErrorsItem(
+    message: message ?? this.message,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// SSL specific settings.
+class Sslsettings {
+  const Sslsettings({
+    this.ciphers,
+    this.earlyHints,
+    this.http2,
+    this.minTlsVersion,
+    this.tls13,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Sslsettings.fromJson(Map<String, Object?> json) => Sslsettings(
+    ciphers: asPrimitiveList<String>(json['ciphers'], asString),
+    earlyHints: asString(json['early_hints']),
+    http2: asString(json['http2']),
+    minTlsVersion: asString(json['min_tls_version']),
+    tls13: asString(json['tls_1_3']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// An allowlist of ciphers for TLS termination. These ciphers must be in the
+  /// BoringSSL format.
+  final List<String>? ciphers;
+
+  /// Whether or not Early Hints is enabled. Allowed values: `on`, `off`.
+  final String? earlyHints;
+
+  /// Whether or not HTTP2 is enabled. Allowed values: `on`, `off`.
+  final String? http2;
+
+  /// The minimum TLS version supported. Allowed values: `1.0`, `1.1`, `1.2`,
+  /// `1.3`.
+  final String? minTlsVersion;
+
+  /// Whether or not TLS 1.3 is enabled. Allowed values: `on`, `off`.
+  final String? tls13;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'ciphers',
+    'early_hints',
+    'http2',
+    'min_tls_version',
+    'tls_1_3',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (ciphers != null) 'ciphers': ciphers!,
+    if (earlyHints != null) 'early_hints': earlyHints!,
+    if (http2 != null) 'http2': http2!,
+    if (minTlsVersion != null) 'min_tls_version': minTlsVersion!,
+    if (tls13 != null) 'tls_1_3': tls13!,
+  };
+
+  Sslsettings copyWith({
+    List<String>? ciphers,
+    String? earlyHints,
+    String? http2,
+    String? minTlsVersion,
+    String? tls13,
+    Map<String, Object?>? extra,
+  }) => Sslsettings(
+    ciphers: ciphers ?? this.ciphers,
+    earlyHints: earlyHints ?? this.earlyHints,
+    http2: http2 ?? this.http2,
+    minTlsVersion: minTlsVersion ?? this.minTlsVersion,
+    tls13: tls13 ?? this.tls13,
+    extra: extra ?? this.extra,
+  );
+}
+
 /// The status of the deployment.
 class Stage {
   const Stage({
@@ -12851,6 +17816,98 @@ class TailConsumersScript {
   );
 }
 
+/// A request condition target.
+class Target {
+  const Target({
+    this.constraint,
+    this.target,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Target.fromJson(Map<String, Object?> json) => Target(
+    constraint: asModel(json['constraint'], TargetConstraint.fromJson),
+    target: json['target'],
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The constraint of a target.
+  final TargetConstraint? constraint;
+
+  /// A target based on the URL of the request. Allowed values: `url`.
+  final Object? target;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'constraint', 'target'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (constraint != null) 'constraint': constraint!.toJson(),
+    if (target != null) 'target': target!,
+  };
+
+  Target copyWith({
+    TargetConstraint? constraint,
+    Object? target,
+    Map<String, Object?>? extra,
+  }) => Target(
+    constraint: constraint ?? this.constraint,
+    target: target ?? this.target,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// The constraint of a target.
+class TargetConstraint {
+  const TargetConstraint({
+    this.operator_,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetConstraint.fromJson(Map<String, Object?> json) =>
+      TargetConstraint(
+        operator_: json['operator'],
+        value: asString(json['value']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The matches operator can use asterisks and pipes as wildcard and 'or'
+  /// operators. Allowed values: `matches`, `contains`, `equals`, `not_equal`,
+  /// `not_contain`.
+  final Object? operator_;
+
+  /// The URL pattern to match against the current request. The pattern may
+  /// contain up to four asterisks ('*') as placeholders.
+  final String? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'operator', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (operator_ != null) 'operator': operator_!,
+    if (value != null) 'value': value!,
+  };
+
+  TargetConstraint copyWith({
+    Object? operator_,
+    String? value,
+    Map<String, Object?>? extra,
+  }) => TargetConstraint(
+    operator_: operator_ ?? this.operator_,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
 class TargetCriteriaSelfHostedApp {
   const TargetCriteriaSelfHostedApp({
     this.port,
@@ -12904,6 +17961,64 @@ class TargetCriteriaSelfHostedApp {
     port: port ?? this.port,
     targetAttributes: targetAttributes ?? this.targetAttributes,
     protocol: protocol ?? this.protocol,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Matches requests by location. Set any combination of `pops`, `countries`,
+/// and `regions` (at least one is required); a request matches when its value
+/// appears in any populated list (e.g. `regions: ["WNAM"]` with `countries:
+/// ["US"]` matches a request in either WNAM or the US).
+class TopologyMatch {
+  const TopologyMatch({
+    this.countries,
+    this.pops,
+    this.regions,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TopologyMatch.fromJson(Map<String, Object?> json) => TopologyMatch(
+    countries: asPrimitiveList<String>(json['countries'], asString),
+    pops: asPrimitiveList<String>(json['pops'], asString),
+    regions: asPrimitiveList<String>(json['regions'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// A list of ISO 3166-1 alpha-2 country codes. Matches when the request's
+  /// country is in this list.
+  final List<String>? countries;
+
+  /// A list of Cloudflare PoP codes. Matches when the request's PoP is in this
+  /// list.
+  final List<String>? pops;
+
+  /// A list of Cloudflare region codes (e.g. `WNAM`, `ENAM`, `WEU`). Matches when
+  /// the request's region is in this list.
+  final List<String>? regions;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'countries', 'pops', 'regions'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (countries != null) 'countries': countries!,
+    if (pops != null) 'pops': pops!,
+    if (regions != null) 'regions': regions!,
+  };
+
+  TopologyMatch copyWith({
+    List<String>? countries,
+    List<String>? pops,
+    List<String>? regions,
+    Map<String, Object?>? extra,
+  }) => TopologyMatch(
+    countries: countries ?? this.countries,
+    pops: pops ?? this.pops,
+    regions: regions ?? this.regions,
     extra: extra ?? this.extra,
   );
 }
@@ -13000,6 +18115,48 @@ class TunnelClient {
     version: version ?? this.version,
     extra: extra ?? this.extra,
   );
+}
+
+class Universal {
+  const Universal({this.enabled, this.extra = const <String, Object?>{}});
+
+  factory Universal.fromJson(Map<String, Object?> json) => Universal(
+    enabled: asBool(json['enabled']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Disabling Universal SSL removes any currently active Universal SSL
+  /// certificates for your zone from the edge and prevents any future Universal
+  /// SSL certificates from being ordered. If there are no advanced certificates
+  /// or custom certificates uploaded for the domain, visitors will be unable to
+  /// access the domain over HTTPS. By disabling Universal SSL, you understand
+  /// that the following Cloudflare settings and preferences will result in
+  /// visitors being unable to visit your domain unless you have uploaded a custom
+  /// certificate or purchased an advanced certificate. * HSTS * Always Use HTTPS
+  /// * Opportunistic Encryption * Onion Routing * Any Page Rules redirecting
+  /// traffic to HTTPS Similarly, any HTTP redirect to HTTPS at the origin while
+  /// the Cloudflare proxy is enabled will result in users being unable to visit
+  /// your site without a valid certificate at Cloudflare's edge. If you do not
+  /// have a valid custom or advanced certificate at Cloudflare's edge and are
+  /// unsure if any of the above Cloudflare settings are enabled, or if any HTTP
+  /// redirects exist at your origin, we advise leaving Universal SSL enabled for
+  /// your domain.
+  final bool? enabled;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'enabled'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (enabled != null) 'enabled': enabled!,
+  };
+
+  Universal copyWith({bool? enabled, Map<String, Object?>? extra}) =>
+      Universal(enabled: enabled ?? this.enabled, extra: extra ?? this.extra);
 }
 
 class UpdateZoneRulesetRuleBody {
@@ -13603,6 +18760,782 @@ class UserUserDetailsResult {
   );
 }
 
+/// Certificate's required validation record.
+class ValidationRecord {
+  const ValidationRecord({
+    this.cname,
+    this.cnameTarget,
+    this.emails,
+    this.httpBody,
+    this.httpUrl,
+    this.status,
+    this.txtName,
+    this.txtValue,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ValidationRecord.fromJson(Map<String, Object?> json) =>
+      ValidationRecord(
+        cname: asString(json['cname']),
+        cnameTarget: asString(json['cname_target']),
+        emails: asPrimitiveList<String>(json['emails'], asString),
+        httpBody: asString(json['http_body']),
+        httpUrl: asString(json['http_url']),
+        status: asString(json['status']),
+        txtName: asString(json['txt_name']),
+        txtValue: asString(json['txt_value']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The CNAME record hostname for DCV delegation.
+  final String? cname;
+
+  /// The CNAME record target value for DCV delegation.
+  final String? cnameTarget;
+
+  /// The set of email addresses that the certificate authority (CA) will use to
+  /// complete domain validation.
+  final List<String>? emails;
+
+  /// The content that the certificate authority (CA) will expect to find at the
+  /// http_url during the domain validation.
+  final String? httpBody;
+
+  /// The url that will be checked during domain validation.
+  final String? httpUrl;
+
+  /// Status of the validation record.
+  final String? status;
+
+  /// The hostname that the certificate authority (CA) will check for a TXT record
+  /// during domain validation .
+  final String? txtName;
+
+  /// The TXT record that the certificate authority (CA) will check during domain
+  /// validation.
+  final String? txtValue;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'cname',
+    'cname_target',
+    'emails',
+    'http_body',
+    'http_url',
+    'status',
+    'txt_name',
+    'txt_value',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (cname != null) 'cname': cname!,
+    if (cnameTarget != null) 'cname_target': cnameTarget!,
+    if (emails != null) 'emails': emails!,
+    if (httpBody != null) 'http_body': httpBody!,
+    if (httpUrl != null) 'http_url': httpUrl!,
+    if (status != null) 'status': status!,
+    if (txtName != null) 'txt_name': txtName!,
+    if (txtValue != null) 'txt_value': txtValue!,
+  };
+
+  ValidationRecord copyWith({
+    String? cname,
+    String? cnameTarget,
+    List<String>? emails,
+    String? httpBody,
+    String? httpUrl,
+    String? status,
+    String? txtName,
+    String? txtValue,
+    Map<String, Object?>? extra,
+  }) => ValidationRecord(
+    cname: cname ?? this.cname,
+    cnameTarget: cnameTarget ?? this.cnameTarget,
+    emails: emails ?? this.emails,
+    httpBody: httpBody ?? this.httpBody,
+    httpUrl: httpUrl ?? this.httpUrl,
+    status: status ?? this.status,
+    txtName: txtName ?? this.txtName,
+    txtValue: txtValue ?? this.txtValue,
+    extra: extra ?? this.extra,
+  );
+}
+
+class Waitingroom {
+  const Waitingroom({
+    this.additionalRoutes,
+    this.cookieAttributes,
+    this.cookieSuffix,
+    this.createdOn,
+    this.customPageHtml,
+    this.defaultTemplateLanguage,
+    this.description,
+    this.disableSessionRenewal,
+    this.enabledOriginCommands,
+    this.host,
+    this.id,
+    this.jsonResponseEnabled,
+    this.modifiedOn,
+    this.name,
+    this.newUsersPerMinute,
+    this.nextEventPrequeueStartTime,
+    this.nextEventStartTime,
+    this.path,
+    this.queueAll,
+    this.queueingMethod,
+    this.queueingStatusCode,
+    this.sessionDuration,
+    this.suspended,
+    this.totalActiveUsers,
+    this.turnstileAction,
+    this.turnstileMode,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Waitingroom.fromJson(Map<String, Object?> json) => Waitingroom(
+    additionalRoutes: asModelList(
+      json['additional_routes'],
+      WaitingroomAdditionalRoutesItem.fromJson,
+    ),
+    cookieAttributes: asModel(
+      json['cookie_attributes'],
+      CookieAttributes.fromJson,
+    ),
+    cookieSuffix: asString(json['cookie_suffix']),
+    createdOn: asString(json['created_on']),
+    customPageHtml: asString(json['custom_page_html']),
+    defaultTemplateLanguage: asString(json['default_template_language']),
+    description: asString(json['description']),
+    disableSessionRenewal: asBool(json['disable_session_renewal']),
+    enabledOriginCommands: asPrimitiveList<String>(
+      json['enabled_origin_commands'],
+      asString,
+    ),
+    host: asString(json['host']),
+    id: asString(json['id']),
+    jsonResponseEnabled: asBool(json['json_response_enabled']),
+    modifiedOn: asString(json['modified_on']),
+    name: asString(json['name']),
+    newUsersPerMinute: asInt(json['new_users_per_minute']),
+    nextEventPrequeueStartTime: asString(
+      json['next_event_prequeue_start_time'],
+    ),
+    nextEventStartTime: asString(json['next_event_start_time']),
+    path: asString(json['path']),
+    queueAll: asBool(json['queue_all']),
+    queueingMethod: asString(json['queueing_method']),
+    queueingStatusCode: asInt(json['queueing_status_code']),
+    sessionDuration: asInt(json['session_duration']),
+    suspended: asBool(json['suspended']),
+    totalActiveUsers: asInt(json['total_active_users']),
+    turnstileAction: asString(json['turnstile_action']),
+    turnstileMode: asString(json['turnstile_mode']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Only available for the Waiting Room Advanced subscription. Additional
+  /// hostname and path combinations to which this waiting room will be applied.
+  /// There is an implied wildcard at the end of the path. The hostname and path
+  /// combination must be unique to this and all other waiting rooms.
+  final List<WaitingroomAdditionalRoutesItem>? additionalRoutes;
+
+  /// Configures cookie attributes for the waiting room cookie. This encrypted
+  /// cookie stores a user's status in the waiting room, such as queue position.
+  final CookieAttributes? cookieAttributes;
+
+  /// Appends a '_' + a custom suffix to the end of Cloudflare Waiting Room's
+  /// cookie name(__cf_waitingroom). If `cookie_suffix` is "abcd", the cookie name
+  /// will be `__cf_waitingroom_abcd`. This field is required if using
+  /// `additional_routes`.
+  final String? cookieSuffix;
+  final String? createdOn;
+
+  /// Only available for the Waiting Room Advanced subscription. This is a
+  /// template html file that will be rendered at the edge. If no custom_page_html
+  /// is provided, the default waiting room will be used. The template is based on
+  /// mustache ( https://mustache.github.io/ ). There are several variables that
+  /// are evaluated by the Cloudflare edge: 1. {{`waitTimeKnown`}} Acts like a
+  /// boolean value that indicates the behavior to take when wait time is not
+  /// available, for instance when queue_all is **true**. 2.
+  /// {{`waitTimeFormatted`}} Estimated wait time for the user. For example, five
+  /// minutes. Alternatively, you can use: 3. {{`waitTime`}} Number of minutes of
+  /// estimated wait for a user. 4. {{`waitTimeHours`}} Number of hours of
+  /// estimated wait for a user (`Math.floor(waitTime/60)`). 5.
+  /// {{`waitTimeHourMinutes`}} Number of minutes above the `waitTimeHours` value
+  /// (`waitTime%60`). 6. {{`queueIsFull`}} Changes to **true** when no more
+  /// people can be added to the queue. To view the full list of variables, look
+  /// at the `cfWaitingRoom` object described under the `json_response_enabled`
+  /// property in other Waiting Room API calls.
+  final String? customPageHtml;
+
+  /// The language of the default page template. If no default_template_language
+  /// is provided, then `en-US` (English) will be used. Allowed values: `en-US`,
+  /// `es-ES`, `de-DE`, `fr-FR`, `it-IT`, `ja-JP`, `ko-KR`, `pt-BR`, `zh-CN`,
+  /// `zh-TW`, `nl-NL`, `pl-PL`, `id-ID`, `tr-TR`, `ar-EG`, `ru-RU`, `fa-IR`,
+  /// `bg-BG`, `hr-HR`, `cs-CZ`, `da-DK`, `fi-FI`, `lt-LT`, `ms-MY`, `nb-NO`,
+  /// `ro-RO`, `el-GR`, `he-IL`, `hi-IN`, `hu-HU`, `sr-BA`, `sk-SK`, `sl-SI`,
+  /// `sv-SE`, `tl-PH`, `th-TH`, `uk-UA`, `vi-VN`.
+  final String? defaultTemplateLanguage;
+
+  /// A note that you can use to add more details about the waiting room.
+  final String? description;
+
+  /// Only available for the Waiting Room Advanced subscription. Disables
+  /// automatic renewal of session cookies. If `true`, an accepted user will have
+  /// session_duration minutes to browse the site. After that, they will have to
+  /// go through the waiting room again. If `false`, a user's session cookie will
+  /// be automatically renewed on every request.
+  final bool? disableSessionRenewal;
+
+  /// A list of enabled origin commands.
+  final List<String>? enabledOriginCommands;
+
+  /// The host name to which the waiting room will be applied (no wildcards).
+  /// Please do not include the scheme (http:// or https://). The host and path
+  /// combination must be unique.
+  final String? host;
+  final String? id;
+
+  /// Only available for the Waiting Room Advanced subscription. If `true`,
+  /// requests to the waiting room with the header `Accept: application/json` will
+  /// receive a JSON response object with information on the user's status in the
+  /// waiting room as opposed to the configured static HTML page. This JSON
+  /// response object has one property `cfWaitingRoom` which is an object
+  /// containing the following fields: 1. `inWaitingRoom`: Boolean indicating if
+  /// the user is in the waiting room (always **true**). 2. `waitTimeKnown`:
+  /// Boolean indicating if the current estimated wait times are accurate. If
+  /// **false**, they are not available. 3. `waitTime`: Valid only when
+  /// `waitTimeKnown` is **true**. Integer indicating the current estimated time
+  /// in minutes the user will wait in the waiting room. When `queueingMethod` is
+  /// **random**, this is set to `waitTime50Percentile`. 4.
+  /// `waitTime25Percentile`: Valid only when `queueingMethod` is **random** and
+  /// `waitTimeKnown` is **true**. Integer indicating the current estimated
+  /// maximum wait time for the 25% of users that gain entry the fastest (25th
+  /// percentile). 5. `waitTime50Percentile`: Valid only when `queueingMethod` is
+  /// **random** and `waitTimeKnown` is **true**. Integer indicating the current
+  /// estimated maximum wait time for the 50% of users that gain entry the fastest
+  /// (50th percentile). In other words, half of the queued users are expected to
+  /// let into the origin website before `waitTime50Percentile` and half are
+  /// expected to be let in after it. 6. `waitTime75Percentile`: Valid only when
+  /// `queueingMethod` is **random** and `waitTimeKnown` is **true**. Integer
+  /// indicating the current estimated maximum wait time for the 75% of users that
+  /// gain entry the fastest (75th percentile). 7. `waitTimeFormatted`: String
+  /// displaying the `waitTime` formatted in English for users. If `waitTimeKnown`
+  /// is **false**, `waitTimeFormatted` will display **unavailable**. 8.
+  /// `queueIsFull`: Boolean indicating if the waiting room's queue is currently
+  /// full and not accepting new users at the moment. 9. `queueAll`: Boolean
+  /// indicating if all users will be queued in the waiting room and no one will
+  /// be let into the origin website. 10. `lastUpdated`: String displaying the
+  /// timestamp as an ISO 8601 string of the user's last attempt to leave the
+  /// waiting room and be let into the origin website. The user is able to make
+  /// another attempt after `refreshIntervalSeconds` past this time. If the user
+  /// makes a request too soon, it will be ignored and `lastUpdated` will not
+  /// change. 11. `refreshIntervalSeconds`: Integer indicating the number of
+  /// seconds after `lastUpdated` until the user is able to make another attempt
+  /// to leave the waiting room and be let into the origin website. When the
+  /// `queueingMethod` is `reject`, there is no specified refresh time —\_it will
+  /// always be **zero**. 12. `queueingMethod`: The queueing method currently used
+  /// by the waiting room. It is either **fifo**, **random**, **passthrough**, or
+  /// **reject**. 13. `isFIFOQueue`: Boolean indicating if the waiting room uses a
+  /// FIFO (First-In-First-Out) queue. 14. `isRandomQueue`: Boolean indicating if
+  /// the waiting room uses a Random queue where users gain access randomly. 15.
+  /// `isPassthroughQueue`: Boolean indicating if the waiting room uses a
+  /// passthrough queue. Keep in mind that when passthrough is enabled, this JSON
+  /// response will only exist when `queueAll` is **true** or `isEventPrequeueing`
+  /// is **true** because in all other cases requests will go directly to the
+  /// origin. 16. `isRejectQueue`: Boolean indicating if the waiting room uses a
+  /// reject queue. 17. `isEventActive`: Boolean indicating if an event is
+  /// currently occurring. Events are able to change a waiting room's behavior
+  /// during a specified period of time. For additional information, look at the
+  /// event properties `prequeue_start_time`, `event_start_time`, and
+  /// `event_end_time` in the documentation for creating waiting room events.
+  /// Events are considered active between these start and end times, as well as
+  /// during the prequeueing period if it exists. 18. `isEventPrequeueing`: Valid
+  /// only when `isEventActive` is **true**. Boolean indicating if an event is
+  /// currently prequeueing users before it starts. 19. `timeUntilEventStart`:
+  /// Valid only when `isEventPrequeueing` is **true**. Integer indicating the
+  /// number of minutes until the event starts. 20.
+  /// `timeUntilEventStartFormatted`: String displaying the `timeUntilEventStart`
+  /// formatted in English for users. If `isEventPrequeueing` is **false**,
+  /// `timeUntilEventStartFormatted` will display **unavailable**. 21.
+  /// `timeUntilEventEnd`: Valid only when `isEventActive` is **true**. Integer
+  /// indicating the number of minutes until the event ends. 22.
+  /// `timeUntilEventEndFormatted`: String displaying the `timeUntilEventEnd`
+  /// formatted in English for users. If `isEventActive` is **false**,
+  /// `timeUntilEventEndFormatted` will display **unavailable**. 23.
+  /// `shuffleAtEventStart`: Valid only when `isEventActive` is **true**. Boolean
+  /// indicating if the users in the prequeue are shuffled randomly when the event
+  /// starts. 24. `turnstile`: Empty when turnstile isn't enabled. String
+  /// displaying an html tag to display the Turnstile widget. Please add the
+  /// `{{{turnstile}}}` tag to the `custom_html` template to ensure the Turnstile
+  /// widget appears. 25. `infiniteQueue`: Boolean indicating whether the response
+  /// is for a user in the infinite queue. An example cURL to a waiting room could
+  /// be: curl -X GET "https://example.com/waitingroom" \ -H "Accept:
+  /// application/json" If `json_response_enabled` is **true** and the request
+  /// hits the waiting room, an example JSON response when `queueingMethod` is
+  /// **fifo** and no event is active could be: { "cfWaitingRoom": {
+  /// "inWaitingRoom": true, "waitTimeKnown": true, "waitTime": 10,
+  /// "waitTime25Percentile": 0, "waitTime50Percentile": 0,
+  /// "waitTime75Percentile": 0, "waitTimeFormatted": "10 minutes", "queueIsFull":
+  /// false, "queueAll": false, "lastUpdated": "2020-08-03T23:46:00.000Z",
+  /// "refreshIntervalSeconds": 20, "queueingMethod": "fifo", "isFIFOQueue": true,
+  /// "isRandomQueue": false, "isPassthroughQueue": false, "isRejectQueue": false,
+  /// "isEventActive": false, "isEventPrequeueing": false, "timeUntilEventStart":
+  /// 0, "timeUntilEventStartFormatted": "unavailable", "timeUntilEventEnd": 0,
+  /// "timeUntilEventEndFormatted": "unavailable", "shuffleAtEventStart": false }
+  /// } If `json_response_enabled` is **true** and the request hits the waiting
+  /// room, an example JSON response when `queueingMethod` is **random** and an
+  /// event is active could be: { "cfWaitingRoom": { "inWaitingRoom": true,
+  /// "waitTimeKnown": true, "waitTime": 10, "waitTime25Percentile": 5,
+  /// "waitTime50Percentile": 10, "waitTime75Percentile": 15, "waitTimeFormatted":
+  /// "5 minutes to 15 minutes", "queueIsFull": false, "queueAll": false,
+  /// "lastUpdated": "2020-08-03T23:46:00.000Z", "refreshIntervalSeconds": 20,
+  /// "queueingMethod": "random", "isFIFOQueue": false, "isRandomQueue": true,
+  /// "isPassthroughQueue": false, "isRejectQueue": false, "isEventActive": true,
+  /// "isEventPrequeueing": false, "timeUntilEventStart": 0,
+  /// "timeUntilEventStartFormatted": "unavailable", "timeUntilEventEnd": 15,
+  /// "timeUntilEventEndFormatted": "15 minutes", "shuffleAtEventStart": true } }
+  final bool? jsonResponseEnabled;
+  final String? modifiedOn;
+
+  /// A unique name to identify the waiting room. Only alphanumeric characters,
+  /// hyphens and underscores are allowed.
+  final String? name;
+
+  /// Sets the number of new users that will be let into the route every minute.
+  /// This value is used as baseline for the number of users that are let in per
+  /// minute. So it is possible that there is a little more or little less traffic
+  /// coming to the route based on the traffic patterns at that time around the
+  /// world.
+  final int? newUsersPerMinute;
+
+  /// An ISO 8601 timestamp that marks when the next event will begin queueing.
+  final String? nextEventPrequeueStartTime;
+
+  /// An ISO 8601 timestamp that marks when the next event will start.
+  final String? nextEventStartTime;
+
+  /// Sets the path within the host to enable the waiting room on. The waiting
+  /// room will be enabled for all subpaths as well. If there are two waiting
+  /// rooms on the same subpath, the waiting room for the most specific path will
+  /// be chosen. Wildcards and query parameters are not supported.
+  final String? path;
+
+  /// If queue_all is `true`, all the traffic that is coming to a route will be
+  /// sent to the waiting room. No new traffic can get to the route once this
+  /// field is set and estimated time will become unavailable.
+  final bool? queueAll;
+
+  /// Sets the queueing method used by the waiting room. Changing this parameter
+  /// from the **default** queueing method is only available for the Waiting Room
+  /// Advanced subscription. Regardless of the queueing method, if `queue_all` is
+  /// enabled or an event is prequeueing, users in the waiting room will not be
+  /// accepted to the origin. These users will always see a waiting room page that
+  /// refreshes automatically. The valid queueing methods are: 1. `fifo`
+  /// **(default)**: First-In-First-Out queue where customers gain access in the
+  /// order they arrived. 2. `random`: Random queue where customers gain access
+  /// randomly, regardless of arrival time. 3. `passthrough`: Users will pass
+  /// directly through the waiting room and into the origin website. As a result,
+  /// any configured limits will not be respected while this is enabled. This
+  /// method can be used as an alternative to disabling a waiting room (with
+  /// `suspended`) so that analytics are still reported. This can be used if you
+  /// wish to allow all traffic normally, but want to restrict traffic during a
+  /// waiting room event, or vice versa. 4. `reject`: Users will be immediately
+  /// rejected from the waiting room. As a result, no users will reach the origin
+  /// website while this is enabled. This can be used if you wish to reject all
+  /// traffic while performing maintenance, block traffic during a specified
+  /// period of time (an event), or block traffic while events are not occurring.
+  /// Consider a waiting room used for vaccine distribution that only allows
+  /// traffic during sign-up events, and otherwise blocks all traffic. For this
+  /// case, the waiting room uses `reject`, and its events override this with
+  /// `fifo`, `random`, or `passthrough`. When this queueing method is enabled and
+  /// neither `queueAll` is enabled nor an event is prequeueing, the waiting room
+  /// page **will not refresh automatically**. Allowed values: `fifo`, `random`,
+  /// `passthrough`, `reject`.
+  final String? queueingMethod;
+
+  /// HTTP status code returned to a user while in the queue. Allowed values:
+  /// `200`, `202`, `429`.
+  final int? queueingStatusCode;
+
+  /// Lifetime of a cookie (in minutes) set by Cloudflare for users who get access
+  /// to the route. If a user is not seen by Cloudflare again in that time period,
+  /// they will be treated as a new user that visits the route.
+  final int? sessionDuration;
+
+  /// Suspends or allows traffic going to the waiting room. If set to `true`, the
+  /// traffic will not go to the waiting room.
+  final bool? suspended;
+
+  /// Sets the total number of active user sessions on the route at a point in
+  /// time. A route is a combination of host and path on which a waiting room is
+  /// available. This value is used as a baseline for the total number of active
+  /// user sessions on the route. It is possible to have a situation where there
+  /// are more or less active users sessions on the route based on the traffic
+  /// patterns at that time around the world.
+  final int? totalActiveUsers;
+
+  /// Which action to take when a bot is detected using Turnstile. `log` will have
+  /// no impact on queueing behavior, simply keeping track of how many bots are
+  /// detected in Waiting Room Analytics. `infinite_queue` will send bots to a
+  /// false queueing state, where they will never reach your origin.
+  /// `infinite_queue` requires Advanced Waiting Room. Allowed values: `log`,
+  /// `infinite_queue`.
+  final String? turnstileAction;
+
+  /// Which Turnstile widget type to use for detecting bot traffic. See [the
+  /// Turnstile
+  /// documentation](https://developers.cloudflare.com/turnstile/concepts/widget/#widget-types)
+  /// for the definitions of these widget types. Set to `off` to disable the
+  /// Turnstile integration entirely. Setting this to anything other than `off` or
+  /// `invisible` requires Advanced Waiting Room. Allowed values: `off`,
+  /// `invisible`, `visible_non_interactive`, `visible_managed`.
+  final String? turnstileMode;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'additional_routes',
+    'cookie_attributes',
+    'cookie_suffix',
+    'created_on',
+    'custom_page_html',
+    'default_template_language',
+    'description',
+    'disable_session_renewal',
+    'enabled_origin_commands',
+    'host',
+    'id',
+    'json_response_enabled',
+    'modified_on',
+    'name',
+    'new_users_per_minute',
+    'next_event_prequeue_start_time',
+    'next_event_start_time',
+    'path',
+    'queue_all',
+    'queueing_method',
+    'queueing_status_code',
+    'session_duration',
+    'suspended',
+    'total_active_users',
+    'turnstile_action',
+    'turnstile_mode',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (additionalRoutes != null)
+      'additional_routes': additionalRoutes!.map((e) => e.toJson()).toList(),
+    if (cookieAttributes != null)
+      'cookie_attributes': cookieAttributes!.toJson(),
+    if (cookieSuffix != null) 'cookie_suffix': cookieSuffix!,
+    if (createdOn != null) 'created_on': createdOn!,
+    if (customPageHtml != null) 'custom_page_html': customPageHtml!,
+    if (defaultTemplateLanguage != null)
+      'default_template_language': defaultTemplateLanguage!,
+    if (description != null) 'description': description!,
+    if (disableSessionRenewal != null)
+      'disable_session_renewal': disableSessionRenewal!,
+    if (enabledOriginCommands != null)
+      'enabled_origin_commands': enabledOriginCommands!,
+    if (host != null) 'host': host!,
+    if (id != null) 'id': id!,
+    if (jsonResponseEnabled != null)
+      'json_response_enabled': jsonResponseEnabled!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (name != null) 'name': name!,
+    if (newUsersPerMinute != null) 'new_users_per_minute': newUsersPerMinute!,
+    if (nextEventPrequeueStartTime != null)
+      'next_event_prequeue_start_time': nextEventPrequeueStartTime!,
+    if (nextEventStartTime != null)
+      'next_event_start_time': nextEventStartTime!,
+    if (path != null) 'path': path!,
+    if (queueAll != null) 'queue_all': queueAll!,
+    if (queueingMethod != null) 'queueing_method': queueingMethod!,
+    if (queueingStatusCode != null) 'queueing_status_code': queueingStatusCode!,
+    if (sessionDuration != null) 'session_duration': sessionDuration!,
+    if (suspended != null) 'suspended': suspended!,
+    if (totalActiveUsers != null) 'total_active_users': totalActiveUsers!,
+    if (turnstileAction != null) 'turnstile_action': turnstileAction!,
+    if (turnstileMode != null) 'turnstile_mode': turnstileMode!,
+  };
+
+  Waitingroom copyWith({
+    List<WaitingroomAdditionalRoutesItem>? additionalRoutes,
+    CookieAttributes? cookieAttributes,
+    String? cookieSuffix,
+    String? createdOn,
+    String? customPageHtml,
+    String? defaultTemplateLanguage,
+    String? description,
+    bool? disableSessionRenewal,
+    List<String>? enabledOriginCommands,
+    String? host,
+    String? id,
+    bool? jsonResponseEnabled,
+    String? modifiedOn,
+    String? name,
+    int? newUsersPerMinute,
+    String? nextEventPrequeueStartTime,
+    String? nextEventStartTime,
+    String? path,
+    bool? queueAll,
+    String? queueingMethod,
+    int? queueingStatusCode,
+    int? sessionDuration,
+    bool? suspended,
+    int? totalActiveUsers,
+    String? turnstileAction,
+    String? turnstileMode,
+    Map<String, Object?>? extra,
+  }) => Waitingroom(
+    additionalRoutes: additionalRoutes ?? this.additionalRoutes,
+    cookieAttributes: cookieAttributes ?? this.cookieAttributes,
+    cookieSuffix: cookieSuffix ?? this.cookieSuffix,
+    createdOn: createdOn ?? this.createdOn,
+    customPageHtml: customPageHtml ?? this.customPageHtml,
+    defaultTemplateLanguage:
+        defaultTemplateLanguage ?? this.defaultTemplateLanguage,
+    description: description ?? this.description,
+    disableSessionRenewal: disableSessionRenewal ?? this.disableSessionRenewal,
+    enabledOriginCommands: enabledOriginCommands ?? this.enabledOriginCommands,
+    host: host ?? this.host,
+    id: id ?? this.id,
+    jsonResponseEnabled: jsonResponseEnabled ?? this.jsonResponseEnabled,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    name: name ?? this.name,
+    newUsersPerMinute: newUsersPerMinute ?? this.newUsersPerMinute,
+    nextEventPrequeueStartTime:
+        nextEventPrequeueStartTime ?? this.nextEventPrequeueStartTime,
+    nextEventStartTime: nextEventStartTime ?? this.nextEventStartTime,
+    path: path ?? this.path,
+    queueAll: queueAll ?? this.queueAll,
+    queueingMethod: queueingMethod ?? this.queueingMethod,
+    queueingStatusCode: queueingStatusCode ?? this.queueingStatusCode,
+    sessionDuration: sessionDuration ?? this.sessionDuration,
+    suspended: suspended ?? this.suspended,
+    totalActiveUsers: totalActiveUsers ?? this.totalActiveUsers,
+    turnstileAction: turnstileAction ?? this.turnstileAction,
+    turnstileMode: turnstileMode ?? this.turnstileMode,
+    extra: extra ?? this.extra,
+  );
+}
+
+class WaitingroomAdditionalRoutesItem {
+  const WaitingroomAdditionalRoutesItem({
+    this.host,
+    this.path,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory WaitingroomAdditionalRoutesItem.fromJson(Map<String, Object?> json) =>
+      WaitingroomAdditionalRoutesItem(
+        host: asString(json['host']),
+        path: asString(json['path']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The hostname to which this waiting room will be applied (no wildcards). The
+  /// hostname must be the primary domain, subdomain, or custom hostname (if using
+  /// SSL for SaaS) of this zone. Please do not include the scheme (http:// or
+  /// https://).
+  final String? host;
+
+  /// Sets the path within the host to enable the waiting room on. The waiting
+  /// room will be enabled for all subpaths as well. If there are two waiting
+  /// rooms on the same subpath, the waiting room for the most specific path will
+  /// be chosen. Wildcards and query parameters are not supported.
+  final String? path;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'host', 'path'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (host != null) 'host': host!,
+    if (path != null) 'path': path!,
+  };
+
+  WaitingroomAdditionalRoutesItem copyWith({
+    String? host,
+    String? path,
+    Map<String, Object?>? extra,
+  }) => WaitingroomAdditionalRoutesItem(
+    host: host ?? this.host,
+    path: path ?? this.path,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// A Turnstile Widgets configuration as it appears in listings
+class WidgetList {
+  const WidgetList({
+    this.botFightMode,
+    this.clearanceLevel,
+    this.createdOn,
+    this.deployedVia,
+    this.domains,
+    this.ephemeralId,
+    this.lastModifiedVia,
+    this.mode,
+    this.modifiedOn,
+    this.name,
+    this.offlabel,
+    this.region,
+    this.sitekey,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory WidgetList.fromJson(Map<String, Object?> json) => WidgetList(
+    botFightMode: asBool(json['bot_fight_mode']),
+    clearanceLevel: asString(json['clearance_level']),
+    createdOn: asString(json['created_on']),
+    deployedVia: asString(json['deployed_via']),
+    domains: asPrimitiveList<String>(json['domains'], asString),
+    ephemeralId: asBool(json['ephemeral_id']),
+    lastModifiedVia: asString(json['last_modified_via']),
+    mode: asString(json['mode']),
+    modifiedOn: asString(json['modified_on']),
+    name: asString(json['name']),
+    offlabel: asBool(json['offlabel']),
+    region: asString(json['region']),
+    sitekey: asString(json['sitekey']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// If bot_fight_mode is set to `true`, Cloudflare issues computationally
+  /// expensive challenges in response to malicious bots (ENT only).
+  final bool? botFightMode;
+
+  /// If Turnstile is embedded on a Cloudflare site and the widget should grant
+  /// challenge clearance, this setting can determine the clearance level to be
+  /// set Allowed values: `no_clearance`, `jschallenge`, `managed`, `interactive`.
+  final String? clearanceLevel;
+
+  /// When the widget was created.
+  final String? createdOn;
+
+  /// Origin that created this widget, recorded at creation time and immutable
+  /// afterward. Server-derived from the create request; not client-settable.
+  /// Omitted from the response for widgets created before this field existed.
+  /// Allowed values: `wrangler`, `dashboard`, `spin`, `api`, `unknown`.
+  final String? deployedVia;
+  final List<String>? domains;
+
+  /// Return the Ephemeral ID in /siteverify (ENT only).
+  final bool? ephemeralId;
+
+  /// Origin of the most recent mutation (create, update, delete, or secret
+  /// rotation). Server-derived; not client-settable. Omitted for widgets last
+  /// mutated before this field existed. Allowed values: `wrangler`, `dashboard`,
+  /// `spin`, `api`, `unknown`.
+  final String? lastModifiedVia;
+
+  /// Widget Mode Allowed values: `non-interactive`, `invisible`, `managed`.
+  final String? mode;
+
+  /// When the widget was modified.
+  final String? modifiedOn;
+
+  /// Human readable widget name. Not unique. Cloudflare suggests that you set
+  /// this to a meaningful string to make it easier to identify your widget, and
+  /// where it is used.
+  final String? name;
+
+  /// Do not show any Cloudflare branding on the widget (ENT only).
+  final bool? offlabel;
+
+  /// Region where this widget can be used. This cannot be changed after creation.
+  /// Allowed values: `world`, `china`.
+  final String? region;
+
+  /// Widget item identifier tag.
+  final String? sitekey;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'bot_fight_mode',
+    'clearance_level',
+    'created_on',
+    'deployed_via',
+    'domains',
+    'ephemeral_id',
+    'last_modified_via',
+    'mode',
+    'modified_on',
+    'name',
+    'offlabel',
+    'region',
+    'sitekey',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (botFightMode != null) 'bot_fight_mode': botFightMode!,
+    if (clearanceLevel != null) 'clearance_level': clearanceLevel!,
+    if (createdOn != null) 'created_on': createdOn!,
+    if (deployedVia != null) 'deployed_via': deployedVia!,
+    if (domains != null) 'domains': domains!,
+    if (ephemeralId != null) 'ephemeral_id': ephemeralId!,
+    if (lastModifiedVia != null) 'last_modified_via': lastModifiedVia!,
+    if (mode != null) 'mode': mode!,
+    if (modifiedOn != null) 'modified_on': modifiedOn!,
+    if (name != null) 'name': name!,
+    if (offlabel != null) 'offlabel': offlabel!,
+    if (region != null) 'region': region!,
+    if (sitekey != null) 'sitekey': sitekey!,
+  };
+
+  WidgetList copyWith({
+    bool? botFightMode,
+    String? clearanceLevel,
+    String? createdOn,
+    String? deployedVia,
+    List<String>? domains,
+    bool? ephemeralId,
+    String? lastModifiedVia,
+    String? mode,
+    String? modifiedOn,
+    String? name,
+    bool? offlabel,
+    String? region,
+    String? sitekey,
+    Map<String, Object?>? extra,
+  }) => WidgetList(
+    botFightMode: botFightMode ?? this.botFightMode,
+    clearanceLevel: clearanceLevel ?? this.clearanceLevel,
+    createdOn: createdOn ?? this.createdOn,
+    deployedVia: deployedVia ?? this.deployedVia,
+    domains: domains ?? this.domains,
+    ephemeralId: ephemeralId ?? this.ephemeralId,
+    lastModifiedVia: lastModifiedVia ?? this.lastModifiedVia,
+    mode: mode ?? this.mode,
+    modifiedOn: modifiedOn ?? this.modifiedOn,
+    name: name ?? this.name,
+    offlabel: offlabel ?? this.offlabel,
+    region: region ?? this.region,
+    sitekey: sitekey ?? this.sitekey,
+    extra: extra ?? this.extra,
+  );
+}
+
 class WorkerCronTriggerGetCronTriggersResult {
   const WorkerCronTriggerGetCronTriggersResult({
     this.schedules,
@@ -13635,6 +19568,43 @@ class WorkerCronTriggerGetCronTriggersResult {
     List<Schedule>? schedules,
     Map<String, Object?>? extra,
   }) => WorkerCronTriggerGetCronTriggersResult(
+    schedules: schedules ?? this.schedules,
+    extra: extra ?? this.extra,
+  );
+}
+
+class WorkerCronTriggerUpdateCronTriggersResult {
+  const WorkerCronTriggerUpdateCronTriggersResult({
+    this.schedules,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory WorkerCronTriggerUpdateCronTriggersResult.fromJson(
+    Map<String, Object?> json,
+  ) => WorkerCronTriggerUpdateCronTriggersResult(
+    schedules: asModelList(json['schedules'], Schedule.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  final List<Schedule>? schedules;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'schedules'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (schedules != null)
+      'schedules': schedules!.map((e) => e.toJson()).toList(),
+  };
+
+  WorkerCronTriggerUpdateCronTriggersResult copyWith({
+    List<Schedule>? schedules,
+    Map<String, Object?>? extra,
+  }) => WorkerCronTriggerUpdateCronTriggersResult(
     schedules: schedules ?? this.schedules,
     extra: extra ?? this.extra,
   );

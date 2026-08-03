@@ -9,6 +9,7 @@ import '../../ui/async_view.dart';
 import '../../ui/failure_text.dart';
 import '../analytics/analytics_screen.dart';
 import '../dns/dns_screen.dart';
+import 'zone_extras_screen.dart';
 import 'zone_settings_providers.dart';
 import 'zones_providers.dart';
 
@@ -69,6 +70,42 @@ class ZoneScreen extends ConsumerWidget {
                 MaterialPageRoute<void>(
                   builder: (_) =>
                       PurgeScreen(zoneId: zoneId, zoneName: zoneName),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.alt_route_outlined),
+              title: Text(l.trafficPageRules),
+              subtitle: Text(l.zoneTrafficSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      ZoneTrafficScreen(zoneId: zoneId, zoneName: zoneName),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.lock_outline),
+              title: const Text('TLS'),
+              subtitle: Text(l.zoneTlsSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      ZoneTlsScreen(zoneId: zoneId, zoneName: zoneName),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.mail_outline),
+              title: const Text('Email'),
+              subtitle: Text(l.zoneEmailSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      ZoneEmailScreen(zoneId: zoneId, zoneName: zoneName),
                 ),
               ),
             ),
