@@ -823,6 +823,90 @@ abstract class L {
   /// **'One per line'**
   String get purgeOnePerLine;
 
+  /// No description provided for @analyticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analyticsTitle;
+
+  /// No description provided for @analyticsRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get analyticsRequests;
+
+  /// No description provided for @analyticsCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached'**
+  String get analyticsCached;
+
+  /// No description provided for @analyticsBandwidth.
+  ///
+  /// In en, this message translates to:
+  /// **'Bandwidth'**
+  String get analyticsBandwidth;
+
+  /// No description provided for @analyticsUniques.
+  ///
+  /// In en, this message translates to:
+  /// **'Visitors'**
+  String get analyticsUniques;
+
+  /// No description provided for @analyticsCacheRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache hit'**
+  String get analyticsCacheRatio;
+
+  /// No description provided for @analyticsThreats.
+  ///
+  /// In en, this message translates to:
+  /// **'Threats'**
+  String get analyticsThreats;
+
+  /// No description provided for @analyticsRequestsOverTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests over time'**
+  String get analyticsRequestsOverTime;
+
+  /// No description provided for @analyticsStatusCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Status codes'**
+  String get analyticsStatusCodes;
+
+  /// No description provided for @analyticsTopCountries.
+  ///
+  /// In en, this message translates to:
+  /// **'Top countries'**
+  String get analyticsTopCountries;
+
+  /// No description provided for @analyticsContentTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Content types'**
+  String get analyticsContentTypes;
+
+  /// No description provided for @analyticsSecurityEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Security events'**
+  String get analyticsSecurityEvents;
+
+  /// No description provided for @analyticsNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No traffic in this period'**
+  String get analyticsNoData;
+
+  /// No description provided for @zoneAnalyticsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic, cache hit ratio, threats'**
+  String get zoneAnalyticsSubtitle;
+
   /// No description provided for @zoneDnsSubtitle.
   ///
   /// In en, this message translates to:
