@@ -275,6 +275,26 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// Pumps until [finder] matches, or gives up.
+  ///
+  /// Replaces `pumpAndSettle(const Duration(seconds: n))` at the points where n
+  /// was a guess about how long a device would take. A cold start, a PBKDF2
+  /// derivation and a first-run JIT are all slower on CI than here, and a guess
+  /// that is generous today becomes a flaky failure the moment the app grows.
+  Future<void> waitFor(
+    WidgetTester tester,
+    Finder finder, {
+    Duration limit = const Duration(seconds: 30),
+    String? what,
+  }) async {
+    final deadline = DateTime.now().add(limit);
+    while (DateTime.now().isBefore(deadline)) {
+      await tester.pump(const Duration(milliseconds: 150));
+      if (finder.evaluate().isNotEmpty) return;
+    }
+    fail('timed out after $limit waiting for ${what ?? finder}');
+  }
+
   /// Scrolls the topmost scrollable — the open bottom sheet, when there is one.
   ///
   /// [scrollTo] targets the first scrollable, which is the screen behind the
@@ -333,20 +353,24 @@ void main() {
     await tapAt(
       tester,
       find.text('Verify and continue'),
-      settle: const Duration(seconds: 3),
+      settle: const Duration(milliseconds: 300),
     );
 
-    expect(find.text('Set a PIN'), findsOneWidget);
+    await waitFor(tester, find.text('Set a PIN'), what: 'the PIN step');
     final pinFields = find.byType(TextField);
     await tester.enterText(pinFields.at(0), '1234');
     await tester.enterText(pinFields.at(1), '1234');
     await tester.pumpAndSettle();
-    // PBKDF2 runs 210k iterations in an isolate; give it room.
+
+    // PBKDF2 runs 210 000 iterations in an isolate, so this is genuinely slow
+    // — and slower on a cold CI runner than on a warm desktop.
     await tapAt(
       tester,
       find.text('Continue'),
-      settle: const Duration(seconds: 15),
+      settle: const Duration(milliseconds: 300),
     );
+    await waitFor(tester, find.text('Zones'), what: 'the app shell');
+    await tester.pumpAndSettle();
   }
 
   Future<void> openTab(WidgetTester tester, String label) => tapAt(
@@ -362,9 +386,15 @@ void main() {
     // The reported bug: the shell appeared before a credential existed, the
     // home providers failed against nothing, and nothing re-ran them. It read
     // "problem" and "—" until the app was restarted.
+    //
+    // So wait for the data rather than assert the instant the shell renders.
+    // The defect was that it never arrived, not that it was slow — asserting on
+    // the first frame only measured how fast the emulator felt that morning.
+    await waitFor(tester, find.text('active'), what: 'the credential status');
+    await waitFor(tester, find.text('2'), what: 'the zone count');
+
     expect(find.text('problem'), findsNothing);
-    expect(find.text('active'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
+    expect(find.text('—'), findsNothing);
   });
 
   testWidgets('zones list and DNS records, including MX priority', (
@@ -423,7 +453,13 @@ void main() {
     Finder field(String label) =>
         find.ancestor(of: find.text(label), matching: find.byType(TextField));
 
+    // Scroll each field into existence before typing. The sheet's list is
+    // lazy, so on a short screen the lower fields are not merely off-view —
+    // they are absent, and enterText on an empty finder throws "Bad state: No
+    // element", which reads nothing like "your field wasn't built".
+    await scrollToInSheet(tester, field('Name'));
     await tester.enterText(field('Name'), 'api');
+    await scrollToInSheet(tester, field('Content'));
     await tester.enterText(field('Content'), '198.51.100.7');
     await tester.pumpAndSettle();
 
@@ -537,13 +573,12 @@ void main() {
       scrollFirst: false,
     );
 
-    await tester.enterText(
-      find.ancestor(
-        of: find.text('Expression'),
-        matching: find.byType(TextField),
-      ),
-      '(ip.src.country ne "AZ")',
+    final expression = find.ancestor(
+      of: find.text('Expression'),
+      matching: find.byType(TextField),
     );
+    await scrollToInSheet(tester, expression);
+    await tester.enterText(expression, '(ip.src.country ne "AZ")');
     await tester.pumpAndSettle();
 
     await scrollToInSheet(tester, find.text('Save'));
