@@ -84,5 +84,5 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/OWNER/REPO/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/OWNER/REPO/releases/tag/v1.0.0
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/hasanzadee/cloudflare-mobile/releases/tag/v1.0.0
