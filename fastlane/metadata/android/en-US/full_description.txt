@@ -1,0 +1,40 @@
+Cloudflare does not publish an Android app. This is one — a native client for their API, built so you can fix a DNS record or flip a firewall rule without finding a laptop.
+
+<b>What it manages</b>
+
+• Zones — search, paginate, plan and status, nameservers
+• DNS — all 21 record types with a proper form for each, so an SRV record asks for service, proto, priority, weight, port and target rather than one blank field. Proxy toggle inline, TTL, comments, tags, BIND export
+• Cache — purge by URL, host, prefix or tag, or everything behind a type-to-confirm gate
+• Zone settings — SSL/TLS mode, HSTS, minimum TLS version, cache level, security level and more
+• Analytics — traffic, cache hit ratio, threats, status codes, top countries, content types, firewall events
+• Security — WAF custom rules and rate limiting: create, enable, disable, delete. IP access rules
+• Developer platform — Workers scripts, routes and cron triggers; Pages projects and deployments; KV namespaces with key browsing and editing; D1 with a SQL console; R2 buckets
+• Zero Trust — tunnels with live connector status, Access applications and policies, Gateway rules
+• Traffic and TLS — page rules, load balancers, waiting rooms, certificate packs, custom hostnames, DNSSEC
+• Email routing, Turnstile widgets, notification policies
+
+<b>Everything else, too</b>
+
+Anything without a hand-built screen is still reachable. The app carries an index of the whole Cloudflare API — 3240 endpoints — and builds a real form from each endpoint's own schema: typed inputs, enum dropdowns, required flags, ranges, and a pre-filled request body. Nothing is out of reach because a screen for it has not been written yet.
+
+<b>Your credentials stay on the device</b>
+
+Sign in with an API token (recommended) or a Global API key. Either is encrypted with AES-256-GCM under a key derived from a PIN you choose, using PBKDF2-HMAC-SHA256 at 210 000 iterations, and stored only on this phone.
+
+Biometric unlock is bound to hardware. The vault key is wrapped by an Android Keystore key created with setUserAuthenticationRequired, and unwrapping goes through BiometricPrompt with a CryptoObject — so the fingerprint check is enforced by the secure element, not by an app drawing a prompt you could walk around. Enrolling a new fingerprint destroys the key and falls back to the PIN.
+
+Screenshots, screen recording and the recent-apps preview are blocked by default. Cloud backup is disabled so the encrypted blobs cannot leave with a device transfer.
+
+<b>No telemetry</b>
+
+No analytics, no crash reporting, no advertising, no tracking of any kind. The app talks to api.cloudflare.com, and to dash.cloudflare.com only when you tap a button that opens the dashboard in a browser. There is nothing else in it that reaches the network.
+
+<b>One deliberate omission</b>
+
+There is no offline write queue and there will not be one. A DNS change queued at 09:00 and applied silently at 14:00 — after you have already fixed the problem another way — is the worst bug a management app can ship. Without a connection, writes are blocked and say so.
+
+<b>Also</b>
+
+Material 3 with dynamic colour, light and dark themes, and eight languages: English, Azerbaijani, German, Spanish, French, Turkish, Russian and Chinese.
+
+Free and open source under Apache-2.0. Not affiliated with, endorsed by, or sponsored by Cloudflare, Inc. "Cloudflare" is a trademark of Cloudflare, Inc.

@@ -1,0 +1,12 @@
+First release.
+
+Zones and DNS with a real form for each of the 21 record types, cache purge,
+zone settings, analytics, WAF custom rules and rate limiting, IP access rules,
+Workers, Pages, KV, D1, R2, and Zero Trust tunnels, Access apps and Gateway
+rules. Anything without a dedicated screen is reachable through an explorer
+that builds a form from the endpoint's own schema — all 3240 of them.
+
+Credentials are encrypted on the device under a PIN-derived key; biometric
+unlock is enforced by the Keystore rather than the UI. No telemetry.
+
+Eight languages, light and dark themes, dynamic colour.
