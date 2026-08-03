@@ -130,11 +130,18 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
             DropdownButtonFormField<String>(
               initialValue: _type.name,
               decoration: InputDecoration(labelText: l.dnsType),
+              // Without isExpanded the button sizes to its widest item, and
+              // "SVCB — service binding, modern alternative to CNAME at apex"
+              // is wider than a phone. It overflowed by ~105px, striped.
+              isExpanded: true,
               items: [
                 for (final t in kDnsRecordTypes)
                   DropdownMenuItem(
                     value: t.name,
-                    child: Text('${t.name} — ${t.description}'),
+                    child: Text(
+                      '${t.name} — ${t.description}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
               ],
               onChanged: editing

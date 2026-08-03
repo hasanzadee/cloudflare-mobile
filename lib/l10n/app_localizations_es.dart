@@ -67,6 +67,32 @@ class LEs extends L {
   String get securityNewIpRule => 'Nueva regla de acceso por IP';
 
   @override
+  String get securityNewCustomRule => 'Nueva regla personalizada';
+
+  @override
+  String get securityNewRateLimitRule => 'Nueva regla de límite de tasa';
+
+  @override
+  String get securityExpression => 'Expresión';
+
+  @override
+  String get securityExpressionHelp =>
+      'Sintaxis de Ruleset Engine. Cloudflare la valida al guardar y dice qué está mal.';
+
+  @override
+  String get securityExpressionRequired => 'Hace falta una expresión';
+
+  @override
+  String get securityRequests => 'Solicitudes';
+
+  @override
+  String get securityPeriod => 'Por segundos';
+
+  @override
+  String get securityRateLimitHelp =>
+      'Se cuenta por IP de cliente y centro de datos. El bloqueo dura lo mismo que el periodo.';
+
+  @override
   String get securityAction => 'Acción';
 
   @override

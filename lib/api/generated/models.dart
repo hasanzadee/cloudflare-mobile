@@ -11780,6 +11780,190 @@ class RandomSteering {
   );
 }
 
+class RequestRule {
+  const RequestRule({
+    this.action,
+    this.actionParameters,
+    this.categories,
+    this.description,
+    this.enabled,
+    this.exposedCredentialCheck,
+    this.expression,
+    this.id,
+    this.lastUpdated,
+    this.logging,
+    this.ratelimit,
+    this.ref,
+    this.version,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RequestRule.fromJson(Map<String, Object?> json) => RequestRule(
+    action: json['action'],
+    actionParameters: asModel(
+      json['action_parameters'],
+      RequestRuleActionParameters.fromJson,
+    ),
+    categories: asPrimitiveList<String>(json['categories'], asString),
+    description: json['description'],
+    enabled: json['enabled'],
+    exposedCredentialCheck: asModel(
+      json['exposed_credential_check'],
+      RuleExposedCredentialCheck.fromJson,
+    ),
+    expression: asString(json['expression']),
+    id: asString(json['id']),
+    lastUpdated: asString(json['last_updated']),
+    logging: asModel(json['logging'], RuleLogging.fromJson),
+    ratelimit: asModel(json['ratelimit'], RuleRatelimit.fromJson),
+    ref: asString(json['ref']),
+    version: asString(json['version']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Allowed values: `transform_response_html`.
+  final Object? action;
+  final RequestRuleActionParameters? actionParameters;
+
+  /// The categories of the rule.
+  final List<String>? categories;
+  final Object? description;
+  final Object? enabled;
+
+  /// Configuration for exposed credential checking.
+  final RuleExposedCredentialCheck? exposedCredentialCheck;
+
+  /// The expression defining which traffic will match the rule.
+  final String? expression;
+
+  /// The unique ID of the rule.
+  final String? id;
+
+  /// The timestamp of when the rule was last modified.
+  final String? lastUpdated;
+
+  /// An object configuring the rule's logging behavior.
+  final RuleLogging? logging;
+
+  /// An object configuring the rule's rate limit behavior.
+  final RuleRatelimit? ratelimit;
+
+  /// The reference of the rule (the rule's ID by default).
+  final String? ref;
+
+  /// The version of the rule.
+  final String? version;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'action',
+    'action_parameters',
+    'categories',
+    'description',
+    'enabled',
+    'exposed_credential_check',
+    'expression',
+    'id',
+    'last_updated',
+    'logging',
+    'ratelimit',
+    'ref',
+    'version',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (action != null) 'action': action!,
+    if (actionParameters != null)
+      'action_parameters': actionParameters!.toJson(),
+    if (categories != null) 'categories': categories!,
+    if (description != null) 'description': description!,
+    if (enabled != null) 'enabled': enabled!,
+    if (exposedCredentialCheck != null)
+      'exposed_credential_check': exposedCredentialCheck!.toJson(),
+    if (expression != null) 'expression': expression!,
+    if (id != null) 'id': id!,
+    if (lastUpdated != null) 'last_updated': lastUpdated!,
+    if (logging != null) 'logging': logging!.toJson(),
+    if (ratelimit != null) 'ratelimit': ratelimit!.toJson(),
+    if (ref != null) 'ref': ref!,
+    if (version != null) 'version': version!,
+  };
+
+  RequestRule copyWith({
+    Object? action,
+    RequestRuleActionParameters? actionParameters,
+    List<String>? categories,
+    Object? description,
+    Object? enabled,
+    RuleExposedCredentialCheck? exposedCredentialCheck,
+    String? expression,
+    String? id,
+    String? lastUpdated,
+    RuleLogging? logging,
+    RuleRatelimit? ratelimit,
+    String? ref,
+    String? version,
+    Map<String, Object?>? extra,
+  }) => RequestRule(
+    action: action ?? this.action,
+    actionParameters: actionParameters ?? this.actionParameters,
+    categories: categories ?? this.categories,
+    description: description ?? this.description,
+    enabled: enabled ?? this.enabled,
+    exposedCredentialCheck:
+        exposedCredentialCheck ?? this.exposedCredentialCheck,
+    expression: expression ?? this.expression,
+    id: id ?? this.id,
+    lastUpdated: lastUpdated ?? this.lastUpdated,
+    logging: logging ?? this.logging,
+    ratelimit: ratelimit ?? this.ratelimit,
+    ref: ref ?? this.ref,
+    version: version ?? this.version,
+    extra: extra ?? this.extra,
+  );
+}
+
+class RequestRuleActionParameters {
+  const RequestRuleActionParameters({
+    this.linkMaze,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RequestRuleActionParameters.fromJson(Map<String, Object?> json) =>
+      RequestRuleActionParameters(
+        linkMaze: asMap(json['link_maze']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Enables the link maze transformation on the response.
+  final Map<String, Object?>? linkMaze;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'link_maze'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (linkMaze != null) 'link_maze': linkMaze!,
+  };
+
+  RequestRuleActionParameters copyWith({
+    Map<String, Object?>? linkMaze,
+    Map<String, Object?>? extra,
+  }) => RequestRuleActionParameters(
+    linkMaze: linkMaze ?? this.linkMaze,
+    extra: extra ?? this.extra,
+  );
+}
+
 class ResponseRule {
   const ResponseRule({
     this.action,
@@ -18157,6 +18341,194 @@ class Universal {
 
   Universal copyWith({bool? enabled, Map<String, Object?>? extra}) =>
       Universal(enabled: enabled ?? this.enabled, extra: extra ?? this.extra);
+}
+
+class UpdateZoneEntrypointRulesetBody {
+  const UpdateZoneEntrypointRulesetBody({
+    this.description,
+    this.id,
+    this.lastUpdated,
+    this.name,
+    this.version,
+    this.rules,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory UpdateZoneEntrypointRulesetBody.fromJson(Map<String, Object?> json) =>
+      UpdateZoneEntrypointRulesetBody(
+        description: asString(json['description']),
+        id: json['id'],
+        lastUpdated: asString(json['last_updated']),
+        name: asString(json['name']),
+        version: json['version'],
+        rules: asModelList(json['rules'], RequestRule.fromJson),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// An informative description of the ruleset.
+  final String? description;
+  final Object? id;
+
+  /// The timestamp of when the ruleset was last modified.
+  final String? lastUpdated;
+
+  /// The human-readable name of the ruleset.
+  final String? name;
+  final Object? version;
+
+  /// The list of rules in the ruleset.
+  final List<RequestRule>? rules;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'description',
+    'id',
+    'last_updated',
+    'name',
+    'version',
+    'rules',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (description != null) 'description': description!,
+    if (id != null) 'id': id!,
+    if (lastUpdated != null) 'last_updated': lastUpdated!,
+    if (name != null) 'name': name!,
+    if (version != null) 'version': version!,
+    if (rules != null) 'rules': rules!.map((e) => e.toJson()).toList(),
+  };
+
+  UpdateZoneEntrypointRulesetBody copyWith({
+    String? description,
+    Object? id,
+    String? lastUpdated,
+    String? name,
+    Object? version,
+    List<RequestRule>? rules,
+    Map<String, Object?>? extra,
+  }) => UpdateZoneEntrypointRulesetBody(
+    description: description ?? this.description,
+    id: id ?? this.id,
+    lastUpdated: lastUpdated ?? this.lastUpdated,
+    name: name ?? this.name,
+    version: version ?? this.version,
+    rules: rules ?? this.rules,
+    extra: extra ?? this.extra,
+  );
+}
+
+class UpdateZoneEntrypointRulesetResult {
+  const UpdateZoneEntrypointRulesetResult({
+    this.description,
+    this.id,
+    this.lastUpdated,
+    this.name,
+    this.version,
+    this.kind,
+    this.phase,
+    this.rules,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory UpdateZoneEntrypointRulesetResult.fromJson(
+    Map<String, Object?> json,
+  ) => UpdateZoneEntrypointRulesetResult(
+    description: asString(json['description']),
+    id: json['id'],
+    lastUpdated: asString(json['last_updated']),
+    name: asString(json['name']),
+    version: json['version'],
+    kind: asString(json['kind']),
+    phase: asString(json['phase']),
+    rules: asModelList(json['rules'], ResponseRule.fromJson),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// An informative description of the ruleset.
+  final String? description;
+  final Object? id;
+
+  /// The timestamp of when the ruleset was last modified.
+  final String? lastUpdated;
+
+  /// The human-readable name of the ruleset.
+  final String? name;
+  final Object? version;
+
+  /// The kind of the ruleset. Allowed values: `managed`, `custom`, `root`,
+  /// `zone`.
+  final String? kind;
+
+  /// The phase of the ruleset. Allowed values: `ddos_l4`, `ddos_l7`,
+  /// `http_config_settings`, `http_custom_errors`, `http_log_custom_fields`,
+  /// `http_ratelimit`, `http_request_cache_settings`,
+  /// `http_request_dynamic_redirect`, `http_request_firewall_custom`,
+  /// `http_request_firewall_managed`, `http_request_late_transform`,
+  /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
+  /// `http_request_sbfm`, `http_request_transform`,
+  /// `http_response_cache_settings`, `http_response_compression`,
+  /// `http_response_firewall_managed`, `http_response_headers_transform`,
+  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `magic_transit_ratelimit`.
+  final String? phase;
+
+  /// The list of rules in the ruleset.
+  final List<ResponseRule>? rules;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'description',
+    'id',
+    'last_updated',
+    'name',
+    'version',
+    'kind',
+    'phase',
+    'rules',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (description != null) 'description': description!,
+    if (id != null) 'id': id!,
+    if (lastUpdated != null) 'last_updated': lastUpdated!,
+    if (name != null) 'name': name!,
+    if (version != null) 'version': version!,
+    if (kind != null) 'kind': kind!,
+    if (phase != null) 'phase': phase!,
+    if (rules != null) 'rules': rules!.map((e) => e.toJson()).toList(),
+  };
+
+  UpdateZoneEntrypointRulesetResult copyWith({
+    String? description,
+    Object? id,
+    String? lastUpdated,
+    String? name,
+    Object? version,
+    String? kind,
+    String? phase,
+    List<ResponseRule>? rules,
+    Map<String, Object?>? extra,
+  }) => UpdateZoneEntrypointRulesetResult(
+    description: description ?? this.description,
+    id: id ?? this.id,
+    lastUpdated: lastUpdated ?? this.lastUpdated,
+    name: name ?? this.name,
+    version: version ?? this.version,
+    kind: kind ?? this.kind,
+    phase: phase ?? this.phase,
+    rules: rules ?? this.rules,
+    extra: extra ?? this.extra,
+  );
 }
 
 class UpdateZoneRulesetRuleBody {

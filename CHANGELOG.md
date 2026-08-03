@@ -24,8 +24,15 @@ survives.
 - **Analytics** — traffic, cache hit ratio, threats, status codes, top
   countries, content types and firewall events, over a hand-written GraphQL
   layer because the Analytics API is absent from the OpenAPI description.
-- **Security** — WAF custom rules and rate limiting (enable, disable, delete),
-  IP access rules (list, create, delete).
+- **Security** — WAF custom rules and rate limiting (create, enable, disable,
+  delete), IP access rules (list, create, delete). Creating the first rule in a
+  phase puts the entry point ruleset into being, since a zone that has never
+  had one has no ruleset id to post a rule to.
+- **Adding profiles after setup** — a second account, or the same account with
+  a differently scoped key. The vault and the switcher were always
+  multi-profile; there had been no way to reach any of it once onboarding was
+  done, and Settings' "Add profile" opened the Cloudflare website and stopped
+  there.
 - **Developer platform** — Workers scripts, routes and cron triggers; Pages
   projects and deployments; KV namespaces with key browse, read, edit, delete;
   D1 with a SQL console that gates destructive statements; R2 buckets.

@@ -974,6 +974,20 @@ void main() {
       final again = RandomSteering.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('RequestRule', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RequestRule.fromJson(json);
+      final encoded = model.toJson();
+      final again = RequestRule.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('RequestRuleActionParameters', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RequestRuleActionParameters.fromJson(json);
+      final encoded = model.toJson();
+      final again = RequestRuleActionParameters.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('ResponseRule', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = ResponseRule.fromJson(json);
@@ -1590,6 +1604,20 @@ void main() {
       final model = Universal.fromJson(json);
       final encoded = model.toJson();
       final again = Universal.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('UpdateZoneEntrypointRulesetBody', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = UpdateZoneEntrypointRulesetBody.fromJson(json);
+      final encoded = model.toJson();
+      final again = UpdateZoneEntrypointRulesetBody.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('UpdateZoneEntrypointRulesetResult', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = UpdateZoneEntrypointRulesetResult.fromJson(json);
+      final encoded = model.toJson();
+      final again = UpdateZoneEntrypointRulesetResult.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('UpdateZoneRulesetRuleBody', () {

@@ -67,6 +67,32 @@ class LRu extends L {
   String get securityNewIpRule => 'Новое IP-правило';
 
   @override
+  String get securityNewCustomRule => 'Новое своё правило';
+
+  @override
+  String get securityNewRateLimitRule => 'Новое ограничение частоты';
+
+  @override
+  String get securityExpression => 'Выражение';
+
+  @override
+  String get securityExpressionHelp =>
+      'Синтаксис Ruleset Engine. Cloudflare проверит его при сохранении и скажет, что не так.';
+
+  @override
+  String get securityExpressionRequired => 'Выражение обязательно';
+
+  @override
+  String get securityRequests => 'Запросов';
+
+  @override
+  String get securityPeriod => 'За секунд';
+
+  @override
+  String get securityRateLimitHelp =>
+      'Считается по IP клиента и дата-центру. Блокировка длится столько же, сколько период.';
+
+  @override
   String get securityAction => 'Действие';
 
   @override

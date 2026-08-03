@@ -10,6 +10,7 @@ import '../../ui/async_view.dart';
 import '../../ui/failure_text.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
+import 'rule_editor.dart';
 import 'security_providers.dart';
 
 class SecurityScreen extends ConsumerStatefulWidget {
@@ -86,6 +87,38 @@ class _PhaseRules extends ConsumerWidget {
     final rules = ref.watch(phaseRulesProvider(key));
     final l = L.of(context);
 
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final created = await showModalBottomSheet<bool>(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            builder: (_) => RuleEditorSheet(
+              zoneId: zoneId,
+              phase: phase.id,
+              // Null when this phase has no ruleset yet, which decides
+              // whether the rule is POSTed or the ruleset is PUT into being.
+              rulesetId: rules.valueOrNull?.id?.toString(),
+              isRateLimit: phase.id == RulesetPhase.rateLimit.id,
+            ),
+          );
+          if (created ?? false) ref.invalidate(phaseRulesProvider(key));
+        },
+        icon: const Icon(Icons.add),
+        label: Text(l.commonAdd),
+      ),
+      body: _list(context, ref, key, rules, l),
+    );
+  }
+
+  Widget _list(
+    BuildContext context,
+    WidgetRef ref,
+    PhaseKey key,
+    AsyncValue<GetZoneEntrypointRulesetResult?> rules,
+    L l,
+  ) {
     return AsyncView<GetZoneEntrypointRulesetResult?>(
       value: rules,
       onRetry: () => ref.invalidate(phaseRulesProvider(key)),
@@ -147,7 +180,10 @@ class _RuleTile extends ConsumerWidget {
       subtitle: Text(
         rule.expression ?? '',
         style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-        maxLines: 3,
+        // Two, not three: isThreeLine sizes the tile for a title plus two
+        // lines, so a third wrapped line of expression overflowed it — 7px of
+        // yellow stripes on a phone-width screen.
+        maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Row(

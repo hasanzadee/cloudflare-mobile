@@ -67,6 +67,32 @@ class LDe extends L {
   String get securityNewIpRule => 'Neue IP-Zugriffsregel';
 
   @override
+  String get securityNewCustomRule => 'Neue eigene Regel';
+
+  @override
+  String get securityNewRateLimitRule => 'Neue Ratenbegrenzung';
+
+  @override
+  String get securityExpression => 'Ausdruck';
+
+  @override
+  String get securityExpressionHelp =>
+      'Ruleset-Engine-Syntax. Cloudflare prüft ihn beim Speichern und nennt den Fehler.';
+
+  @override
+  String get securityExpressionRequired => 'Ein Ausdruck ist erforderlich';
+
+  @override
+  String get securityRequests => 'Anfragen';
+
+  @override
+  String get securityPeriod => 'Pro Sekunden';
+
+  @override
+  String get securityRateLimitHelp =>
+      'Gezählt pro Client-IP und Rechenzentrum. Die Sperre dauert so lange wie der Zeitraum.';
+
+  @override
   String get securityAction => 'Aktion';
 
   @override

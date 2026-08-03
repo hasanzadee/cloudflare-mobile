@@ -96,6 +96,26 @@ class WafApi {
     return CreateZoneRulesetRuleResult.fromJson(_env.resultAsMap);
   }
 
+  /// `PUT /zones/{zone_id}/rulesets/phases/{ruleset_phase}/entrypoint`
+  /// Update a zone entry point ruleset
+  Future<UpdateZoneEntrypointRulesetResult> putPhaseEntrypoint({
+    required String zoneId,
+    required String rulesetPhase,
+    required UpdateZoneEntrypointRulesetBody body,
+    Map<String, Object?>? extraQuery,
+    CancelToken? cancelToken,
+  }) async {
+    final _env = await _client.send(
+      method: 'PUT',
+      path: '/zones/$zoneId/rulesets/phases/$rulesetPhase/entrypoint',
+      body: body.toJson(),
+      query: <String, Object?>{...?extraQuery},
+      cancelToken: cancelToken,
+      missingPermissions: const {'Zone WAF Write'},
+    );
+    return UpdateZoneEntrypointRulesetResult.fromJson(_env.resultAsMap);
+  }
+
   /// `PATCH /zones/{zone_id}/rulesets/{ruleset_id}/rules/{rule_id}`
   /// Update a zone ruleset rule
   Future<UpdateZoneRulesetRuleResult> updateRule({

@@ -142,6 +142,7 @@ void main() {
           'scopeZone',
           'securityAction',
           'securityValue',
+          'securityExpression',
           'permTitle',
           'commonAll',
         };

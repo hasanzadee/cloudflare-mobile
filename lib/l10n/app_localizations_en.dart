@@ -67,6 +67,32 @@ class LEn extends L {
   String get securityNewIpRule => 'New IP access rule';
 
   @override
+  String get securityNewCustomRule => 'New custom rule';
+
+  @override
+  String get securityNewRateLimitRule => 'New rate limiting rule';
+
+  @override
+  String get securityExpression => 'Expression';
+
+  @override
+  String get securityExpressionHelp =>
+      'Ruleset Engine syntax. Cloudflare validates it when you save and says what is wrong.';
+
+  @override
+  String get securityExpressionRequired => 'An expression is required';
+
+  @override
+  String get securityRequests => 'Requests';
+
+  @override
+  String get securityPeriod => 'Per seconds';
+
+  @override
+  String get securityRateLimitHelp =>
+      'Counted per client IP and data centre. Blocking lasts as long as the period.';
+
+  @override
   String get securityAction => 'Action';
 
   @override

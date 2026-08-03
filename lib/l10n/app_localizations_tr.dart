@@ -67,6 +67,32 @@ class LTr extends L {
   String get securityNewIpRule => 'Yeni IP erişim kuralı';
 
   @override
+  String get securityNewCustomRule => 'Yeni özel kural';
+
+  @override
+  String get securityNewRateLimitRule => 'Yeni hız sınırı kuralı';
+
+  @override
+  String get securityExpression => 'İfade';
+
+  @override
+  String get securityExpressionHelp =>
+      'Ruleset Engine sözdizimi. Cloudflare kaydederken doğrular ve neyin yanlış olduğunu söyler.';
+
+  @override
+  String get securityExpressionRequired => 'İfade zorunludur';
+
+  @override
+  String get securityRequests => 'İstek';
+
+  @override
+  String get securityPeriod => 'Saniyede';
+
+  @override
+  String get securityRateLimitHelp =>
+      'İstemci IP\'si ve veri merkezi başına sayılır. Engelleme, periyot kadar sürer.';
+
+  @override
   String get securityAction => 'Eylem';
 
   @override
