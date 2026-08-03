@@ -12,6 +12,13 @@
   "navZeroTrust": "Zero Trust",
   "navMore": "More",
 
+  "scopeAccount": "Account",
+  "scopeZone": "Zone",
+  "scopeAllAccounts": "All accounts",
+  "scopePickZone": "Pick a zone",
+  "scopePickAccount": "Pick an account",
+  "scopeMoreZones": "More zones exist — type to search",
+
   "securityIpAccess": "IP access",
   "securityPickZone": "Pick a zone first — security rules are per zone.",
   "securityNoRules": "No rules in this phase yet",

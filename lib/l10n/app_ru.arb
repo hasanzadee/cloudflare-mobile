@@ -12,6 +12,13 @@
   "navZeroTrust": "Zero Trust",
   "navMore": "Ещё",
 
+  "scopeAccount": "Аккаунт",
+  "scopeZone": "Зона",
+  "scopeAllAccounts": "Все аккаунты",
+  "scopePickZone": "Выбрать зону",
+  "scopePickAccount": "Выбрать аккаунт",
+  "scopeMoreZones": "Зон больше — начните печатать",
+
   "securityIpAccess": "IP-доступ",
   "securityPickZone": "Сначала выберите зону — правила защиты задаются на зону.",
   "securityNoRules": "В этой фазе правил пока нет",

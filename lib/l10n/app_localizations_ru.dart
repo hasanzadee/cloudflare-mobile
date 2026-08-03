@@ -36,6 +36,24 @@ class LRu extends L {
   String get navMore => 'Ещё';
 
   @override
+  String get scopeAccount => 'Аккаунт';
+
+  @override
+  String get scopeZone => 'Зона';
+
+  @override
+  String get scopeAllAccounts => 'Все аккаунты';
+
+  @override
+  String get scopePickZone => 'Выбрать зону';
+
+  @override
+  String get scopePickAccount => 'Выбрать аккаунт';
+
+  @override
+  String get scopeMoreZones => 'Зон больше — начните печатать';
+
+  @override
   String get securityIpAccess => 'IP-доступ';
 
   @override

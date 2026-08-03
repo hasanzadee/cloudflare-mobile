@@ -58,11 +58,11 @@ class _DeveloperScreenState extends ConsumerState<DeveloperScreen>
         ),
       ),
       body: accountId == null
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Text(l.devPickAccount, textAlign: TextAlign.center),
-              ),
+          ? ScopePrompt(
+              icon: Icons.account_balance_outlined,
+              message: l.devPickAccount,
+              action: l.scopePickAccount,
+              onTap: () => pickAccount(context, ref),
             )
           : TabBarView(
               controller: _tabs,

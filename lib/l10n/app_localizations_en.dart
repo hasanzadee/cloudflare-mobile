@@ -36,6 +36,24 @@ class LEn extends L {
   String get navMore => 'More';
 
   @override
+  String get scopeAccount => 'Account';
+
+  @override
+  String get scopeZone => 'Zone';
+
+  @override
+  String get scopeAllAccounts => 'All accounts';
+
+  @override
+  String get scopePickZone => 'Pick a zone';
+
+  @override
+  String get scopePickAccount => 'Pick an account';
+
+  @override
+  String get scopeMoreZones => 'More zones exist — type to search';
+
+  @override
   String get securityIpAccess => 'IP access';
 
   @override

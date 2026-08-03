@@ -6,6 +6,7 @@ import '../../app/theme.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../core/net/paginator.dart';
 import '../../l10n/app_localizations.dart';
+import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
 import '../zones/zone_extras_screen.dart';
 
@@ -54,11 +55,11 @@ class AccountExtrasScreen extends ConsumerWidget {
     if (accountId == null) {
       return Scaffold(
         appBar: AppBar(title: Text(l.moreAlerts)),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Text(l.devPickAccount, textAlign: TextAlign.center),
-          ),
+        body: ScopePrompt(
+          icon: Icons.account_balance_outlined,
+          message: l.devPickAccount,
+          action: l.scopePickAccount,
+          onTap: () => pickAccount(context, ref),
         ),
       );
     }
