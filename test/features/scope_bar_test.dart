@@ -144,7 +144,9 @@ void main() {
 
   testWidgets('account sheet lists every account', (tester) async {
     await tester.pumpWidget(
-      _host(overrides: [accountsProvider.overrideWith((ref) async => accounts)]),
+      _host(
+        overrides: [accountsProvider.overrideWith((ref) async => accounts)],
+      ),
     );
     await tester.pumpAndSettle();
 

@@ -56,7 +56,11 @@ class TokenTemplate {
     'teams',
   };
 
-  static Set<String> get allKeys => {...accountKeys, ...zoneKeys, ...accessKeys};
+  static Set<String> get allKeys => {
+    ...accountKeys,
+    ...zoneKeys,
+    ...accessKeys,
+  };
 
   /// Accepted access levels. `edit` means full CRUD, not merely update.
   static const Set<String> types = {'read', 'edit', 'revoke', 'run', 'purge'};
@@ -182,7 +186,9 @@ class TokenTemplate {
   static Uri forMissing(Set<String> missingPermissionLabels) {
     final wanted = <Map<String, String>>[...dnsAdmin];
     void add(String key, String type) {
-      if (!wanted.any((p) => p['key'] == key)) wanted.add(permission(key, type));
+      if (!wanted.any((p) => p['key'] == key)) {
+        wanted.add(permission(key, type));
+      }
     }
 
     for (final label in missingPermissionLabels) {

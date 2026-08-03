@@ -179,8 +179,7 @@ class _AccountSheet extends ConsumerWidget {
                             fontSize: 11,
                           ),
                         ),
-                        selected:
-                            a.id == ref.watch(scopeProvider).accountId,
+                        selected: a.id == ref.watch(scopeProvider).accountId,
                         onTap: () {
                           ref
                               .read(scopeProvider.notifier)

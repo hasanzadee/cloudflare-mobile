@@ -46,7 +46,15 @@ android {
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {
-                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                // rootProject, not the app module: a relative storeFile in
+                // key.properties should mean "next to key.properties", not
+                // "inside android/app". Absolute paths pass through unchanged,
+                // which is what the release workflow writes.
+                //
+                // Use forward slashes in key.properties even on Windows — it is
+                // a java.util.Properties file, so `\r` and `\U` in a path like
+                // C:\rm\Users are read as escape sequences and eaten.
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
                 storePassword = keystoreProperties.getProperty("storePassword")
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")

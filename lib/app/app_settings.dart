@@ -4,16 +4,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/application/auth_providers.dart';
 
+/// Languages the app ships, in the order the picker shows them.
+///
+/// English leads because it is the default. The rest are alphabetical by their
+/// own endonym, not by English name — a Turkish speaker looks for "Türkçe".
+const Map<String, String> kSupportedLanguages = {
+  'en': 'English',
+  'az': 'Azərbaycanca',
+  'de': 'Deutsch',
+  'es': 'Español',
+  'fr': 'Français',
+  'tr': 'Türkçe',
+  'ru': 'Русский',
+  'zh': '中文',
+};
+
 /// Appearance and language, persisted.
 ///
-/// Both default to following the system, which is what most people want and
-/// costs nothing. The overrides exist because "most people" is not everyone:
-/// a phone set to a language you can read is not the same as a technical app
-/// you would rather read in English.
+/// Language defaults to English rather than the system: this is a technical
+/// tool whose vocabulary — zone, purge, ruleset — is English in the dashboard
+/// and in every piece of Cloudflare documentation, and a translation of it is a
+/// preference, not an improvement. Picking "System" is one tap away.
 class AppSettings {
   const AppSettings({
     this.themeMode = ThemeMode.system,
-    this.locale,
+    this.locale = const Locale('en'),
     this.useDynamicColor = true,
     this.blockScreenshots = true,
     this.autoLock = const Duration(minutes: 1),
@@ -21,7 +36,8 @@ class AppSettings {
 
   final ThemeMode themeMode;
 
-  /// Null means "follow the system".
+  /// Null means "follow the system", which is a deliberate choice the user made
+  /// rather than the absence of one — see [AppSettingsController._restore].
   final Locale? locale;
 
   /// Material You. Off falls back to the Cloudflare-orange seed, which is what
@@ -87,7 +103,14 @@ class AppSettingsController extends Notifier<AppSettings> {
         'dark' => ThemeMode.dark,
         _ => ThemeMode.system,
       },
-      locale: localeTag == null || localeTag.isEmpty ? null : Locale(localeTag),
+      // Three distinct states, and collapsing any two of them loses something:
+      // absent means the user has never chosen (English), empty means they
+      // chose "System", and a tag is an explicit language.
+      locale: switch (localeTag) {
+        null => const Locale('en'),
+        '' => null,
+        final tag => Locale(tag),
+      },
       useDynamicColor: prefs.getBool(_kDynamic) ?? true,
       blockScreenshots: prefs.getBool(_kSecure) ?? true,
       autoLock: lockSeconds == null
