@@ -11,9 +11,13 @@ Cloudflare API, not just the ones with a hand-built screen.
 > architecture, the generator, the screens, the tests. That is not a disclaimer
 > hidden at the bottom; it is how it got built and you should know before you
 > trust it with a credential. What is *not* vibes: every screen was run against
-> a real Cloudflare account, there are 365 tests, CI regenerates the API client
-> and fails on any drift, and the security design is written down in full below
-> so you can disagree with it. Read the code. Issues and corrections welcome.
+> a real Cloudflare account; there are 385 unit tests plus a suite that drives
+> the real app on a real Android device through onboarding, DNS, a WAF toggle,
+> both languages and lock/unlock; CI regenerates the API client and fails on any
+> drift; and the security design is written down in full below so you can
+> disagree with it. That on-device pass found eight bugs nothing else caught —
+> they are listed in [CHANGELOG.md](CHANGELOG.md). Read the code. Issues and
+> corrections welcome.
 
 ## Why
 
