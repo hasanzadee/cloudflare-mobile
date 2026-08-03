@@ -76,6 +76,26 @@ Carried over from the prototype, each of these was silent:
 - The zone chip only rendered once a zone was already selected and had no tap
   handler, making every zone-scoped screen unreachable without a detour through
   the Zones tab.
+- The "read + write" token link claimed more than the format can deliver.
+  Cloudflare's template URLs accept 27 keys and Zone WAF is not among them, so
+  a token made from that button still could not open the Security tab. Eight
+  such groups are now listed as a checklist instead of being silently omitted.
+- `FailureView` took an `onFixPermissions` callback that no caller ever passed,
+  so the offer to re-create a token existed only in the widget's source.
+- Signing in left the home screen reading "problem" until the app was
+  restarted: the shell replaced onboarding a moment before a credential
+  existed, and nothing invalidated the providers holding that first failure.
+- Toggling a WAF rule always failed. The Ruleset API replaces rather than
+  merges, so `{enabled: false}` on its own was rejected for a missing action
+  and expression.
+- The loading skeleton was a `ListView`, which throws when `AsyncView` is
+  nested in a page that already scrolls — the analytics charts went red for as
+  long as the request was in flight.
+- Locking hid nothing. The lock screen replaces what `home` renders, but pushed
+  routes sit above it, so "Lock now" and auto-lock both left the previous
+  screen fully visible.
+- The splash screen never drew: the stock template wraps the icon in `<bitmap>`,
+  which accepts only a raster, and this icon is a vector.
 
 ### Security
 
