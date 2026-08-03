@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Shown for the fraction of a second before Flutter draws its first frame.
-  The stock template uses white here, which reads as a flash on a dark theme;
-  matching the icon background makes launch look continuous instead.
+  Base variant. minSdk is 26, so drawable-v21 is the one that actually loads;
+  this exists because the resource still has to resolve without a qualifier.
+  Keep the two in step — see the v21 copy for why <bitmap> is not used.
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/launch_background" />
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/ic_launcher_foreground" />
-    </item>
+    <item
+        android:drawable="@drawable/ic_launcher_foreground"
+        android:gravity="center"
+        android:width="160dp"
+        android:height="160dp" />
 </layer-list>
