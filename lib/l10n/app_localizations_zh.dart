@@ -263,6 +263,13 @@ class LZh extends L {
   String get authCreateToken => '在控制台创建令牌';
 
   @override
+  String get authManualPermsTitle => '这些需要手动添加';
+
+  @override
+  String get authManualPermsBody =>
+      'Cloudflare 的链接格式没有对应这些权限的键，上面的按钮无法自动勾选。请在刚打开的页面的 Permissions 一栏中逐个添加。';
+
+  @override
   String get authPasteToken => '粘贴你的 API 令牌';
 
   @override

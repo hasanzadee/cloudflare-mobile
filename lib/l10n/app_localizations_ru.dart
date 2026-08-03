@@ -268,6 +268,13 @@ class LRu extends L {
   String get authCreateToken => 'Создать токен в панели';
 
   @override
+  String get authManualPermsTitle => 'Добавьте вручную';
+
+  @override
+  String get authManualPermsBody =>
+      'Для этих прав в формате ссылок Cloudflare нет ключа, поэтому кнопка выше их не отметит. Добавьте каждое в разделе Permissions на открывшейся странице.';
+
+  @override
   String get authPasteToken => 'Вставьте API-токен';
 
   @override

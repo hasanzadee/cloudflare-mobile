@@ -93,6 +93,8 @@
   "authGlobalKey": "Global API Key",
   "authGlobalKeyBlurb": "Veraltet. Uneingeschränkter Zugriff auf das gesamte Konto.",
   "authCreateToken": "Token im Dashboard erstellen",
+  "authManualPermsTitle": "Diese von Hand hinzufügen",
+  "authManualPermsBody": "Für diese Berechtigungen gibt es im Link-Format von Cloudflare keinen Schlüssel, der Button oben kann sie also nicht ankreuzen. Füge jede davon auf der eben geöffneten Seite unter Permissions hinzu.",
   "authPasteToken": "API-Token einfügen",
   "authTokenHint": "40-stelliger Token aus dem Dashboard",
   "authVerify": "Prüfen und fortfahren",

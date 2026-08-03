@@ -93,6 +93,8 @@
   "authGlobalKey": "Global API Key",
   "authGlobalKeyBlurb": "Método antiguo. Acceso sin restricciones a toda la cuenta.",
   "authCreateToken": "Crear un token en el panel",
+  "authManualPermsTitle": "Añade estos a mano",
+  "authManualPermsBody": "El formato de enlace de Cloudflare no tiene clave para estos permisos, así que el botón de arriba no puede marcarlos. Añade cada uno en la sección Permissions de la página que se acaba de abrir.",
   "authPasteToken": "Pega tu token de API",
   "authTokenHint": "Token de 40 caracteres del panel",
   "authVerify": "Verificar y continuar",

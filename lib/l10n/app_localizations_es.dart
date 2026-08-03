@@ -268,6 +268,13 @@ class LEs extends L {
   String get authCreateToken => 'Crear un token en el panel';
 
   @override
+  String get authManualPermsTitle => 'Añade estos a mano';
+
+  @override
+  String get authManualPermsBody =>
+      'El formato de enlace de Cloudflare no tiene clave para estos permisos, así que el botón de arriba no puede marcarlos. Añade cada uno en la sección Permissions de la página que se acaba de abrir.';
+
+  @override
   String get authPasteToken => 'Pega tu token de API';
 
   @override

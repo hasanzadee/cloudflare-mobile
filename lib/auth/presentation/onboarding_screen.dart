@@ -10,6 +10,7 @@ import '../../ui/failure_text.dart';
 import '../application/auth_providers.dart';
 import '../data/token_template.dart';
 import '../domain/cf_credential.dart';
+import 'manual_permissions.dart';
 
 /// First-run flow: pick a sign-in method, provide the credential, set a PIN.
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -124,7 +125,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           FilledButton.icon(
             onPressed: () => _open(TokenTemplate.userToken(TokenTemplate.full)),
             icon: const Icon(Icons.all_inclusive),
-            label: const Text('Everything (read + write)'),
+            label: const Text('Read + write'),
           ),
           OutlinedButton.icon(
             onPressed: () =>
@@ -140,6 +141,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         ],
       ),
+      const SizedBox(height: 12),
+      ManualPermissions(permissions: TokenTemplate.full),
       const SizedBox(height: 20),
       TextField(
         controller: _token,

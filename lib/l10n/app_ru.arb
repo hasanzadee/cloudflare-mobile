@@ -94,6 +94,8 @@
   "authGlobalKey": "Global API Key",
   "authGlobalKeyBlurb": "Устаревший способ. Неограниченный доступ ко всему аккаунту.",
   "authCreateToken": "Создать токен в панели",
+  "authManualPermsTitle": "Добавьте вручную",
+  "authManualPermsBody": "Для этих прав в формате ссылок Cloudflare нет ключа, поэтому кнопка выше их не отметит. Добавьте каждое в разделе Permissions на открывшейся странице.",
   "authPasteToken": "Вставьте API-токен",
   "authTokenHint": "40 символов из панели Cloudflare",
   "authVerify": "Проверить и продолжить",

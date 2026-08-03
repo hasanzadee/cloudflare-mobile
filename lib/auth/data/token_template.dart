@@ -1,19 +1,49 @@
 import 'dart:convert';
 
+/// One Cloudflare permission group the app needs.
+///
+/// [group] is the exact wording of the checkbox in the dashboard's token form,
+/// because that is the string a user has to find in a dropdown of ~150 entries.
+/// [key] is the dashboard's *template* key, which is a different and much
+/// smaller namespace — see [TokenTemplate.allKeys]. A null key means the token
+/// form cannot pre-select this one and the user must tick it themselves.
+class CfPermission {
+  const CfPermission(this.group, this.type, {this.key, this.why});
+
+  /// Name shown in the dashboard, e.g. `Zone WAF`.
+  final String group;
+
+  /// `read`, `edit` or `purge`.
+  final String type;
+
+  /// Template-URL key, or null when no key exists for this group.
+  final String? key;
+
+  /// What breaks without it, shown next to the manual checklist.
+  final String? why;
+
+  bool get isManual => key == null;
+
+  /// How the dashboard labels the access level next to the group.
+  String get level => switch (type) {
+    'read' => 'Read',
+    'purge' => 'Purge',
+    _ => 'Edit',
+  };
+
+  @override
+  String toString() => '$group — $level';
+}
+
 /// Builds Cloudflare dashboard deep links that pre-fill the API token form.
 ///
-/// This is what makes the token path feel close to a real sign-in: the user
-/// taps a button, lands on the token screen with the right permissions already
-/// selected, presses Create, and pastes the result back. No hunting through
-/// the permission list for "Zone / DNS / Edit".
+/// The template format accepts only the 27 keys in [allKeys], and silently
+/// drops anything else, so a link can never cover everything this app touches.
+/// Rather than pretend otherwise, [full] carries the whole list and marks the
+/// entries the form cannot express; the UI shows those as a checklist.
 ///
-/// The keys below are the dashboard's own template keys, taken from
+/// Keys per
 /// https://developers.cloudflare.com/fundamentals/api/how-to/account-owned-token-template/
-/// They are NOT the permission-group ids returned by
-/// `GET /user/tokens/permission_groups`, and they are NOT free-form: the
-/// dashboard silently ignores a key it does not recognise, so a typo costs a
-/// permission the user then has to find by hand. [allKeys] is the full accepted
-/// set and [assertValid] guards every template against it.
 class TokenTemplate {
   const TokenTemplate._();
 
@@ -65,165 +95,143 @@ class TokenTemplate {
   /// Accepted access levels. `edit` means full CRUD, not merely update.
   static const Set<String> types = {'read', 'edit', 'revoke', 'run', 'purge'};
 
-  /// A single permission entry: `{"key": "dns", "type": "edit"}`.
-  static Map<String, String> permission(String key, String type) {
-    assert(allKeys.contains(key), 'unknown permission key: $key');
-    assert(types.contains(type), 'unknown permission type: $type');
-    return {'key': key, 'type': type};
-  }
-
-  /// Read-only across everything the app can show.
-  static const List<Map<String, String>> readOnly = [
-    {'key': 'zone', 'type': 'read'},
-    {'key': 'dns', 'type': 'read'},
-    {'key': 'zone_settings', 'type': 'read'},
-    {'key': 'analytics', 'type': 'read'},
-    {'key': 'firewall_services', 'type': 'read'},
-    {'key': 'page_rules', 'type': 'read'},
-    {'key': 'ssl_and_certificates', 'type': 'read'},
-    {'key': 'account_settings', 'type': 'read'},
-    {'key': 'account_analytics', 'type': 'read'},
-    {'key': 'workers_scripts', 'type': 'read'},
-    {'key': 'workers_kv_storage', 'type': 'read'},
-    {'key': 'workers_routes', 'type': 'read'},
-    {'key': 'workers_r2', 'type': 'read'},
-    {'key': 'd1', 'type': 'read'},
-    {'key': 'queues', 'type': 'read'},
-    {'key': 'page', 'type': 'read'},
-    {'key': 'access', 'type': 'read'},
-    {'key': 'access_acct', 'type': 'read'},
-    {'key': 'teams', 'type': 'read'},
-  ];
-
-  /// Everything the DNS screens need.
-  static const List<Map<String, String>> dnsAdmin = [
-    {'key': 'zone', 'type': 'read'},
-    {'key': 'dns', 'type': 'edit'},
-    {'key': 'zone_settings', 'type': 'read'},
-    {'key': 'account_settings', 'type': 'read'},
-  ];
-
   /// Read and write across every screen this app has.
   ///
-  /// This is the "just let me use the whole app" preset. It does not cover
-  /// literally every Cloudflare permission group — the dashboard's template
-  /// format only accepts the keys in [allKeys], so Turnstile, Email Routing,
-  /// Load Balancers, Waiting Rooms and Notifications have no key and must be
-  /// ticked by hand on the same form. Those screens are read-only-ish anyway,
-  /// and a 403 from them names the missing permission.
-  static const List<Map<String, String>> full = [
+  /// Eight of these have no template key. That is not an oversight to fix
+  /// later: Cloudflare's template format simply has no key for them, and
+  /// inventing one gets it dropped without a word — which is how an earlier
+  /// version shipped a "full access" link that produced a token with no DNS.
+  static const List<CfPermission> full = [
     // Zone
-    {'key': 'zone', 'type': 'edit'},
-    {'key': 'dns', 'type': 'edit'},
-    {'key': 'zone_settings', 'type': 'edit'},
-    {'key': 'cache', 'type': 'purge'},
-    {'key': 'firewall_services', 'type': 'edit'},
-    {'key': 'page_rules', 'type': 'edit'},
-    {'key': 'ssl_and_certificates', 'type': 'edit'},
-    {'key': 'analytics', 'type': 'read'},
+    CfPermission('Zone', 'edit', key: 'zone'),
+    CfPermission('DNS', 'edit', key: 'dns'),
+    CfPermission('Zone Settings', 'edit', key: 'zone_settings'),
+    CfPermission('Cache Purge', 'purge', key: 'cache'),
+    CfPermission('Firewall Services', 'edit', key: 'firewall_services'),
+    CfPermission('Page Rules', 'edit', key: 'page_rules'),
+    CfPermission('SSL and Certificates', 'edit', key: 'ssl_and_certificates'),
+    CfPermission('Zone Analytics', 'read', key: 'analytics'),
     // Account
-    {'key': 'account_settings', 'type': 'read'},
-    {'key': 'account_analytics', 'type': 'read'},
-    {'key': 'workers_scripts', 'type': 'edit'},
-    {'key': 'workers_kv_storage', 'type': 'edit'},
-    {'key': 'workers_routes', 'type': 'edit'},
-    {'key': 'workers_r2', 'type': 'edit'},
-    {'key': 'd1', 'type': 'edit'},
-    {'key': 'queues', 'type': 'edit'},
-    {'key': 'page', 'type': 'edit'},
+    CfPermission('Account Settings', 'read', key: 'account_settings'),
+    CfPermission('Account Analytics', 'read', key: 'account_analytics'),
+    CfPermission('API Tokens', 'read', key: 'account_api_tokens'),
+    CfPermission('Workers Scripts', 'edit', key: 'workers_scripts'),
+    CfPermission('Workers KV Storage', 'edit', key: 'workers_kv_storage'),
+    CfPermission('Workers Routes', 'edit', key: 'workers_routes'),
+    CfPermission('Workers R2 Storage', 'edit', key: 'workers_r2'),
+    CfPermission('D1', 'edit', key: 'd1'),
+    CfPermission('Queues', 'edit', key: 'queues'),
+    CfPermission('Pages', 'edit', key: 'page'),
     // Zero Trust
-    {'key': 'access', 'type': 'edit'},
-    {'key': 'access_acct', 'type': 'edit'},
-    {'key': 'teams', 'type': 'edit'},
+    CfPermission('Access: Apps and Policies', 'edit', key: 'access'),
+    CfPermission(
+      'Access: Organizations, Identity Providers, and Groups',
+      'edit',
+      key: 'access_acct',
+    ),
+    CfPermission('Zero Trust', 'edit', key: 'teams'),
+
+    // No template key exists for any of the following.
+    CfPermission('Zone WAF', 'edit', why: 'Custom rules and rate limiting'),
+    CfPermission('Cloudflare Tunnel', 'read', why: 'Tunnels and connectors'),
+    CfPermission('Email Routing Rules', 'read', why: 'Email routing'),
+    CfPermission('Load Balancers', 'read', why: 'Load balancers'),
+    CfPermission('Waiting Room', 'read', why: 'Waiting rooms'),
+    CfPermission('Turnstile', 'read', why: 'Turnstile widgets'),
+    CfPermission('Notifications', 'read', why: 'Alert policies and history'),
+    CfPermission('User Details', 'read', why: 'Your profile'),
   ];
 
-  /// Throws in debug if a preset drifts onto a key the dashboard would drop.
-  static void assertValid(List<Map<String, String>> permissions) {
+  /// Read-only across everything the app can show.
+  ///
+  /// Derived from [full] so a permission added there cannot be forgotten here.
+  /// Cache Purge drops out entirely: it has no read level — purging *is* the
+  /// write.
+  static List<CfPermission> get readOnly => [
+    for (final p in full)
+      if (p.type != 'purge')
+        CfPermission(p.group, 'read', key: p.key, why: p.why),
+  ];
+
+  /// Everything the DNS screens need, and nothing else.
+  static const List<CfPermission> dnsAdmin = [
+    CfPermission('Zone', 'read', key: 'zone'),
+    CfPermission('DNS', 'edit', key: 'dns'),
+    CfPermission('Zone Settings', 'read', key: 'zone_settings'),
+    CfPermission('Account Settings', 'read', key: 'account_settings'),
+  ];
+
+  /// The subset the dashboard form has to be told about by hand.
+  static List<CfPermission> manualIn(List<CfPermission> permissions) =>
+      permissions.where((p) => p.isManual).toList();
+
+  /// The checklist text, shaped so it can be pasted somewhere useful.
+  static String manualChecklist(List<CfPermission> permissions) =>
+      manualIn(permissions).map((p) => '${p.group} — ${p.level}').join('\n');
+
+  static List<Map<String, String>> _encode(List<CfPermission> permissions) {
+    final out = <Map<String, String>>[];
     for (final p in permissions) {
-      assert(allKeys.contains(p['key']), 'unknown permission key: ${p['key']}');
-      assert(types.contains(p['type']), 'unknown type: ${p['type']}');
+      final key = p.key;
+      if (key == null) continue;
+      assert(allKeys.contains(key), 'unknown permission key: $key');
+      assert(types.contains(p.type), 'unknown permission type: ${p.type}');
+      out.add({'key': key, 'type': p.type});
     }
+    return out;
   }
 
   /// User-owned token, scoped to all accounts and all zones.
   static Uri userToken(
-    List<Map<String, String>> permissions, {
+    List<CfPermission> permissions, {
     String name = 'Cloudflare Mobile',
-  }) {
-    assertValid(permissions);
-    return Uri.parse('$dashboardBase/profile/api-tokens').replace(
-      queryParameters: {
-        'permissionGroupKeys': jsonEncode(permissions),
-        'accountId': '*',
-        'zoneId': 'all',
-        'name': name,
-      },
-    );
-  }
+  }) => Uri.parse('$dashboardBase/profile/api-tokens').replace(
+    queryParameters: {
+      'permissionGroupKeys': jsonEncode(_encode(permissions)),
+      'accountId': '*',
+      'zoneId': 'all',
+      'name': name,
+    },
+  );
 
   /// Account-owned token. The dashboard resolves `:account` by asking the user
   /// to pick, which is why no account id is needed here — and why passing one
   /// is explicitly wrong for this form.
   static Uri accountToken(
-    List<Map<String, String>> permissions, {
+    List<CfPermission> permissions, {
     String name = 'Cloudflare Mobile',
-  }) {
-    assertValid(permissions);
-    return Uri.parse(dashboardBase).replace(
-      queryParameters: {
-        'to': '/:account/api-tokens',
-        'permissionGroupKeys': jsonEncode(permissions),
-        'name': name,
-      },
-    );
-  }
+  }) => Uri.parse(dashboardBase).replace(
+    queryParameters: {
+      'to': '/:account/api-tokens',
+      'permissionGroupKeys': jsonEncode(_encode(permissions)),
+      'name': name,
+    },
+  );
 
   /// Where to send someone whose token turned out to lack a permission.
   ///
-  /// Starts from what they plainly already wanted and adds the missing area, so
-  /// the new token is a superset rather than a sidegrade that breaks a screen
-  /// that used to work.
-  static Uri forMissing(Set<String> missingPermissionLabels) {
-    final wanted = <Map<String, String>>[...dnsAdmin];
-    void add(String key, String type) {
-      if (!wanted.any((p) => p['key'] == key)) {
-        wanted.add(permission(key, type));
-      }
-    }
+  /// Starts from the full set rather than from what they had: a token created
+  /// to fix one 403 should not quietly drop a screen that already worked.
+  static Uri forMissing(Set<String> missingPermissionLabels) =>
+      userToken(full, name: 'Cloudflare Mobile');
 
-    for (final label in missingPermissionLabels) {
+  /// The groups behind a 403, matched to the checklist so the message can name
+  /// what to tick rather than only what is missing.
+  static List<CfPermission> resolveMissing(Set<String> missingLabels) {
+    // Longest match wins. "Zone WAF Read" starts with "Zone" as well as with
+    // "Zone WAF", and taking the first hit sent people to the wrong checkbox.
+    final candidates = [...full]
+      ..sort((a, b) => b.group.length.compareTo(a.group.length));
+
+    final out = <CfPermission>[];
+    for (final label in missingLabels) {
       final lower = label.toLowerCase();
-      if (lower.contains('cache')) add('cache', 'purge');
-      if (lower.contains('firewall') ||
-          lower.contains('waf') ||
-          lower.contains('ruleset')) {
-        add('firewall_services', 'edit');
-      }
-      if (lower.contains('analytics')) add('analytics', 'read');
-      if (lower.contains('zone settings')) add('zone_settings', 'edit');
-      if (lower.contains('page rule')) add('page_rules', 'edit');
-      if (lower.contains('ssl') || lower.contains('certificate')) {
-        add('ssl_and_certificates', 'edit');
-      }
-      if (lower.contains('worker') && lower.contains('kv')) {
-        add('workers_kv_storage', 'edit');
-      } else if (lower.contains('worker') && lower.contains('route')) {
-        add('workers_routes', 'edit');
-      } else if (lower.contains('worker')) {
-        add('workers_scripts', 'edit');
-      }
-      if (lower.contains('r2')) add('workers_r2', 'edit');
-      if (lower.contains('d1')) add('d1', 'edit');
-      if (lower.contains('queue')) add('queues', 'edit');
-      if (lower.contains('pages')) add('page', 'edit');
-      if (lower.contains('access')) add('access', 'edit');
-      if (lower.contains('gateway') ||
-          lower.contains('teams') ||
-          lower.contains('tunnel') ||
-          lower.contains('zero trust')) {
-        add('teams', 'edit');
-      }
+      final match = candidates.firstWhere(
+        (p) => lower.startsWith(p.group.toLowerCase()),
+        orElse: () => CfPermission(label, 'edit'),
+      );
+      if (!out.any((p) => p.group == match.group)) out.add(match);
     }
-    return userToken(wanted);
+    return out;
   }
 }
