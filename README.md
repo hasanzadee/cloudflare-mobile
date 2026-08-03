@@ -7,6 +7,14 @@ Cloudflare API, not just the ones with a hand-built screen.
 > Not affiliated with, endorsed by, or sponsored by Cloudflare, Inc.
 > "Cloudflare" is a trademark of Cloudflare, Inc.
 
+> **Vibe coded.** I built this by vibe coding it, start to finish — the
+> architecture, the generator, the screens, the tests. That is not a disclaimer
+> hidden at the bottom; it is how it got built and you should know before you
+> trust it with a credential. What is *not* vibes: every screen was run against
+> a real Cloudflare account, there are 365 tests, CI regenerates the API client
+> and fails on any drift, and the security design is written down in full below
+> so you can disagree with it. Read the code. Issues and corrections welcome.
+
 ## Why
 
 There is no good Cloudflare app for Android. The official one was retired, and
@@ -56,8 +64,27 @@ Verify what you installed:
 sha256sum -c SHA256SUMS
 ```
 
-The release signing certificate fingerprint is published in each release's
-notes. If it ever changes without an announcement in this README, do not install.
+And check who signed it:
+
+```bash
+apksigner verify --print-certs app-arm64-v8a-release.apk
+```
+
+```
+Signer #1 certificate SHA-256 digest: cd688cfb0805b6f8ce956c1425ef063299753c7c6c7ae18eef7fa384d40f33de
+```
+
+Every release is signed with that key. If a build ever shows a different
+fingerprint and this README has not changed to match, do not install it.
+
+## Languages
+
+English (default), Azerbaijani, German, Spanish, French, Turkish, Russian and
+Chinese, switchable in Settings independently of the phone's language — the
+Cloudflare dashboard is English, so reading the app in English is often the
+lesser confusion. Everything but English was translated by a non-native speaker;
+[corrections and new languages](CONTRIBUTING.md#translations) are genuinely
+welcome and are the easiest useful PR in this repo.
 
 ## Signing in
 

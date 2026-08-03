@@ -46,7 +46,9 @@ what to fix.
   go through `failureMessage`. If a failure mode has no useful message yet, add
   a case to `CfFailure` rather than printing the exception.
 - **No user-visible string literals in Dart.** Add them to `lib/l10n/app_en.arb`
-  (the template) and `app_ru.arb`. CI fails on Cyrillic outside `lib/l10n/`.
+  (the template) *and every other locale*. CI fails on Cyrillic outside
+  `lib/l10n/`, and `test/features/localization_test.dart` fails if any locale is
+  missing a key, drops a placeholder, or is still verbatim English.
 - **Never retry a non-idempotent request** without an explicit opt-in at the
   call site, and think about duplicates before you add one.
 - **No offline write queue.** See `docs/architecture.md`; this is a stated
@@ -55,6 +57,29 @@ what to fix.
   `core/net/interceptors/redaction.dart`.
 - Run `dart format` and `flutter analyze --fatal-infos` before pushing; CI
   enforces both.
+
+## Translations
+
+The app ships English, Azerbaijani, German, Spanish, French, Turkish, Russian
+and Chinese. Everything except English was written by someone who is not a
+native speaker — **corrections are as welcome as new languages**, and neither
+needs an issue first.
+
+To add a language, copy `lib/l10n/app_en.arb` to `app_<code>.arb`, set
+`@@locale`, translate the values, drop the `@key` metadata blocks (only the
+template needs them), and add the code with its endonym to
+`kSupportedLanguages` in `lib/app/app_settings.dart`. Then:
+
+```bash
+flutter gen-l10n && flutter test test/features/localization_test.dart
+```
+
+Two things the test will hold you to. Placeholders such as `{count}` must
+survive translation — losing one is a crash, not a typo. And plural forms use
+your language's real CLDR categories: Russian needs `one/few/other`, German and
+French need `one/other`, Turkish and Chinese need only `other`. Leave Cloudflare
+product names (Workers, Pages, R2, Zero Trust, Turnstile) in English; that is
+what they are called everywhere.
 
 ## Tests
 

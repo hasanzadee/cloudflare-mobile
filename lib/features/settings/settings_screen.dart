@@ -81,8 +81,8 @@ class SettingsScreen extends ConsumerWidget {
                   value: '',
                   child: Text(l.settingsLanguageSystem),
                 ),
-                const DropdownMenuItem(value: 'en', child: Text('English')),
-                const DropdownMenuItem(value: 'ru', child: Text('Русский')),
+                for (final e in kSupportedLanguages.entries)
+                  DropdownMenuItem(value: e.key, child: Text(e.value)),
               ],
               onChanged: (v) => controller.setLocale(
                 v == null || v.isEmpty ? null : Locale(v),
