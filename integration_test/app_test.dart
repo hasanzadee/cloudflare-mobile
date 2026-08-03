@@ -295,16 +295,25 @@ void main() {
   /// below the fold — and a tap on a widget laid out off-screen lands on
   /// nothing while still reporting success. Every tap goes through here so the
   /// suite says the same thing on a phone, a tablet and CI.
+  /// Set [scrollFirst] false for anything pinned to the screen rather than laid
+  /// out in a list — a floating action button, a bottom-navigation item.
+  ///
+  /// A TabBarView is itself a Scrollable, so those widgets do have a scrollable
+  /// ancestor, and ensureVisible obligingly scrolls it: the tab slides sideways,
+  /// the button it was aiming at goes offstage, and the tap finds nothing. The
+  /// quieter version of the same bug put a WAF rule in the rate-limiting
+  /// ruleset while the test still passed.
   Future<void> tapAt(
     WidgetTester tester,
     Finder finder, {
     Duration settle = const Duration(seconds: 2),
+    bool scrollFirst = true,
   }) async {
     final scrollable = find.ancestor(
       of: finder,
       matching: find.byType(Scrollable),
     );
-    if (scrollable.evaluate().isNotEmpty) {
+    if (scrollFirst && scrollable.evaluate().isNotEmpty) {
       await tester.ensureVisible(finder);
       await tester.pumpAndSettle();
     }
@@ -340,8 +349,12 @@ void main() {
     );
   }
 
-  Future<void> openTab(WidgetTester tester, String label) =>
-      tapAt(tester, find.text(label).last, settle: const Duration(seconds: 3));
+  Future<void> openTab(WidgetTester tester, String label) => tapAt(
+    tester,
+    find.text(label).last,
+    settle: const Duration(seconds: 3),
+    scrollFirst: false,
+  );
 
   testWidgets('home has live data immediately after sign-in', (tester) async {
     await onboard(tester);
@@ -515,10 +528,13 @@ void main() {
     // By key, not by label: all three tabs have an "Add" button, and the first
     // version of this test silently created the rule in the rate-limiting
     // ruleset instead.
+    const addRule = ValueKey('add-rule-http_request_firewall_custom');
+    expect(find.byKey(addRule), findsOneWidget, reason: onScreen(tester));
     await tapAt(
       tester,
-      find.byKey(const ValueKey('add-rule-http_request_firewall_custom')),
+      find.byKey(addRule),
       settle: const Duration(seconds: 2),
+      scrollFirst: false,
     );
 
     await tester.enterText(
