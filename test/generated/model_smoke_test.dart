@@ -53,6 +53,13 @@ void main() {
       final again = AppPolicyResponse.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('AppPolicyResult', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = AppPolicyResult.fromJson(json);
+      final encoded = model.toJson();
+      final again = AppPolicyResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('AppResponse', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = AppResponse.fromJson(json);
@@ -224,11 +231,25 @@ void main() {
       final again = ConnectionRules.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('ConnectionRulesInfra', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ConnectionRulesInfra.fromJson(json);
+      final encoded = model.toJson();
+      final again = ConnectionRulesInfra.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('ConnectionRulesRdp', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = ConnectionRulesRdp.fromJson(json);
       final encoded = model.toJson();
       final again = ConnectionRulesRdp.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('ConnectionRulesSsh', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ConnectionRulesSsh.fromJson(json);
+      final encoded = model.toJson();
+      final again = ConnectionRulesSsh.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('CookieAttributes', () {
@@ -481,6 +502,13 @@ void main() {
       final model = History.fromJson(json);
       final encoded = model.toJson();
       final again = History.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('InfraMfaConfig', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = InfraMfaConfig.fromJson(json);
+      final encoded = model.toJson();
+      final again = InfraMfaConfig.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('IpAccessRulesForAZoneCreateAnIpAccessRuleBody', () {

@@ -332,6 +332,7 @@ class AppPolicyResponse {
     this.purposeJustificationPrompt,
     this.purposeJustificationRequired,
     this.sessionDuration,
+    this.accountId,
     this.precedence,
     this.extra = const <String, Object?>{},
   });
@@ -364,6 +365,7 @@ class AppPolicyResponse {
           json['purpose_justification_required'],
         ),
         sessionDuration: asString(json['session_duration']),
+        accountId: asString(json['account_id']),
         precedence: asInt(json['precedence']),
         extra: extraOf(json, _knownKeys),
       );
@@ -424,6 +426,9 @@ class AppPolicyResponse {
   /// µs), ms, s, m, h.
   final String? sessionDuration;
 
+  /// Identifier.
+  final String? accountId;
+
   /// The order of execution for this policy. Must be unique for each policy
   /// within an app.
   final int? precedence;
@@ -450,6 +455,7 @@ class AppPolicyResponse {
     'purpose_justification_prompt',
     'purpose_justification_required',
     'session_duration',
+    'account_id',
     'precedence',
   };
 
@@ -474,6 +480,7 @@ class AppPolicyResponse {
     if (purposeJustificationRequired != null)
       'purpose_justification_required': purposeJustificationRequired!,
     if (sessionDuration != null) 'session_duration': sessionDuration!,
+    if (accountId != null) 'account_id': accountId!,
     if (precedence != null) 'precedence': precedence!,
   };
 
@@ -494,6 +501,7 @@ class AppPolicyResponse {
     String? purposeJustificationPrompt,
     bool? purposeJustificationRequired,
     String? sessionDuration,
+    String? accountId,
     int? precedence,
     Map<String, Object?>? extra,
   }) => AppPolicyResponse(
@@ -515,6 +523,223 @@ class AppPolicyResponse {
     purposeJustificationRequired:
         purposeJustificationRequired ?? this.purposeJustificationRequired,
     sessionDuration: sessionDuration ?? this.sessionDuration,
+    accountId: accountId ?? this.accountId,
+    precedence: precedence ?? this.precedence,
+    extra: extra ?? this.extra,
+  );
+}
+
+class AppPolicyResult {
+  const AppPolicyResult({
+    this.createdAt,
+    this.decision,
+    this.exclude,
+    this.id,
+    this.include,
+    this.name,
+    this.require,
+    this.updatedAt,
+    this.approvalGroups,
+    this.approvalRequired,
+    this.connectionRules,
+    this.isolationRequired,
+    this.mfaConfig,
+    this.purposeJustificationPrompt,
+    this.purposeJustificationRequired,
+    this.sessionDuration,
+    this.accountId,
+    this.precedence,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory AppPolicyResult.fromJson(Map<String, Object?> json) =>
+      AppPolicyResult(
+        createdAt: asString(json['created_at']),
+        decision: asString(json['decision']),
+        exclude: asModelList(json['exclude'], Rule2.fromJson),
+        id: asString(json['id']),
+        include: asModelList(json['include'], Rule2.fromJson),
+        name: asString(json['name']),
+        require: asModelList(json['require'], Rule2.fromJson),
+        updatedAt: asString(json['updated_at']),
+        approvalGroups: asModelList(
+          json['approval_groups'],
+          ApprovalGroup.fromJson,
+        ),
+        approvalRequired: asBool(json['approval_required']),
+        connectionRules: asModel(
+          json['connection_rules'],
+          ConnectionRulesInfra.fromJson,
+        ),
+        isolationRequired: asBool(json['isolation_required']),
+        mfaConfig: asModel(json['mfa_config'], InfraMfaConfig.fromJson),
+        purposeJustificationPrompt: asString(
+          json['purpose_justification_prompt'],
+        ),
+        purposeJustificationRequired: asBool(
+          json['purpose_justification_required'],
+        ),
+        sessionDuration: asString(json['session_duration']),
+        accountId: asString(json['account_id']),
+        precedence: asInt(json['precedence']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  final String? createdAt;
+
+  /// The action Access will take if a user matches this policy. Infrastructure
+  /// application policies can only use the Allow action. Allowed values: `allow`,
+  /// `deny`, `non_identity`, `bypass`.
+  final String? decision;
+
+  /// Rules evaluated with a NOT logical operator. To match the policy, a user
+  /// cannot meet any of the Exclude rules.
+  final List<Rule2>? exclude;
+
+  /// The UUID of the policy
+  final String? id;
+
+  /// Rules evaluated with an OR logical operator. A user needs to meet only one
+  /// of the Include rules.
+  final List<Rule2>? include;
+
+  /// The name of the Access policy.
+  final String? name;
+
+  /// Rules evaluated with an AND logical operator. To match the policy, a user
+  /// must meet all of the Require rules.
+  final List<Rule2>? require;
+  final String? updatedAt;
+
+  /// Administrators who can approve a temporary authentication request.
+  final List<ApprovalGroup>? approvalGroups;
+
+  /// Requires the user to request access from an administrator at the start of
+  /// each session.
+  final bool? approvalRequired;
+
+  /// The rules that define how users may connect to the targets secured by your
+  /// application.
+  final ConnectionRulesInfra? connectionRules;
+
+  /// Require this application to be served in an isolated browser for users
+  /// matching this policy. 'Client Web Isolation' must be on for the account in
+  /// order to use this feature.
+  final bool? isolationRequired;
+
+  /// Configures multi-factor authentication (MFA) settings for infrastructure
+  /// applications.
+  final InfraMfaConfig? mfaConfig;
+
+  /// A custom message that will appear on the purpose justification screen.
+  final String? purposeJustificationPrompt;
+
+  /// Require users to enter a justification when they log in to the application.
+  final bool? purposeJustificationRequired;
+
+  /// The amount of time that tokens issued for the application will be valid.
+  /// Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or
+  /// µs), ms, s, m, h.
+  final String? sessionDuration;
+
+  /// Identifier.
+  final String? accountId;
+
+  /// The order of execution for this policy. Must be unique for each policy
+  /// within an app.
+  final int? precedence;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'created_at',
+    'decision',
+    'exclude',
+    'id',
+    'include',
+    'name',
+    'require',
+    'updated_at',
+    'approval_groups',
+    'approval_required',
+    'connection_rules',
+    'isolation_required',
+    'mfa_config',
+    'purpose_justification_prompt',
+    'purpose_justification_required',
+    'session_duration',
+    'account_id',
+    'precedence',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (createdAt != null) 'created_at': createdAt!,
+    if (decision != null) 'decision': decision!,
+    if (exclude != null) 'exclude': exclude!.map((e) => e.toJson()).toList(),
+    if (id != null) 'id': id!,
+    if (include != null) 'include': include!.map((e) => e.toJson()).toList(),
+    if (name != null) 'name': name!,
+    if (require != null) 'require': require!.map((e) => e.toJson()).toList(),
+    if (updatedAt != null) 'updated_at': updatedAt!,
+    if (approvalGroups != null)
+      'approval_groups': approvalGroups!.map((e) => e.toJson()).toList(),
+    if (approvalRequired != null) 'approval_required': approvalRequired!,
+    if (connectionRules != null) 'connection_rules': connectionRules!.toJson(),
+    if (isolationRequired != null) 'isolation_required': isolationRequired!,
+    if (mfaConfig != null) 'mfa_config': mfaConfig!.toJson(),
+    if (purposeJustificationPrompt != null)
+      'purpose_justification_prompt': purposeJustificationPrompt!,
+    if (purposeJustificationRequired != null)
+      'purpose_justification_required': purposeJustificationRequired!,
+    if (sessionDuration != null) 'session_duration': sessionDuration!,
+    if (accountId != null) 'account_id': accountId!,
+    if (precedence != null) 'precedence': precedence!,
+  };
+
+  AppPolicyResult copyWith({
+    String? createdAt,
+    String? decision,
+    List<Rule2>? exclude,
+    String? id,
+    List<Rule2>? include,
+    String? name,
+    List<Rule2>? require,
+    String? updatedAt,
+    List<ApprovalGroup>? approvalGroups,
+    bool? approvalRequired,
+    ConnectionRulesInfra? connectionRules,
+    bool? isolationRequired,
+    InfraMfaConfig? mfaConfig,
+    String? purposeJustificationPrompt,
+    bool? purposeJustificationRequired,
+    String? sessionDuration,
+    String? accountId,
+    int? precedence,
+    Map<String, Object?>? extra,
+  }) => AppPolicyResult(
+    createdAt: createdAt ?? this.createdAt,
+    decision: decision ?? this.decision,
+    exclude: exclude ?? this.exclude,
+    id: id ?? this.id,
+    include: include ?? this.include,
+    name: name ?? this.name,
+    require: require ?? this.require,
+    updatedAt: updatedAt ?? this.updatedAt,
+    approvalGroups: approvalGroups ?? this.approvalGroups,
+    approvalRequired: approvalRequired ?? this.approvalRequired,
+    connectionRules: connectionRules ?? this.connectionRules,
+    isolationRequired: isolationRequired ?? this.isolationRequired,
+    mfaConfig: mfaConfig ?? this.mfaConfig,
+    purposeJustificationPrompt:
+        purposeJustificationPrompt ?? this.purposeJustificationPrompt,
+    purposeJustificationRequired:
+        purposeJustificationRequired ?? this.purposeJustificationRequired,
+    sessionDuration: sessionDuration ?? this.sessionDuration,
+    accountId: accountId ?? this.accountId,
     precedence: precedence ?? this.precedence,
     extra: extra ?? this.extra,
   );
@@ -1982,7 +2207,7 @@ class Bucket {
   final String? creationDate;
 
   /// Jurisdiction where objects in this bucket are guaranteed to be stored.
-  /// Allowed values: `default`, `eu`, `fedramp`.
+  /// Allowed values: `default`, `eu`, `us`, `fedramp`, `fedramp-high`.
   final String? jurisdiction;
 
   /// Location of the bucket. Allowed values: `apac`, `eeur`, `enam`, `weur`,
@@ -2805,6 +3030,42 @@ class ConnectionRules {
   }) => ConnectionRules(rdp: rdp ?? this.rdp, extra: extra ?? this.extra);
 }
 
+/// The rules that define how users may connect to the targets secured by your
+/// application.
+class ConnectionRulesInfra {
+  const ConnectionRulesInfra({
+    this.ssh,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ConnectionRulesInfra.fromJson(Map<String, Object?> json) =>
+      ConnectionRulesInfra(
+        ssh: asModel(json['ssh'], ConnectionRulesSsh.fromJson),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The SSH-specific rules that define how users may connect to the targets
+  /// secured by your application.
+  final ConnectionRulesSsh? ssh;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'ssh'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (ssh != null) 'ssh': ssh!.toJson(),
+  };
+
+  ConnectionRulesInfra copyWith({
+    ConnectionRulesSsh? ssh,
+    Map<String, Object?>? extra,
+  }) => ConnectionRulesInfra(ssh: ssh ?? this.ssh, extra: extra ?? this.extra);
+}
+
 /// The RDP-specific rules that define clipboard behavior for RDP connections.
 class ConnectionRulesRdp {
   const ConnectionRulesRdp({
@@ -2865,6 +3126,52 @@ class ConnectionRulesRdp {
     allowedClipboardRemoteToLocalFormats:
         allowedClipboardRemoteToLocalFormats ??
         this.allowedClipboardRemoteToLocalFormats,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// The SSH-specific rules that define how users may connect to the targets
+/// secured by your application.
+class ConnectionRulesSsh {
+  const ConnectionRulesSsh({
+    this.allowEmailAlias,
+    this.usernames,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ConnectionRulesSsh.fromJson(Map<String, Object?> json) =>
+      ConnectionRulesSsh(
+        allowEmailAlias: asBool(json['allow_email_alias']),
+        usernames: asPrimitiveList<String>(json['usernames'], asString),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Enables using Identity Provider email alias as SSH username.
+  final bool? allowEmailAlias;
+
+  /// Contains the Unix usernames that may be used when connecting over SSH.
+  final List<String>? usernames;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'allow_email_alias', 'usernames'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (allowEmailAlias != null) 'allow_email_alias': allowEmailAlias!,
+    if (usernames != null) 'usernames': usernames!,
+  };
+
+  ConnectionRulesSsh copyWith({
+    bool? allowEmailAlias,
+    List<String>? usernames,
+    Map<String, Object?>? extra,
+  }) => ConnectionRulesSsh(
+    allowEmailAlias: allowEmailAlias ?? this.allowEmailAlias,
+    usernames: usernames ?? this.usernames,
     extra: extra ?? this.extra,
   );
 }
@@ -3045,13 +3352,13 @@ class CreateZoneRulesetRuleBody {
 
   factory CreateZoneRulesetRuleBody.fromJson(Map<String, Object?> json) =>
       CreateZoneRulesetRuleBody(
-        action: json['action'],
+        action: asString(json['action']),
         actionParameters: asModel(
           json['action_parameters'],
           CreateZoneRulesetRuleBodyActionParameters.fromJson,
         ),
         categories: asPrimitiveList<String>(json['categories'], asString),
-        description: json['description'],
+        description: asString(json['description']),
         enabled: json['enabled'],
         exposedCredentialCheck: asModel(
           json['exposed_credential_check'],
@@ -3072,12 +3379,12 @@ class CreateZoneRulesetRuleBody {
       );
 
   /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final CreateZoneRulesetRuleBodyActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
+  final String? description;
   final Object? enabled;
 
   /// Configuration for exposed credential checking.
@@ -3148,10 +3455,10 @@ class CreateZoneRulesetRuleBody {
   };
 
   CreateZoneRulesetRuleBody copyWith({
-    Object? action,
+    String? action,
     CreateZoneRulesetRuleBodyActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
+    String? description,
     Object? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
@@ -3307,8 +3614,6 @@ class CreateZoneRulesetRuleResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -3558,7 +3863,7 @@ class DatabaseResponse {
 
   /// Specify the location to restrict the D1 database to run and store data. If
   /// this option is present, the location hint is ignored. Allowed values: `eu`,
-  /// `fedramp`.
+  /// `fedramp`, `us`.
   final String? jurisdiction;
 
   /// D1 database name.
@@ -3639,8 +3944,6 @@ class DeleteZoneRulesetRuleResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -6133,8 +6436,6 @@ class GetZoneEntrypointRulesetResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -6241,8 +6542,6 @@ class GetZoneRulesetResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -6424,6 +6723,70 @@ class History {
     name: name ?? this.name,
     policyId: policyId ?? this.policyId,
     sent: sent ?? this.sent,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Configures multi-factor authentication (MFA) settings for infrastructure
+/// applications.
+class InfraMfaConfig {
+  const InfraMfaConfig({
+    this.allowedAuthenticators,
+    this.mfaDisabled,
+    this.sessionDuration,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory InfraMfaConfig.fromJson(Map<String, Object?> json) => InfraMfaConfig(
+    allowedAuthenticators: asPrimitiveList<String>(
+      json['allowed_authenticators'],
+      asString,
+    ),
+    mfaDisabled: asBool(json['mfa_disabled']),
+    sessionDuration: asString(json['session_duration']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Lists the MFA methods that users can authenticate with. For infrastructure
+  /// applications, supported values are `piv_key` and `ssh_fido2_key`.
+  final List<String>? allowedAuthenticators;
+
+  /// Indicates whether to disable MFA for this resource. This option is available
+  /// at the application and policy level.
+  final bool? mfaDisabled;
+
+  /// Defines the duration of an MFA session. Must be in minutes (m) or hours (h).
+  /// Minimum: 0m. Maximum: 720h (30 days). Examples: `5m` or `24h`.
+  final String? sessionDuration;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'allowed_authenticators',
+    'mfa_disabled',
+    'session_duration',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (allowedAuthenticators != null)
+      'allowed_authenticators': allowedAuthenticators!,
+    if (mfaDisabled != null) 'mfa_disabled': mfaDisabled!,
+    if (sessionDuration != null) 'session_duration': sessionDuration!,
+  };
+
+  InfraMfaConfig copyWith({
+    List<String>? allowedAuthenticators,
+    bool? mfaDisabled,
+    String? sessionDuration,
+    Map<String, Object?>? extra,
+  }) => InfraMfaConfig(
+    allowedAuthenticators: allowedAuthenticators ?? this.allowedAuthenticators,
+    mfaDisabled: mfaDisabled ?? this.mfaDisabled,
+    sessionDuration: sessionDuration ?? this.sessionDuration,
     extra: extra ?? this.extra,
   );
 }
@@ -6761,8 +7124,6 @@ class ListZoneRulesetsItem {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -8030,6 +8391,7 @@ class Monitor {
 class Namespace {
   const Namespace({
     this.id,
+    this.jurisdiction,
     this.supportsUrlEncoding,
     this.title,
     this.extra = const <String, Object?>{},
@@ -8037,6 +8399,7 @@ class Namespace {
 
   factory Namespace.fromJson(Map<String, Object?> json) => Namespace(
     id: asString(json['id']),
+    jurisdiction: asString(json['jurisdiction']),
     supportsUrlEncoding: asBool(json['supports_url_encoding']),
     title: asString(json['title']),
     extra: extraOf(json, _knownKeys),
@@ -8044,6 +8407,11 @@ class Namespace {
 
   /// Namespace identifier tag.
   final String? id;
+
+  /// Specify the jurisdiction to restrict the KV namespace to durably store data
+  /// within. Can only be set at namespace creation time. Allowed values: `eu`,
+  /// `fedramp`, `us`.
+  final String? jurisdiction;
 
   /// True if keys written on the URL will be URL-decoded before storing. For
   /// example, if set to "true", a key written on the URL as "%3F" will be stored
@@ -8060,6 +8428,7 @@ class Namespace {
 
   static const Set<String> _knownKeys = {
     'id',
+    'jurisdiction',
     'supports_url_encoding',
     'title',
   };
@@ -8067,6 +8436,7 @@ class Namespace {
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
     if (id != null) 'id': id!,
+    if (jurisdiction != null) 'jurisdiction': jurisdiction!,
     if (supportsUrlEncoding != null)
       'supports_url_encoding': supportsUrlEncoding!,
     if (title != null) 'title': title!,
@@ -8074,11 +8444,13 @@ class Namespace {
 
   Namespace copyWith({
     String? id,
+    String? jurisdiction,
     bool? supportsUrlEncoding,
     String? title,
     Map<String, Object?>? extra,
   }) => Namespace(
     id: id ?? this.id,
+    jurisdiction: jurisdiction ?? this.jurisdiction,
     supportsUrlEncoding: supportsUrlEncoding ?? this.supportsUrlEncoding,
     title: title ?? this.title,
     extra: extra ?? this.extra,
@@ -8329,6 +8701,7 @@ class Observability {
     this.enabled,
     this.headSamplingRate,
     this.logs,
+    this.redactQueryString,
     this.traces,
     this.extra = const <String, Object?>{},
   });
@@ -8337,6 +8710,7 @@ class Observability {
     enabled: asBool(json['enabled']),
     headSamplingRate: asNum(json['head_sampling_rate']),
     logs: asModel(json['logs'], ObservabilityLogs.fromJson),
+    redactQueryString: asBool(json['redact_query_string']),
     traces: asModel(json['traces'], ObservabilityTraces.fromJson),
     extra: extraOf(json, _knownKeys),
   );
@@ -8351,6 +8725,9 @@ class Observability {
   /// Log settings for the Worker.
   final ObservabilityLogs? logs;
 
+  /// Whether query strings are removed from request URLs in logs and traces.
+  final bool? redactQueryString;
+
   /// Trace settings for the Worker.
   final ObservabilityTraces? traces;
 
@@ -8363,6 +8740,7 @@ class Observability {
     'enabled',
     'head_sampling_rate',
     'logs',
+    'redact_query_string',
     'traces',
   };
 
@@ -8371,6 +8749,7 @@ class Observability {
     if (enabled != null) 'enabled': enabled!,
     if (headSamplingRate != null) 'head_sampling_rate': headSamplingRate!,
     if (logs != null) 'logs': logs!.toJson(),
+    if (redactQueryString != null) 'redact_query_string': redactQueryString!,
     if (traces != null) 'traces': traces!.toJson(),
   };
 
@@ -8378,12 +8757,14 @@ class Observability {
     bool? enabled,
     num? headSamplingRate,
     ObservabilityLogs? logs,
+    bool? redactQueryString,
     ObservabilityTraces? traces,
     Map<String, Object?>? extra,
   }) => Observability(
     enabled: enabled ?? this.enabled,
     headSamplingRate: headSamplingRate ?? this.headSamplingRate,
     logs: logs ?? this.logs,
+    redactQueryString: redactQueryString ?? this.redactQueryString,
     traces: traces ?? this.traces,
     extra: extra ?? this.extra,
   );
@@ -8501,11 +8882,11 @@ class ObservabilityTraces {
   final bool? persist;
 
   /// Controls how inbound trace context (traceparent/tracestate) headers on
-  /// incoming requests are handled. "authenticated" (default) honors inbound
-  /// trace context only when accompanied by a valid trace auth token. "accept"
-  /// unconditionally accepts inbound trace context. Requires the trace
-  /// propagation feature to be enabled. Allowed values: `authenticated`,
-  /// `accept`.
+  /// incoming requests are handled. "authenticated" honors inbound trace context
+  /// only when accompanied by a valid trace auth token. "accept" unconditionally
+  /// accepts inbound trace context. Requires the trace propagation feature to be
+  /// enabled. Returns null when the trace propagation feature is not enabled for
+  /// the account. Allowed values: `authenticated`, `accept`, `null`.
   final String? propagationPolicy;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -9569,6 +9950,7 @@ class Pool {
     this.description,
     this.disabledAt,
     this.enabled,
+    this.healthSources,
     this.id,
     this.latitude,
     this.loadShedding,
@@ -9592,6 +9974,7 @@ class Pool {
     description: asString(json['description']),
     disabledAt: asString(json['disabled_at']),
     enabled: asBool(json['enabled']),
+    healthSources: asPrimitiveList<String>(json['health_sources'], asString),
     id: asString(json['id']),
     latitude: asNum(json['latitude']),
     loadShedding: asModel(json['load_shedding'], LoadShedding.fromJson),
@@ -9629,6 +10012,16 @@ class Pool {
   /// will cause any load balancers using it to failover to the next pool (if
   /// any).
   final bool? enabled;
+
+  /// A list of health sources, ordered from highest to lowest priority, used to
+  /// evaluate individual origin health and overall pool health. The load balancer
+  /// uses the first source that has data and falls back to the next. Currently
+  /// accepted values are null or the exact array ["regional", "global"]; any
+  /// other combination is rejected. Null (the default) behaves like ["local",
+  /// "global"]. ["regional", "global"] makes each region steer on its own health,
+  /// falling back to the global decision when a region has no fresh data. Setting
+  /// regional requires at least one region in check_regions.
+  final List<String>? healthSources;
   final String? id;
 
   /// The latitude of the data center containing the origins used in this pool in
@@ -9695,6 +10088,7 @@ class Pool {
     'description',
     'disabled_at',
     'enabled',
+    'health_sources',
     'id',
     'latitude',
     'load_shedding',
@@ -9718,6 +10112,7 @@ class Pool {
     if (description != null) 'description': description!,
     if (disabledAt != null) 'disabled_at': disabledAt!,
     if (enabled != null) 'enabled': enabled!,
+    if (healthSources != null) 'health_sources': healthSources!,
     if (id != null) 'id': id!,
     if (latitude != null) 'latitude': latitude!,
     if (loadShedding != null) 'load_shedding': loadShedding!.toJson(),
@@ -9741,6 +10136,7 @@ class Pool {
     String? description,
     String? disabledAt,
     bool? enabled,
+    List<String>? healthSources,
     String? id,
     num? latitude,
     LoadShedding? loadShedding,
@@ -9762,6 +10158,7 @@ class Pool {
     description: description ?? this.description,
     disabledAt: disabledAt ?? this.disabledAt,
     enabled: enabled ?? this.enabled,
+    healthSources: healthSources ?? this.healthSources,
     id: id ?? this.id,
     latitude: latitude ?? this.latitude,
     loadShedding: loadShedding ?? this.loadShedding,
@@ -11799,13 +12196,13 @@ class RequestRule {
   });
 
   factory RequestRule.fromJson(Map<String, Object?> json) => RequestRule(
-    action: json['action'],
+    action: asString(json['action']),
     actionParameters: asModel(
       json['action_parameters'],
       RequestRuleActionParameters.fromJson,
     ),
     categories: asPrimitiveList<String>(json['categories'], asString),
-    description: json['description'],
+    description: asString(json['description']),
     enabled: json['enabled'],
     exposedCredentialCheck: asModel(
       json['exposed_credential_check'],
@@ -11822,12 +12219,12 @@ class RequestRule {
   );
 
   /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final RequestRuleActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
+  final String? description;
   final Object? enabled;
 
   /// Configuration for exposed credential checking.
@@ -11895,10 +12292,10 @@ class RequestRule {
   };
 
   RequestRule copyWith({
-    Object? action,
+    String? action,
     RequestRuleActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
+    String? description,
     Object? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
@@ -11983,14 +12380,14 @@ class ResponseRule {
   });
 
   factory ResponseRule.fromJson(Map<String, Object?> json) => ResponseRule(
-    action: json['action'],
+    action: asString(json['action']),
     actionParameters: asModel(
       json['action_parameters'],
       ResponseRuleActionParameters.fromJson,
     ),
     categories: asPrimitiveList<String>(json['categories'], asString),
-    description: json['description'],
-    enabled: json['enabled'],
+    description: asString(json['description']),
+    enabled: asBool(json['enabled']),
     exposedCredentialCheck: asModel(
       json['exposed_credential_check'],
       RuleExposedCredentialCheck.fromJson,
@@ -12005,22 +12402,17 @@ class ResponseRule {
     extra: extraOf(json, _knownKeys),
   );
 
-  /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final ResponseRuleActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
-  final Object? enabled;
+  final String? description;
+  final bool? enabled;
 
   /// Configuration for exposed credential checking.
   final RuleExposedCredentialCheck? exposedCredentialCheck;
-
-  /// The expression defining which traffic will match the rule.
   final String? expression;
-
-  /// The unique ID of the rule.
   final String? id;
 
   /// The timestamp of when the rule was last modified.
@@ -12031,8 +12423,6 @@ class ResponseRule {
 
   /// An object configuring the rule's rate limit behavior.
   final RuleRatelimit? ratelimit;
-
-  /// The reference of the rule (the rule's ID by default).
   final String? ref;
 
   /// The version of the rule.
@@ -12079,11 +12469,11 @@ class ResponseRule {
   };
 
   ResponseRule copyWith({
-    Object? action,
+    String? action,
     ResponseRuleActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
-    Object? enabled,
+    String? description,
+    bool? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
     String? id,
@@ -12729,15 +13119,20 @@ class Rule2CommonName {
 
 class Rule2DevicePosture {
   const Rule2DevicePosture({
+    this.accountId,
     this.integrationUid,
     this.extra = const <String, Object?>{},
   });
 
   factory Rule2DevicePosture.fromJson(Map<String, Object?> json) =>
       Rule2DevicePosture(
+        accountId: json['account_id'],
         integrationUid: asString(json['integration_uid']),
         extra: extraOf(json, _knownKeys),
       );
+
+  /// The ID of the account that owns the device posture integration.
+  final Object? accountId;
 
   /// The ID of a device posture integration.
   final String? integrationUid;
@@ -12747,17 +13142,20 @@ class Rule2DevicePosture {
   /// silently drop them.
   final Map<String, Object?> extra;
 
-  static const Set<String> _knownKeys = {'integration_uid'};
+  static const Set<String> _knownKeys = {'account_id', 'integration_uid'};
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
+    if (accountId != null) 'account_id': accountId!,
     if (integrationUid != null) 'integration_uid': integrationUid!,
   };
 
   Rule2DevicePosture copyWith({
+    Object? accountId,
     String? integrationUid,
     Map<String, Object?>? extra,
   }) => Rule2DevicePosture(
+    accountId: accountId ?? this.accountId,
     integrationUid: integrationUid ?? this.integrationUid,
     extra: extra ?? this.extra,
   );
@@ -18455,8 +18853,6 @@ class UpdateZoneEntrypointRulesetResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -18552,13 +18948,13 @@ class UpdateZoneRulesetRuleBody {
 
   factory UpdateZoneRulesetRuleBody.fromJson(Map<String, Object?> json) =>
       UpdateZoneRulesetRuleBody(
-        action: json['action'],
+        action: asString(json['action']),
         actionParameters: asModel(
           json['action_parameters'],
           UpdateZoneRulesetRuleBodyActionParameters.fromJson,
         ),
         categories: asPrimitiveList<String>(json['categories'], asString),
-        description: json['description'],
+        description: asString(json['description']),
         enabled: json['enabled'],
         exposedCredentialCheck: asModel(
           json['exposed_credential_check'],
@@ -18579,12 +18975,12 @@ class UpdateZoneRulesetRuleBody {
       );
 
   /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final UpdateZoneRulesetRuleBodyActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
+  final String? description;
   final Object? enabled;
 
   /// Configuration for exposed credential checking.
@@ -18655,10 +19051,10 @@ class UpdateZoneRulesetRuleBody {
   };
 
   UpdateZoneRulesetRuleBody copyWith({
-    Object? action,
+    String? action,
     UpdateZoneRulesetRuleBodyActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
+    String? description,
     Object? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
@@ -18814,8 +19210,6 @@ class UpdateZoneRulesetRuleResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 

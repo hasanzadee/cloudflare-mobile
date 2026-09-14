@@ -32,7 +32,7 @@ export 'ops/zones_api.dart';
 ///
 /// Emitted rather than written by hand so the figure quoted
 /// in onboarding cannot drift from the shipped index.
-const int kCloudflareOperationCount = 3240;
+const int kCloudflareOperationCount = 3465;
 
 /// `info.version` of the bundled Cloudflare description.
 const String kCloudflareApiVersion = '4.0.0';

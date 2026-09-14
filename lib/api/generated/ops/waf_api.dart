@@ -82,6 +82,7 @@ class WafApi {
     required String zoneId,
     required String rulesetId,
     required CreateZoneRulesetRuleBody body,
+    bool? dryRun,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -89,7 +90,7 @@ class WafApi {
       method: 'POST',
       path: '/zones/$zoneId/rulesets/$rulesetId/rules',
       body: body.toJson(),
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{'dry_run': dryRun, ...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone WAF Write'},
     );
@@ -102,6 +103,7 @@ class WafApi {
     required String zoneId,
     required String rulesetPhase,
     required UpdateZoneEntrypointRulesetBody body,
+    bool? dryRun,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -109,7 +111,7 @@ class WafApi {
       method: 'PUT',
       path: '/zones/$zoneId/rulesets/phases/$rulesetPhase/entrypoint',
       body: body.toJson(),
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{'dry_run': dryRun, ...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone WAF Write'},
     );
@@ -123,6 +125,7 @@ class WafApi {
     required String rulesetId,
     required String ruleId,
     required UpdateZoneRulesetRuleBody body,
+    bool? dryRun,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
@@ -130,7 +133,7 @@ class WafApi {
       method: 'PATCH',
       path: '/zones/$zoneId/rulesets/$rulesetId/rules/$ruleId',
       body: body.toJson(),
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{'dry_run': dryRun, ...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone WAF Write'},
     );
@@ -143,13 +146,14 @@ class WafApi {
     required String zoneId,
     required String rulesetId,
     required String ruleId,
+    bool? dryRun,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
     final _env = await _client.send(
       method: 'DELETE',
       path: '/zones/$zoneId/rulesets/$rulesetId/rules/$ruleId',
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{'dry_run': dryRun, ...?extraQuery},
       cancelToken: cancelToken,
       missingPermissions: const {'Zone WAF Write'},
     );
