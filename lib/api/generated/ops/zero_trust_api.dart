@@ -131,7 +131,7 @@ class ZeroTrustApi {
 
   /// `GET /accounts/{account_id}/access/apps/{app_id}/policies`
   /// List Access application policies
-  Future<CfPage<AppPolicyResponse>> listAccessPolicies({
+  Future<CfPage<AppPolicyResult>> listAccessPolicies({
     required String accountId,
     required String appId,
     int? page,
@@ -150,20 +150,30 @@ class ZeroTrustApi {
       cancelToken: cancelToken,
       missingPermissions: const {'Access Apps and Policies Read'},
     );
-    return CfPage.from(_env, AppPolicyResponse.fromJson);
+    return CfPage.from(_env, AppPolicyResult.fromJson);
   }
 
   /// `GET /accounts/{account_id}/gateway/rules`
   /// List Zero Trust Gateway rules
   Future<CfPage<Rules>> listGatewayRules({
     required String accountId,
+    List<String>? filter,
+    String? search,
+    String? orderBy,
+    String? direction,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
     final _env = await _client.send(
       method: 'GET',
       path: '/accounts/$accountId/gateway/rules',
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{
+        'filter': filter,
+        'search': search,
+        'order_by': orderBy,
+        'direction': direction,
+        ...?extraQuery,
+      },
       cancelToken: cancelToken,
       missingPermissions: const {'Zero Trust Read'},
     );
