@@ -117,9 +117,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // The dashboard's own wording, and the fix button that used to be dead
-    // code because no caller ever passed onFixPermissions.
-    expect(find.text('Zone WAF — Edit'), findsOneWidget);
+    // The dashboard's own wording, led by the menu it sits under, and the fix
+    // button that used to be dead code because no caller ever passed
+    // onFixPermissions.
+    expect(find.text('Zone · Zone WAF — Edit'), findsOneWidget);
     expect(find.text('Create a token with this permission'), findsOneWidget);
   });
 }

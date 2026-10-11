@@ -176,11 +176,11 @@ class FailureView extends StatelessWidget {
             ),
             if (missing.isNotEmpty) ...[
               const SizedBox(height: 12),
-              // The dashboard's own wording plus the access level, because a
-              // user hunting a checkbox in a list of ~150 needs the exact
-              // label, not our paraphrase of it.
+              // The dashboard's own wording plus scope and access level,
+              // because a user hunting a checkbox in a list of ~150 needs the
+              // exact label and the menu it lives under, not our paraphrase.
               Text(
-                missing.map((p) => '${p.group} — ${p.level}').join('\n'),
+                missing.map((p) => p.line).join('\n'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
