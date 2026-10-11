@@ -145,6 +145,9 @@ void main() {
           'securityExpression',
           'permTitle',
           'commonAll',
+          // Loanwords Italian uses as-is: "Account", "Privacy".
+          'scopeAccount',
+          'settingsPrivacyTitle',
         };
         final untranslated = templateKeys
             .where((k) => !shared.contains(k))

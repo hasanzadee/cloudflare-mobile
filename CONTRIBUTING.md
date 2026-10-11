@@ -60,10 +60,10 @@ what to fix.
 
 ## Translations
 
-The app ships English, Azerbaijani, German, Spanish, French, Turkish, Russian
-and Chinese. Everything except English was written by someone who is not a
-native speaker — **corrections are as welcome as new languages**, and neither
-needs an issue first.
+The app ships English, Azerbaijani, German, Spanish, French, Italian, Turkish,
+Russian and Chinese. Everything except English was written by someone who is
+not a native speaker — **corrections are as welcome as new languages**, and
+neither needs an issue first.
 
 To add a language, copy `lib/l10n/app_en.arb` to `app_<code>.arb`, set
 `@@locale`, translate the values, drop the `@key` metadata blocks (only the
