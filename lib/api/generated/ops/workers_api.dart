@@ -18,7 +18,7 @@ class WorkersApi {
   final CfClient _client;
 
   /// `GET /accounts/{account_id}/workers/scripts`
-  /// List Workers
+  /// List Worker Scripts
   Future<CfPage<WorkerScriptListWorkersItem>> listScripts({
     required String accountId,
     String? tags,
@@ -36,7 +36,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/workers/scripts/{script_name}/settings`
-  /// Get Settings
+  /// Get Worker Script and Version Settings
   Future<ScriptAndVersionSettingsItem> getScriptSettings({
     required String accountId,
     required String scriptName,
@@ -54,7 +54,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/workers/scripts/{script_name}/schedules`
-  /// Get Cron Triggers
+  /// Get Worker Script Schedules (Cron Triggers)
   Future<WorkerCronTriggerGetCronTriggersResult> getCronTriggers({
     required String accountId,
     required String scriptName,
@@ -72,7 +72,7 @@ class WorkersApi {
   }
 
   /// `GET /zones/{zone_id}/workers/routes`
-  /// List Routes
+  /// List Worker Routes
   Future<CfPage<Route>> listRoutes({
     required String zoneId,
     Map<String, Object?>? extraQuery,
@@ -89,7 +89,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/pages/projects`
-  /// Get projects
+  /// List Cloudflare Pages projects
   Future<CfPage<Project>> listPagesProjects({
     required String accountId,
     int? page,
@@ -112,7 +112,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/pages/projects/{project_name}/deployments`
-  /// Get deployments
+  /// List Pages deployments
   Future<CfPage<Deployment>> listPagesDeployments({
     required String accountId,
     required String projectName,
@@ -138,7 +138,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/storage/kv/namespaces`
-  /// List Namespaces
+  /// List namespaces
   Future<CfPage<Namespace>> listKvNamespaces({
     required String accountId,
     num? page,
@@ -241,7 +241,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys`
-  /// List a Namespace's Keys
+  /// List keys in a namespace
   Future<CfPage<Key>> listKvKeys({
     required String accountId,
     required String namespaceId,
@@ -267,7 +267,7 @@ class WorkersApi {
   }
 
   /// `GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}`
-  /// Read key-value pair
+  /// Get a key's value
   Future<CfEnvelope> readKvValue({
     required String accountId,
     required String namespaceId,
@@ -288,7 +288,7 @@ class WorkersApi {
   }
 
   /// `PUT /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}`
-  /// Write key-value pair with optional metadata
+  /// Write a key-value pair with optional metadata
   Future<CfEnvelope> writeKvValue({
     required String accountId,
     required String namespaceId,
@@ -314,7 +314,7 @@ class WorkersApi {
   }
 
   /// `DELETE /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}`
-  /// Delete key-value pair
+  /// Delete a key-value pair
   Future<CfEnvelope> deleteKvValue({
     required String accountId,
     required String namespaceId,
@@ -334,7 +334,7 @@ class WorkersApi {
   }
 
   /// `PUT /accounts/{account_id}/workers/scripts/{script_name}/schedules`
-  /// Update Cron Triggers
+  /// Update Worker Script Schedules (Cron Triggers)
   Future<WorkerCronTriggerUpdateCronTriggersResult> updateCronTriggers({
     required String accountId,
     required String scriptName,
@@ -354,7 +354,7 @@ class WorkersApi {
   }
 
   /// `POST /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/retry`
-  /// Retry deployment
+  /// Retry a Pages deployment
   Future<Deployment> retryDeployment({
     required String accountId,
     required String projectName,
@@ -374,7 +374,7 @@ class WorkersApi {
   }
 
   /// `POST /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback`
-  /// Rollback deployment
+  /// Roll back a Pages deployment
   Future<Deployment> rollbackDeployment({
     required String accountId,
     required String projectName,
