@@ -380,7 +380,7 @@ void main() {
     scrollFirst: false,
   );
 
-  testWidgets('home has live data immediately after sign-in', (tester) async {
+  testWidgets('Pulse has live data immediately after sign-in', (tester) async {
     await onboard(tester);
 
     // The reported bug: the shell appeared before a credential existed, the
@@ -391,9 +391,17 @@ void main() {
     // The defect was that it never arrived, not that it was slow — asserting on
     // the first frame only measured how fast the emulator felt that morning.
     await waitFor(tester, find.text('active'), what: 'the credential status');
-    await waitFor(tester, find.text('2'), what: 'the zone count');
+    await waitFor(tester, find.text('All 2'), what: 'the zone count');
+    await waitFor(tester, find.text('second.dev'), what: 'the zone list');
 
-    expect(find.text('problem'), findsNothing);
+    // A pending zone is the kind of thing Pulse exists to surface.
+    await waitFor(
+      tester,
+      find.text('second.dev is pending'),
+      what: 'the pending-zone notice',
+    );
+
+    expect(find.text('Token problem'), findsNothing);
     expect(find.text('—'), findsNothing);
   });
 
