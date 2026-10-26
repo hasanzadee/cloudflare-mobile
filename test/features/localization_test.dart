@@ -112,6 +112,7 @@ void main() {
           'devPages',
           'd1Query',
           'dnsTitle',
+          'zoneTlsTitle',
           'dnsTtl',
           'dnsTtlAuto',
           'dnsTags',

@@ -1356,6 +1356,270 @@ abstract class L {
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get errUnknown;
+
+  /// No description provided for @dsTypeToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {word} to confirm'**
+  String dsTypeToConfirm(String word);
+
+  /// No description provided for @pulseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulse'**
+  String get pulseTitle;
+
+  /// No description provided for @pulseRequests24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests · last 24 hours'**
+  String get pulseRequests24h;
+
+  /// No description provided for @pulseCredentialProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Token problem'**
+  String get pulseCredentialProblem;
+
+  /// No description provided for @pulseAnalyticsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic needs Zone Analytics: Read on this token.'**
+  String get pulseAnalyticsUnavailable;
+
+  /// No description provided for @pulseAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get pulseAttention;
+
+  /// No description provided for @pulseAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing needs attention right now.'**
+  String get pulseAllClear;
+
+  /// No description provided for @pulseTunnelDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel {name} is down'**
+  String pulseTunnelDown(String name);
+
+  /// No description provided for @pulseTunnelDegraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunnel {name} is degraded'**
+  String pulseTunnelDegraded(String name);
+
+  /// No description provided for @pulseOpenTunnels.
+  ///
+  /// In en, this message translates to:
+  /// **'Open tunnels'**
+  String get pulseOpenTunnels;
+
+  /// No description provided for @pulseZoneNotActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is {status}'**
+  String pulseZoneNotActive(String name, String status);
+
+  /// No description provided for @pulseZoneNotActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudflare isn\'t serving it until the nameservers point here.'**
+  String get pulseZoneNotActiveBody;
+
+  /// No description provided for @pulseOpenZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Open zone'**
+  String get pulseOpenZone;
+
+  /// No description provided for @pulseAllZones.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count}'**
+  String pulseAllZones(int count);
+
+  /// No description provided for @zoneQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get zoneQuickActions;
+
+  /// No description provided for @zoneUnderAttack.
+  ///
+  /// In en, this message translates to:
+  /// **'Under attack'**
+  String get zoneUnderAttack;
+
+  /// No description provided for @zoneUnderAttackCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge all'**
+  String get zoneUnderAttackCaption;
+
+  /// No description provided for @zoneUnderAttackNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Every visitor sees a challenge page for a few seconds before the site loads. Use it during an attack, then switch it back.'**
+  String get zoneUnderAttackNote;
+
+  /// No description provided for @zoneUnderAttackOffNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Visitors stop seeing the challenge page. The security level goes back to what it was before.'**
+  String get zoneUnderAttackOffNote;
+
+  /// No description provided for @zoneStateOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get zoneStateOn;
+
+  /// No description provided for @zoneDevMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dev mode'**
+  String get zoneDevMode;
+
+  /// No description provided for @zoneDevModeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip cache 3 h'**
+  String get zoneDevModeCaption;
+
+  /// No description provided for @zoneDevModeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} left'**
+  String zoneDevModeLeft(String time);
+
+  /// No description provided for @zoneDevModeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudflare stops caching for three hours, then turns this off on its own. Your origin takes the full load meanwhile.'**
+  String get zoneDevModeNote;
+
+  /// No description provided for @zonePurgeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'URLs or all'**
+  String get zonePurgeCaption;
+
+  /// No description provided for @zoneLast24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 24 hours'**
+  String get zoneLast24h;
+
+  /// No description provided for @zoneManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get zoneManage;
+
+  /// No description provided for @zoneSecuritySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WAF rules, rate limiting, IP access'**
+  String get zoneSecuritySubtitle;
+
+  /// No description provided for @zoneTlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SSL/TLS'**
+  String get zoneTlsTitle;
+
+  /// No description provided for @zoneEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get zoneEmailTitle;
+
+  /// No description provided for @zoneOpenDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Cloudflare dashboard'**
+  String get zoneOpenDashboard;
+
+  /// No description provided for @zonePaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get zonePaused;
+
+  /// No description provided for @zoneNotActiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zone is {status}'**
+  String zoneNotActiveTitle(String status);
+
+  /// No description provided for @zoneNotActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Set these nameservers at your registrar. Cloudflare starts serving the zone once it sees them.'**
+  String get zoneNotActiveBody;
+
+  /// No description provided for @zoneCopyNameservers.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy nameservers'**
+  String get zoneCopyNameservers;
+
+  /// No description provided for @zoneSslWeakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SSL is {mode}'**
+  String zoneSslWeakTitle(String mode);
+
+  /// No description provided for @zoneSslWeakBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The hop from Cloudflare to your origin isn\'t verified, so it can be read or altered in transit.'**
+  String get zoneSslWeakBody;
+
+  /// No description provided for @zoneSslUseStrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Full (strict)'**
+  String get zoneSslUseStrict;
+
+  /// No description provided for @zoneSslStrictNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your origin must present a valid certificate — a free Cloudflare Origin CA one works — or visitors get error 526.'**
+  String get zoneSslStrictNote;
+
+  /// No description provided for @zoneHttpsOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plain HTTP is still served'**
+  String get zoneHttpsOffTitle;
+
+  /// No description provided for @zoneHttpsOffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Visitors who type http:// stay on an unencrypted connection.'**
+  String get zoneHttpsOffBody;
+
+  /// No description provided for @zoneTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get zoneTurnOn;
+
+  /// No description provided for @zoneApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get zoneApply;
+
+  /// No description provided for @zoneChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change {setting}?'**
+  String zoneChangeTitle(String setting);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

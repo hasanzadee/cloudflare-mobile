@@ -663,4 +663,163 @@ class LRu extends L {
 
   @override
   String get errUnknown => 'Что-то пошло не так';
+
+  @override
+  String dsTypeToConfirm(String word) {
+    return 'Введите $word для подтверждения';
+  }
+
+  @override
+  String get pulseTitle => 'Пульс';
+
+  @override
+  String get pulseRequests24h => 'Запросы · последние 24 часа';
+
+  @override
+  String get pulseCredentialProblem => 'Проблема с токеном';
+
+  @override
+  String get pulseAnalyticsUnavailable =>
+      'Для трафика токену нужно право Zone Analytics: Read.';
+
+  @override
+  String get pulseAttention => 'Требует внимания';
+
+  @override
+  String get pulseAllClear => 'Сейчас всё в порядке.';
+
+  @override
+  String pulseTunnelDown(String name) {
+    return 'Туннель $name упал';
+  }
+
+  @override
+  String pulseTunnelDegraded(String name) {
+    return 'Туннель $name работает с перебоями';
+  }
+
+  @override
+  String get pulseOpenTunnels => 'Открыть туннели';
+
+  @override
+  String pulseZoneNotActive(String name, String status) {
+    return '$name: $status';
+  }
+
+  @override
+  String get pulseZoneNotActiveBody =>
+      'Cloudflare не обслуживает зону, пока на неё не указывают NS-серверы.';
+
+  @override
+  String get pulseOpenZone => 'Открыть зону';
+
+  @override
+  String pulseAllZones(int count) {
+    return 'Все $count';
+  }
+
+  @override
+  String get zoneQuickActions => 'Быстрые действия';
+
+  @override
+  String get zoneUnderAttack => 'Под атакой';
+
+  @override
+  String get zoneUnderAttackCaption => 'Проверять всех';
+
+  @override
+  String get zoneUnderAttackNote =>
+      'Каждый посетитель несколько секунд видит страницу проверки. Включайте на время атаки и потом выключайте.';
+
+  @override
+  String get zoneUnderAttackOffNote =>
+      'Страница проверки пропадёт, уровень защиты вернётся к прежнему.';
+
+  @override
+  String get zoneStateOn => 'Включено';
+
+  @override
+  String get zoneDevMode => 'Dev-режим';
+
+  @override
+  String get zoneDevModeCaption => 'Без кэша 3 ч';
+
+  @override
+  String zoneDevModeLeft(String time) {
+    return 'осталось $time';
+  }
+
+  @override
+  String get zoneDevModeNote =>
+      'Cloudflare перестаёт кэшировать на три часа и потом сам выключает режим. Всё это время нагрузка идёт на origin.';
+
+  @override
+  String get zonePurgeCaption => 'URL или всё';
+
+  @override
+  String get zoneLast24h => 'Последние 24 часа';
+
+  @override
+  String get zoneManage => 'Управление';
+
+  @override
+  String get zoneSecuritySubtitle => 'Правила WAF, rate limiting, доступ по IP';
+
+  @override
+  String get zoneTlsTitle => 'SSL/TLS';
+
+  @override
+  String get zoneEmailTitle => 'Почта';
+
+  @override
+  String get zoneOpenDashboard => 'Открыть в панели Cloudflare';
+
+  @override
+  String get zonePaused => 'На паузе';
+
+  @override
+  String zoneNotActiveTitle(String status) {
+    return 'Статус зоны: $status';
+  }
+
+  @override
+  String get zoneNotActiveBody =>
+      'Пропишите эти NS-серверы у регистратора. Cloudflare начнёт обслуживать зону, когда их увидит.';
+
+  @override
+  String get zoneCopyNameservers => 'Скопировать NS-серверы';
+
+  @override
+  String zoneSslWeakTitle(String mode) {
+    return 'SSL в режиме $mode';
+  }
+
+  @override
+  String get zoneSslWeakBody =>
+      'Связь между Cloudflare и вашим origin не проверяется, её можно прочитать или подменить.';
+
+  @override
+  String get zoneSslUseStrict => 'Включить Full (strict)';
+
+  @override
+  String get zoneSslStrictNote =>
+      'Origin должен отдавать валидный сертификат (подойдёт бесплатный Cloudflare Origin CA), иначе посетители увидят ошибку 526.';
+
+  @override
+  String get zoneHttpsOffTitle => 'Сайт всё ещё отдаётся по HTTP';
+
+  @override
+  String get zoneHttpsOffBody =>
+      'Кто откроет http://, останется на незашифрованном соединении.';
+
+  @override
+  String get zoneTurnOn => 'Включить';
+
+  @override
+  String get zoneApply => 'Применить';
+
+  @override
+  String zoneChangeTitle(String setting) {
+    return 'Изменить «$setting»?';
+  }
 }

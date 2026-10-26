@@ -663,4 +663,164 @@ class LEs extends L {
 
   @override
   String get errUnknown => 'Algo ha salido mal';
+
+  @override
+  String dsTypeToConfirm(String word) {
+    return 'Escribe $word para confirmar';
+  }
+
+  @override
+  String get pulseTitle => 'Pulso';
+
+  @override
+  String get pulseRequests24h => 'Solicitudes · últimas 24 horas';
+
+  @override
+  String get pulseCredentialProblem => 'Problema con el token';
+
+  @override
+  String get pulseAnalyticsUnavailable =>
+      'Para ver el tráfico, el token necesita Zone Analytics: Read.';
+
+  @override
+  String get pulseAttention => 'Requiere atención';
+
+  @override
+  String get pulseAllClear => 'Ahora mismo no hay nada pendiente.';
+
+  @override
+  String pulseTunnelDown(String name) {
+    return 'El túnel $name está caído';
+  }
+
+  @override
+  String pulseTunnelDegraded(String name) {
+    return 'El túnel $name está degradado';
+  }
+
+  @override
+  String get pulseOpenTunnels => 'Abrir túneles';
+
+  @override
+  String pulseZoneNotActive(String name, String status) {
+    return '$name: $status';
+  }
+
+  @override
+  String get pulseZoneNotActiveBody =>
+      'Cloudflare no la sirve hasta que los servidores de nombres apunten aquí.';
+
+  @override
+  String get pulseOpenZone => 'Abrir zona';
+
+  @override
+  String pulseAllZones(int count) {
+    return 'Todas ($count)';
+  }
+
+  @override
+  String get zoneQuickActions => 'Acciones rápidas';
+
+  @override
+  String get zoneUnderAttack => 'Bajo ataque';
+
+  @override
+  String get zoneUnderAttackCaption => 'Verificar a todos';
+
+  @override
+  String get zoneUnderAttackNote =>
+      'Cada visitante ve una página de verificación durante unos segundos. Actívalo durante un ataque y desactívalo después.';
+
+  @override
+  String get zoneUnderAttackOffNote =>
+      'La página de verificación desaparece y el nivel de seguridad vuelve al anterior.';
+
+  @override
+  String get zoneStateOn => 'Activado';
+
+  @override
+  String get zoneDevMode => 'Modo dev';
+
+  @override
+  String get zoneDevModeCaption => 'Sin caché 3 h';
+
+  @override
+  String zoneDevModeLeft(String time) {
+    return 'quedan $time';
+  }
+
+  @override
+  String get zoneDevModeNote =>
+      'Cloudflare deja de almacenar en caché durante tres horas y luego lo desactiva solo. Mientras tanto, tu origen recibe toda la carga.';
+
+  @override
+  String get zonePurgeCaption => 'URL o todo';
+
+  @override
+  String get zoneLast24h => 'Últimas 24 horas';
+
+  @override
+  String get zoneManage => 'Gestionar';
+
+  @override
+  String get zoneSecuritySubtitle =>
+      'Reglas WAF, limitación de tasa, acceso por IP';
+
+  @override
+  String get zoneTlsTitle => 'SSL/TLS';
+
+  @override
+  String get zoneEmailTitle => 'Correo';
+
+  @override
+  String get zoneOpenDashboard => 'Abrir en el panel de Cloudflare';
+
+  @override
+  String get zonePaused => 'En pausa';
+
+  @override
+  String zoneNotActiveTitle(String status) {
+    return 'La zona está $status';
+  }
+
+  @override
+  String get zoneNotActiveBody =>
+      'Configura estos servidores de nombres en tu registrador. Cloudflare empezará a servir la zona en cuanto los vea.';
+
+  @override
+  String get zoneCopyNameservers => 'Copiar servidores de nombres';
+
+  @override
+  String zoneSslWeakTitle(String mode) {
+    return 'SSL está en $mode';
+  }
+
+  @override
+  String get zoneSslWeakBody =>
+      'El tramo entre Cloudflare y tu origen no se verifica, así que puede leerse o alterarse.';
+
+  @override
+  String get zoneSslUseStrict => 'Cambiar a Full (strict)';
+
+  @override
+  String get zoneSslStrictNote =>
+      'Tu origen debe presentar un certificado válido (sirve uno gratuito de Cloudflare Origin CA); si no, los visitantes verán el error 526.';
+
+  @override
+  String get zoneHttpsOffTitle => 'Aún se sirve HTTP sin cifrar';
+
+  @override
+  String get zoneHttpsOffBody =>
+      'Quien escriba http:// se queda en una conexión sin cifrar.';
+
+  @override
+  String get zoneTurnOn => 'Activar';
+
+  @override
+  String get zoneApply => 'Aplicar';
+
+  @override
+  String zoneChangeTitle(String setting) {
+    return '¿Cambiar $setting?';
+  }
 }

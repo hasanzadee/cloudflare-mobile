@@ -661,4 +661,163 @@ class LEn extends L {
 
   @override
   String get errUnknown => 'Something went wrong';
+
+  @override
+  String dsTypeToConfirm(String word) {
+    return 'Type $word to confirm';
+  }
+
+  @override
+  String get pulseTitle => 'Pulse';
+
+  @override
+  String get pulseRequests24h => 'Requests · last 24 hours';
+
+  @override
+  String get pulseCredentialProblem => 'Token problem';
+
+  @override
+  String get pulseAnalyticsUnavailable =>
+      'Traffic needs Zone Analytics: Read on this token.';
+
+  @override
+  String get pulseAttention => 'Needs attention';
+
+  @override
+  String get pulseAllClear => 'Nothing needs attention right now.';
+
+  @override
+  String pulseTunnelDown(String name) {
+    return 'Tunnel $name is down';
+  }
+
+  @override
+  String pulseTunnelDegraded(String name) {
+    return 'Tunnel $name is degraded';
+  }
+
+  @override
+  String get pulseOpenTunnels => 'Open tunnels';
+
+  @override
+  String pulseZoneNotActive(String name, String status) {
+    return '$name is $status';
+  }
+
+  @override
+  String get pulseZoneNotActiveBody =>
+      'Cloudflare isn\'t serving it until the nameservers point here.';
+
+  @override
+  String get pulseOpenZone => 'Open zone';
+
+  @override
+  String pulseAllZones(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String get zoneQuickActions => 'Quick actions';
+
+  @override
+  String get zoneUnderAttack => 'Under attack';
+
+  @override
+  String get zoneUnderAttackCaption => 'Challenge all';
+
+  @override
+  String get zoneUnderAttackNote =>
+      'Every visitor sees a challenge page for a few seconds before the site loads. Use it during an attack, then switch it back.';
+
+  @override
+  String get zoneUnderAttackOffNote =>
+      'Visitors stop seeing the challenge page. The security level goes back to what it was before.';
+
+  @override
+  String get zoneStateOn => 'On';
+
+  @override
+  String get zoneDevMode => 'Dev mode';
+
+  @override
+  String get zoneDevModeCaption => 'Skip cache 3 h';
+
+  @override
+  String zoneDevModeLeft(String time) {
+    return '$time left';
+  }
+
+  @override
+  String get zoneDevModeNote =>
+      'Cloudflare stops caching for three hours, then turns this off on its own. Your origin takes the full load meanwhile.';
+
+  @override
+  String get zonePurgeCaption => 'URLs or all';
+
+  @override
+  String get zoneLast24h => 'Last 24 hours';
+
+  @override
+  String get zoneManage => 'Manage';
+
+  @override
+  String get zoneSecuritySubtitle => 'WAF rules, rate limiting, IP access';
+
+  @override
+  String get zoneTlsTitle => 'SSL/TLS';
+
+  @override
+  String get zoneEmailTitle => 'Email';
+
+  @override
+  String get zoneOpenDashboard => 'Open in Cloudflare dashboard';
+
+  @override
+  String get zonePaused => 'Paused';
+
+  @override
+  String zoneNotActiveTitle(String status) {
+    return 'Zone is $status';
+  }
+
+  @override
+  String get zoneNotActiveBody =>
+      'Set these nameservers at your registrar. Cloudflare starts serving the zone once it sees them.';
+
+  @override
+  String get zoneCopyNameservers => 'Copy nameservers';
+
+  @override
+  String zoneSslWeakTitle(String mode) {
+    return 'SSL is $mode';
+  }
+
+  @override
+  String get zoneSslWeakBody =>
+      'The hop from Cloudflare to your origin isn\'t verified, so it can be read or altered in transit.';
+
+  @override
+  String get zoneSslUseStrict => 'Switch to Full (strict)';
+
+  @override
+  String get zoneSslStrictNote =>
+      'Your origin must present a valid certificate — a free Cloudflare Origin CA one works — or visitors get error 526.';
+
+  @override
+  String get zoneHttpsOffTitle => 'Plain HTTP is still served';
+
+  @override
+  String get zoneHttpsOffBody =>
+      'Visitors who type http:// stay on an unencrypted connection.';
+
+  @override
+  String get zoneTurnOn => 'Turn on';
+
+  @override
+  String get zoneApply => 'Apply';
+
+  @override
+  String zoneChangeTitle(String setting) {
+    return 'Change $setting?';
+  }
 }
