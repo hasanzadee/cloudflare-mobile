@@ -18,10 +18,24 @@ lib/
     presentation/         onboarding, lock
   features/<area>/        providers + screens per product area
   ui/                     AsyncView, ScopeBar, failure text, primitives
+  ui/ds/                  design system: tones, panels, sparklines, change sheet
   l10n/                   app_en.arb (template), app_ru.arb
 tool/openapi/             the generator
 spec/                     vendored Cloudflare OpenAPI description + lock file
 ```
+
+## Design system
+
+`lib/ui/ds/` is what every v2 screen is assembled from, imported as one file
+(`ds.dart`). Screens choose a `Tone` — success, warning, danger, info, brand —
+and never a colour; `ToneColors` maps tones onto `CfColors` per theme. Surfaces
+come from a neutral `ColorScheme` (`cfScheme` in `app/theme.dart`) so the
+orange accent stays rare enough to mean something.
+
+Any write that changes whether visitors can reach a site goes through
+`confirmChanges`, which shows the old and new value side by side. A busy state
+appears only after the user confirms (`writeZoneSetting`'s `onConfirmed`), so a
+spinner never sits behind a question that has not been answered.
 
 ## Networking
 

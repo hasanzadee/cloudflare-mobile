@@ -21,15 +21,18 @@ Cloudflare API, not just the ones with a hand-built screen.
 
 ## Screenshots
 
-| Zone overview | Analytics |
+| Pulse | Zone |
 |---|---|
-| <img src="docs/screenshots/01-zone.jpg" width="270"> | <img src="docs/screenshots/02-analytics.jpg" width="270"> |
-| Every zone-level area behind one hub, with plan, status, nameservers and SSL/TLS mode inline. | Traffic, cache hit ratio, threats, status codes and countries, over the GraphQL Analytics API. |
+| <img src="docs/screenshots/01-pulse.jpg" width="270"> | <img src="docs/screenshots/02-zone.jpg" width="270"> |
+| The whole account at a glance: 24-hour traffic across every zone, tunnels that are down, zones still pending, busiest zones first. | The zone's state and what is wrong with it first, with the fix one tap away; Under attack, Development mode and Purge as big buttons. |
 
-| Security | Settings |
+| Every risky change asks first | Dark |
 |---|---|
-| <img src="docs/screenshots/03-security.jpg" width="270"> | <img src="docs/screenshots/04-settings.jpg" width="270"> |
-| WAF custom rules, rate limiting and IP access, scoped by the account/zone bar at the top. | Theme, eight languages, PIN and hardware-bound biometric unlock, screenshot blocking, auto-lock. |
+| <img src="docs/screenshots/03-change-sheet.jpg" width="270"> | <img src="docs/screenshots/04-zone-dark.jpg" width="270"> |
+| SSL mode, security level, the TLS floor and friends show the old and new value before anything is written. | Neutral surfaces with Cloudflare orange as the only accent, in both themes. |
+
+Screenshots come from `integration_test/showcase_test.dart`, which drives the
+real app against a fake account — no real zones in them.
 
 ## Why
 

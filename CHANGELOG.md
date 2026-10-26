@@ -4,6 +4,41 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+The start of v2: a design system, and the two screens people open first
+rebuilt on it. The networking core, the vault and the generated client are
+untouched.
+
+### Added
+
+- **Design system** (`lib/ui/ds/`) — tones instead of hand-picked colours,
+  panels, status pills, sparklines, metrics, rows, action tiles, callouts and a
+  before/after change sheet. A neutral palette with Cloudflare orange as the one
+  accent replaces the orange-tinted seeded scheme; Material You is now opt-in.
+- **Pulse** replaces Home. Requests, bandwidth, cache hit and threats across
+  every zone for the last 24 hours with a sparkline and the change against the
+  day before, in one GraphQL round trip per ten zones; tunnels that are down or
+  degraded and zones that are not active yet, first; zones sorted by traffic,
+  each with its own sparkline.
+- **Zone hub, rebuilt.** The zone's state comes first — status, plan, SSL mode,
+  nameservers with copy — then what is wrong with it and the one tap that
+  fixes it (Flexible or Off SSL → Full (strict), plain HTTP still served,
+  pending nameservers). Under attack, Development mode and Purge are big
+  buttons. Today's traffic, then the way into DNS, Security, SSL/TLS, rules and
+  email, then the curated settings.
+- **Under attack remembers what it replaced.** Switching it off restores the
+  security level the zone had before, instead of assuming Medium.
+- `integration_test/showcase_test.dart` poses every new screen against a fake
+  account for README and store screenshots; skipped unless
+  `--dart-define=SHOWCASE=true`.
+
+### Changed
+
+- **Settings that decide whether visitors reach the site ask first.** SSL mode,
+  Always use HTTPS, the minimum TLS version, TLS 1.3, security level and
+  development mode now show the old and new value and wait for Apply. v1 wrote
+  them the instant a switch moved.
+- Choice settings open a sheet of options instead of a clipped dropdown.
+
 ## [1.0.0] — 2026-08-03
 
 First public release. The project began as a 15-file prototype that could list
