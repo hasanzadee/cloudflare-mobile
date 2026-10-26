@@ -820,4 +820,9 @@ class LEn extends L {
   String zoneChangeTitle(String setting) {
     return 'Change $setting?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Zones without analytics access on this token: $count';
+  }
 }

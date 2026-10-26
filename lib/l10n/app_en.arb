@@ -283,5 +283,7 @@
   "zoneTurnOn": "Turn on",
   "zoneApply": "Apply",
   "zoneChangeTitle": "Change {setting}?",
-  "@zoneChangeTitle": { "placeholders": { "setting": { "type": "String" } } }
+  "@zoneChangeTitle": { "placeholders": { "setting": { "type": "String" } } },
+  "pulseAnalyticsPartial": "Zones without analytics access on this token: {count}",
+  "@pulseAnalyticsPartial": { "placeholders": { "count": { "type": "int" } } }
 }

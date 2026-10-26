@@ -269,5 +269,6 @@
   "zoneHttpsOffBody": "Les visiteurs qui tapent http:// restent sur une connexion non chiffrée.",
   "zoneTurnOn": "Activer",
   "zoneApply": "Appliquer",
-  "zoneChangeTitle": "Modifier {setting} ?"
+  "zoneChangeTitle": "Modifier {setting} ?",
+  "pulseAnalyticsPartial": "Zones sans accès aux statistiques avec ce jeton : {count}"
 }

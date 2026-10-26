@@ -823,4 +823,9 @@ class LEs extends L {
   String zoneChangeTitle(String setting) {
     return '¿Cambiar $setting?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Zonas sin acceso a analíticas con este token: $count';
+  }
 }

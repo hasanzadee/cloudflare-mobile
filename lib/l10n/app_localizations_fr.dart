@@ -826,4 +826,9 @@ class LFr extends L {
   String zoneChangeTitle(String setting) {
     return 'Modifier $setting ?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Zones sans accès aux statistiques avec ce jeton : $count';
+  }
 }

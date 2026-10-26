@@ -819,4 +819,9 @@ class LTr extends L {
   String zoneChangeTitle(String setting) {
     return '$setting değiştirilsin mi?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Bu tokenin analitik erişimi olmayan bölgeler: $count';
+  }
 }

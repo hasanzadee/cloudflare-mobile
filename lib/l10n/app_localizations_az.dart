@@ -820,4 +820,9 @@ class LAz extends L {
   String zoneChangeTitle(String setting) {
     return '«$setting» dəyişdirilsin?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Bu tokenin analitikaya girişi olmayan zonalar: $count';
+  }
 }
