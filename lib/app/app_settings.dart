@@ -14,7 +14,7 @@ class AppSettings {
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.locale = const Locale('en'),
-    this.useDynamicColor = true,
+    this.useDynamicColor = false,
     this.blockScreenshots = true,
     this.autoLock = const Duration(minutes: 1),
   });
@@ -25,8 +25,9 @@ class AppSettings {
   /// rather than the absence of one — see [AppSettingsController._restore].
   final Locale? locale;
 
-  /// Material You. Off falls back to the Cloudflare-orange seed, which is what
-  /// the app looks like on devices without dynamic colour anyway.
+  /// Material You. Off by default: the app's own neutral-and-orange palette
+  /// carries meaning (the orange cloud is the proxied state), and a wallpaper
+  /// colour washing over every surface drowns it out.
   final bool useDynamicColor;
 
   final bool blockScreenshots;
@@ -96,7 +97,7 @@ class AppSettingsController extends Notifier<AppSettings> {
         '' => null,
         final tag => Locale(tag),
       },
-      useDynamicColor: prefs.getBool(_kDynamic) ?? true,
+      useDynamicColor: prefs.getBool(_kDynamic) ?? false,
       blockScreenshots: prefs.getBool(_kSecure) ?? true,
       autoLock: lockSeconds == null
           ? const Duration(minutes: 1)

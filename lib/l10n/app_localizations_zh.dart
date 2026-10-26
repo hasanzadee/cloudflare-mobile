@@ -651,4 +651,158 @@ class LZh extends L {
 
   @override
   String get errUnknown => '出了点问题';
+
+  @override
+  String dsTypeToConfirm(String word) {
+    return '输入 $word 以确认';
+  }
+
+  @override
+  String get pulseTitle => '概览';
+
+  @override
+  String get pulseRequests24h => '请求 · 最近 24 小时';
+
+  @override
+  String get pulseCredentialProblem => '令牌有问题';
+
+  @override
+  String get pulseAnalyticsUnavailable =>
+      '查看流量需要此令牌具有 Zone Analytics: Read 权限。';
+
+  @override
+  String get pulseAttention => '需要关注';
+
+  @override
+  String get pulseAllClear => '目前一切正常。';
+
+  @override
+  String pulseTunnelDown(String name) {
+    return '隧道 $name 已中断';
+  }
+
+  @override
+  String pulseTunnelDegraded(String name) {
+    return '隧道 $name 运行不稳定';
+  }
+
+  @override
+  String get pulseOpenTunnels => '打开隧道';
+
+  @override
+  String pulseZoneNotActive(String name, String status) {
+    return '$name：$status';
+  }
+
+  @override
+  String get pulseZoneNotActiveBody => '在域名服务器指向这里之前，Cloudflare 不会为它提供服务。';
+
+  @override
+  String get pulseOpenZone => '打开区域';
+
+  @override
+  String pulseAllZones(int count) {
+    return '全部 $count';
+  }
+
+  @override
+  String get zoneQuickActions => '快捷操作';
+
+  @override
+  String get zoneUnderAttack => '遭受攻击';
+
+  @override
+  String get zoneUnderAttackCaption => '验证所有人';
+
+  @override
+  String get zoneUnderAttackNote => '每位访问者都会先看到几秒钟的验证页面。请在遭受攻击时开启，之后再关闭。';
+
+  @override
+  String get zoneUnderAttackOffNote => '验证页面将消失，安全级别恢复为之前的设置。';
+
+  @override
+  String get zoneStateOn => '已开启';
+
+  @override
+  String get zoneDevMode => '开发模式';
+
+  @override
+  String get zoneDevModeCaption => '3 小时不缓存';
+
+  @override
+  String zoneDevModeLeft(String time) {
+    return '剩余 $time';
+  }
+
+  @override
+  String get zoneDevModeNote =>
+      'Cloudflare 将在三小时内停止缓存，之后自动关闭此模式。在此期间，源站承担全部负载。';
+
+  @override
+  String get zonePurgeCaption => 'URL 或全部';
+
+  @override
+  String get zoneLast24h => '最近 24 小时';
+
+  @override
+  String get zoneManage => '管理';
+
+  @override
+  String get zoneSecuritySubtitle => 'WAF 规则、速率限制、IP 访问';
+
+  @override
+  String get zoneTlsTitle => 'SSL/TLS';
+
+  @override
+  String get zoneEmailTitle => '电子邮件';
+
+  @override
+  String get zoneOpenDashboard => '在 Cloudflare 控制台中打开';
+
+  @override
+  String get zonePaused => '已暂停';
+
+  @override
+  String zoneNotActiveTitle(String status) {
+    return '区域状态：$status';
+  }
+
+  @override
+  String get zoneNotActiveBody =>
+      '请在注册商处设置这些域名服务器。Cloudflare 检测到后就会开始为该区域提供服务。';
+
+  @override
+  String get zoneCopyNameservers => '复制域名服务器';
+
+  @override
+  String zoneSslWeakTitle(String mode) {
+    return 'SSL 处于 $mode 模式';
+  }
+
+  @override
+  String get zoneSslWeakBody => 'Cloudflare 到源站的连接未经验证，可能被读取或篡改。';
+
+  @override
+  String get zoneSslUseStrict => '切换到 Full (strict)';
+
+  @override
+  String get zoneSslStrictNote =>
+      '源站必须提供有效证书（免费的 Cloudflare Origin CA 证书即可），否则访问者会看到 526 错误。';
+
+  @override
+  String get zoneHttpsOffTitle => '仍在提供未加密的 HTTP';
+
+  @override
+  String get zoneHttpsOffBody => '输入 http:// 的访问者会停留在未加密的连接上。';
+
+  @override
+  String get zoneTurnOn => '开启';
+
+  @override
+  String get zoneApply => '应用';
+
+  @override
+  String zoneChangeTitle(String setting) {
+    return '要更改$setting吗？';
+  }
 }
