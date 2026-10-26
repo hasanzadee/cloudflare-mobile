@@ -19,6 +19,7 @@ class ZoneSettingSpec {
     this.isToggle = false,
     this.onValue = 'on',
     this.offValue = 'off',
+    this.confirm = false,
   });
 
   final String id;
@@ -31,6 +32,32 @@ class ZoneSettingSpec {
   final bool isToggle;
   final String onValue;
   final String offValue;
+
+  /// Whether a change goes through the before/after sheet first.
+  ///
+  /// True for settings that change whether visitors can reach the site at
+  /// all — encryption mode, the TLS floor, challenge level, cache bypass. The
+  /// cosmetic ones (Brotli, email obfuscation) stay one tap.
+  final bool confirm;
+
+  /// Display label for a raw API value, falling back to the value itself.
+  String labelFor(String? value) {
+    if (isToggle) return value ?? '';
+    for (final o in options) {
+      if (o.value == value) return o.label;
+    }
+    return value ?? '';
+  }
+}
+
+/// Looks a curated setting up by its API id.
+ZoneSettingSpec? zoneSettingSpec(String id) {
+  for (final group in kZoneSettings) {
+    for (final s in group.settings) {
+      if (s.id == id) return s;
+    }
+  }
+  return null;
 }
 
 const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
@@ -39,6 +66,7 @@ const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
     settings: [
       ZoneSettingSpec(
         id: 'ssl',
+        confirm: true,
         label: 'Encryption mode',
         description:
             'Flexible leaves the hop to your origin unencrypted. Full (strict) '
@@ -52,6 +80,7 @@ const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
       ),
       ZoneSettingSpec(
         id: 'always_use_https',
+        confirm: true,
         label: 'Always use HTTPS',
         description: 'Redirects every http:// request to https://.',
         isToggle: true,
@@ -64,6 +93,7 @@ const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
       ),
       ZoneSettingSpec(
         id: 'min_tls_version',
+        confirm: true,
         label: 'Minimum TLS version',
         description: 'Refuse handshakes below this version.',
         options: [
@@ -81,6 +111,7 @@ const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
       ),
       ZoneSettingSpec(
         id: 'tls_1_3',
+        confirm: true,
         label: 'TLS 1.3',
         description: 'Enable the current TLS version.',
         isToggle: true,
@@ -121,6 +152,7 @@ const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
       ),
       ZoneSettingSpec(
         id: 'development_mode',
+        confirm: true,
         label: 'Development mode',
         description:
             'Bypasses the cache entirely for three hours. Turns itself off.',
@@ -168,6 +200,7 @@ const List<({String group, List<ZoneSettingSpec> settings})> kZoneSettings = [
     settings: [
       ZoneSettingSpec(
         id: 'security_level',
+        confirm: true,
         label: 'Security level',
         description: 'How readily visitors are challenged.',
         options: [
