@@ -112,16 +112,164 @@ extension CfTheme on BuildContext {
 
 const Color kCloudflareOrange = Color(0xFFF6821F);
 
+/// The app's own palette: neutral greys with Cloudflare orange as the single
+/// accent.
+///
+/// A seeded scheme on its own tints every surface orange-beige, which is what
+/// made v1 look like a stock template. The surfaces are pinned to neutral
+/// values instead, so the accent only appears where it means something — the
+/// orange cloud, the primary action, the selected tab.
+ColorScheme cfScheme(Brightness mode) {
+  final seeded = ColorScheme.fromSeed(
+    seedColor: kCloudflareOrange,
+    brightness: mode,
+  );
+  return mode == Brightness.dark
+      ? seeded.copyWith(
+          primary: kCloudflareOrange,
+          onPrimary: const Color(0xFF1C0E02),
+          primaryContainer: const Color(0xFF3A1E08),
+          onPrimaryContainer: const Color(0xFFFFD6B0),
+          surface: const Color(0xFF0C0C0E),
+          onSurface: const Color(0xFFF2F2F3),
+          onSurfaceVariant: const Color(0xFFA1A1AA),
+          surfaceContainerLowest: const Color(0xFF08080A),
+          surfaceContainerLow: const Color(0xFF151518),
+          surfaceContainer: const Color(0xFF1B1B1F),
+          surfaceContainerHigh: const Color(0xFF232328),
+          surfaceContainerHighest: const Color(0xFF2B2B31),
+          outline: const Color(0xFF52525B),
+          outlineVariant: const Color(0xFF26262B),
+        )
+      : seeded.copyWith(
+          // Darker than the brand orange so white text on it stays legible.
+          primary: const Color(0xFFC2410C),
+          onPrimary: Colors.white,
+          primaryContainer: const Color(0xFFFFE8D6),
+          onPrimaryContainer: const Color(0xFF7C2D12),
+          surface: const Color(0xFFF4F4F5),
+          onSurface: const Color(0xFF18181B),
+          onSurfaceVariant: const Color(0xFF6B6B74),
+          surfaceContainerLowest: Colors.white,
+          surfaceContainerLow: Colors.white,
+          surfaceContainer: const Color(0xFFEFEFF1),
+          surfaceContainerHigh: const Color(0xFFE8E8EB),
+          surfaceContainerHighest: const Color(0xFFE1E1E5),
+          outline: const Color(0xFFA1A1AA),
+          outlineVariant: const Color(0xFFE4E4E7),
+        );
+}
+
 ThemeData buildTheme({ColorScheme? dynamicScheme, required Brightness mode}) {
-  final scheme =
-      dynamicScheme ??
-      ColorScheme.fromSeed(seedColor: kCloudflareOrange, brightness: mode);
-  return ThemeData(
+  final scheme = dynamicScheme ?? cfScheme(mode);
+  final base = ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
+    brightness: mode,
+  );
+  final text = base.textTheme;
+
+  return base.copyWith(
+    scaffoldBackgroundColor: scheme.surface,
     extensions: [mode == Brightness.dark ? CfColors.dark : CfColors.light],
-    inputDecorationTheme: const InputDecorationTheme(
-      border: OutlineInputBorder(),
+    textTheme: text.copyWith(
+      headlineMedium: text.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.6,
+      ),
+      headlineSmall: text.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.4,
+      ),
+      titleLarge: text.titleLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      titleMedium: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+      titleSmall: text.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+    ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      centerTitle: false,
+      titleTextStyle: text.titleLarge?.copyWith(
+        color: scheme.onSurface,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: scheme.surfaceContainerLow,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: scheme.primaryContainer,
+      height: 68,
+      elevation: 0,
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => text.labelSmall?.copyWith(
+          fontWeight: states.contains(WidgetState.selected)
+              ? FontWeight.w700
+              : FontWeight.w500,
+        ),
+      ),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          color: states.contains(WidgetState.selected)
+              ? scheme.onPrimaryContainer
+              : scheme.onSurfaceVariant,
+        ),
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: scheme.surfaceContainerLow,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant, width: 0.6),
+      ),
+    ),
+    dividerTheme: DividerThemeData(
+      color: scheme.outlineVariant,
+      thickness: 0.6,
+      space: 0.6,
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: scheme.surfaceContainerLow,
+      surfaceTintColor: Colors.transparent,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: scheme.surfaceContainerLow,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
+    snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(0, 46),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        textStyle: text.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(0, 46),
+        side: BorderSide(color: scheme.outlineVariant),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: scheme.surfaceContainerLow,
+      side: BorderSide(color: scheme.outlineVariant, width: 0.6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       isDense: true,
     ),
     listTileTheme: const ListTileThemeData(

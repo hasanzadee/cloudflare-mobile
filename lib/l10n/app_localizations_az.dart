@@ -661,4 +661,163 @@ class LAz extends L {
 
   @override
   String get errUnknown => 'Nəsə səhv getdi';
+
+  @override
+  String dsTypeToConfirm(String word) {
+    return 'Təsdiq üçün $word yazın';
+  }
+
+  @override
+  String get pulseTitle => 'Nəbz';
+
+  @override
+  String get pulseRequests24h => 'Sorğular · son 24 saat';
+
+  @override
+  String get pulseCredentialProblem => 'Token problemi';
+
+  @override
+  String get pulseAnalyticsUnavailable =>
+      'Trafik üçün tokenə Zone Analytics: Read icazəsi lazımdır.';
+
+  @override
+  String get pulseAttention => 'Diqqət tələb edir';
+
+  @override
+  String get pulseAllClear => 'Hazırda hər şey qaydasındadır.';
+
+  @override
+  String pulseTunnelDown(String name) {
+    return '$name tuneli işləmir';
+  }
+
+  @override
+  String pulseTunnelDegraded(String name) {
+    return '$name tuneli fasilələrlə işləyir';
+  }
+
+  @override
+  String get pulseOpenTunnels => 'Tunelləri aç';
+
+  @override
+  String pulseZoneNotActive(String name, String status) {
+    return '$name: $status';
+  }
+
+  @override
+  String get pulseZoneNotActiveBody =>
+      'Nameserverlər buraya yönəlməyənə qədər Cloudflare zonaya xidmət etmir.';
+
+  @override
+  String get pulseOpenZone => 'Zonanı aç';
+
+  @override
+  String pulseAllZones(int count) {
+    return 'Hamısı $count';
+  }
+
+  @override
+  String get zoneQuickActions => 'Tez əməliyyatlar';
+
+  @override
+  String get zoneUnderAttack => 'Hücum rejimi';
+
+  @override
+  String get zoneUnderAttackCaption => 'Hamını yoxla';
+
+  @override
+  String get zoneUnderAttackNote =>
+      'Hər ziyarətçi bir neçə saniyə yoxlama səhifəsi görür. Hücum vaxtı aktiv edin, sonra söndürün.';
+
+  @override
+  String get zoneUnderAttackOffNote =>
+      'Yoxlama səhifəsi yox olacaq, təhlükəsizlik səviyyəsi əvvəlki vəziyyətə qayıdacaq.';
+
+  @override
+  String get zoneStateOn => 'Aktivdir';
+
+  @override
+  String get zoneDevMode => 'Dev rejimi';
+
+  @override
+  String get zoneDevModeCaption => '3 saat keşsiz';
+
+  @override
+  String zoneDevModeLeft(String time) {
+    return '$time qalıb';
+  }
+
+  @override
+  String get zoneDevModeNote =>
+      'Cloudflare üç saat keşləməni dayandırır, sonra rejimi özü söndürür. Bu müddətdə bütün yük origin-ə düşür.';
+
+  @override
+  String get zonePurgeCaption => 'URL və ya hamısı';
+
+  @override
+  String get zoneLast24h => 'Son 24 saat';
+
+  @override
+  String get zoneManage => 'İdarəetmə';
+
+  @override
+  String get zoneSecuritySubtitle => 'WAF qaydaları, rate limiting, IP girişi';
+
+  @override
+  String get zoneTlsTitle => 'SSL/TLS';
+
+  @override
+  String get zoneEmailTitle => 'Poçt';
+
+  @override
+  String get zoneOpenDashboard => 'Cloudflare panelində aç';
+
+  @override
+  String get zonePaused => 'Dayandırılıb';
+
+  @override
+  String zoneNotActiveTitle(String status) {
+    return 'Zonanın statusu: $status';
+  }
+
+  @override
+  String get zoneNotActiveBody =>
+      'Bu nameserverləri registratorda qeyd edin. Cloudflare onları görən kimi zonaya xidmət etməyə başlayacaq.';
+
+  @override
+  String get zoneCopyNameservers => 'Nameserverləri kopyala';
+
+  @override
+  String zoneSslWeakTitle(String mode) {
+    return 'SSL $mode rejimindədir';
+  }
+
+  @override
+  String get zoneSslWeakBody =>
+      'Cloudflare ilə origin arasındakı əlaqə yoxlanılmır, onu oxumaq və ya dəyişmək mümkündür.';
+
+  @override
+  String get zoneSslUseStrict => 'Full (strict) rejiminə keç';
+
+  @override
+  String get zoneSslStrictNote =>
+      'Origin etibarlı sertifikat təqdim etməlidir (pulsuz Cloudflare Origin CA da olar), əks halda ziyarətçilər 526 xətası görəcək.';
+
+  @override
+  String get zoneHttpsOffTitle => 'Sayt hələ də HTTP ilə açılır';
+
+  @override
+  String get zoneHttpsOffBody =>
+      'http:// yazan ziyarətçilər şifrəsiz bağlantıda qalır.';
+
+  @override
+  String get zoneTurnOn => 'Aktiv et';
+
+  @override
+  String get zoneApply => 'Tətbiq et';
+
+  @override
+  String zoneChangeTitle(String setting) {
+    return '«$setting» dəyişdirilsin?';
+  }
 }
