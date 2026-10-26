@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'api/generated/generated.dart';
 import 'app/app_settings.dart';
 import 'app/theme.dart';
 import 'auth/application/auth_providers.dart';
@@ -10,8 +11,9 @@ import 'auth/presentation/lock_screen.dart';
 import 'auth/presentation/onboarding_screen.dart';
 import 'core/security/secure_flag.dart';
 import 'features/developer/developer_screen.dart';
-import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
+import 'features/pulse/pulse_screen.dart';
+import 'features/scope/scope_providers.dart';
 import 'features/security/security_screen.dart';
 import 'features/zones/zone_screen.dart';
 import 'features/zones/zones_screen.dart';
@@ -145,15 +147,27 @@ class _RootState extends ConsumerState<_Root> with WidgetsBindingObserver {
 ///
 /// IndexedStack keeps each tab's scroll position and state, which the
 /// prototype's `switch (_idx)` body threw away on every tab change.
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
   @override
-  State<AppShell> createState() => _AppShellState();
+  ConsumerState<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
+class _AppShellState extends ConsumerState<AppShell> {
   int _index = 0;
+
+  /// Tapping a zone lands on the zone hub — state, quick actions, traffic —
+  /// rather than jumping straight into DNS as the prototype did.
+  void _openZone(Zone zone) {
+    ref.read(scopeProvider.notifier).setZone(zone.id, zone.name);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            ZoneScreen(zoneId: zone.id ?? '', zoneName: zone.name ?? ''),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,21 +177,11 @@ class _AppShellState extends State<AppShell> {
       body: IndexedStack(
         index: _index,
         children: [
-          HomeScreen(onOpenZones: () => setState(() => _index = 1)),
-          ZonesScreen(
-            onOpenZone: (zone) {
-              // Tapping a zone lands on the zone hub — DNS, purge and settings
-              // — rather than jumping straight into DNS as the prototype did.
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => ZoneScreen(
-                    zoneId: zone.id ?? '',
-                    zoneName: zone.name ?? '',
-                  ),
-                ),
-              );
-            },
+          PulseScreen(
+            onOpenZone: _openZone,
+            onOpenZones: () => setState(() => _index = 1),
           ),
+          ZonesScreen(onOpenZone: _openZone),
           const SecurityScreen(),
           const DeveloperScreen(),
           const MoreScreen(),
@@ -188,9 +192,9 @@ class _AppShellState extends State<AppShell> {
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.dashboard_outlined),
-            selectedIcon: const Icon(Icons.dashboard),
-            label: l.navHome,
+            icon: const Icon(Icons.monitor_heart_outlined),
+            selectedIcon: const Icon(Icons.monitor_heart),
+            label: l.pulseTitle,
           ),
           NavigationDestination(
             icon: const Icon(Icons.public_outlined),
