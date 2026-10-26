@@ -269,5 +269,6 @@
   "zoneHttpsOffBody": "Wer http:// eintippt, bleibt auf einer unverschlüsselten Verbindung.",
   "zoneTurnOn": "Einschalten",
   "zoneApply": "Übernehmen",
-  "zoneChangeTitle": "{setting} ändern?"
+  "zoneChangeTitle": "{setting} ändern?",
+  "pulseAnalyticsPartial": "Zonen ohne Analytics-Zugriff mit diesem Token: {count}"
 }

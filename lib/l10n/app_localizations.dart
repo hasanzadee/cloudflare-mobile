@@ -1620,6 +1620,12 @@ abstract class L {
   /// In en, this message translates to:
   /// **'Change {setting}?'**
   String zoneChangeTitle(String setting);
+
+  /// No description provided for @pulseAnalyticsPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Zones without analytics access on this token: {count}'**
+  String pulseAnalyticsPartial(int count);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

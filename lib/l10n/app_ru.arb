@@ -274,5 +274,6 @@
   "zoneHttpsOffBody": "Кто откроет http://, останется на незашифрованном соединении.",
   "zoneTurnOn": "Включить",
   "zoneApply": "Применить",
-  "zoneChangeTitle": "Изменить «{setting}»?"
+  "zoneChangeTitle": "Изменить «{setting}»?",
+  "pulseAnalyticsPartial": "Зон без доступа к аналитике у этого токена: {count}"
 }

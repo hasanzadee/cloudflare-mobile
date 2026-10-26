@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/generated/generated.dart';
 import '../../auth/application/auth_providers.dart';
+import '../../core/net/failure.dart';
 import '../../core/net/paginator.dart';
+import '../analytics/analytics_denials.dart';
 import '../analytics/analytics_providers.dart';
 import '../scope/scope_providers.dart';
 
@@ -66,10 +68,15 @@ class ZonePulse {
 
 /// Traffic for every zone on Pulse, and the account-wide sum of it.
 class PulseTraffic {
-  PulseTraffic(this.zones) : total = _sum(zones.values);
+  PulseTraffic(this.zones, {this.denied = const {}})
+    : total = _sum(zones.values);
 
   final Map<String, ZonePulse> zones;
   final ZonePulse total;
+
+  /// Zones the token may not read analytics for. They are absent from
+  /// [zones] — no sparkline beats a flat line that claims zero traffic.
+  final Set<String> denied;
 
   double get cacheRatio =>
       total.totalRequests == 0 ? 0 : total.totalCached / total.totalRequests;
@@ -191,18 +198,34 @@ final pulseTrafficProvider = FutureProvider.autoDispose<PulseTraffic>((
       tags.sublist(i, (i + _kZonesPerQuery).clamp(0, tags.length)),
   ];
 
-  final results = await Future.wait([
+  final answers = await Future.wait([
     for (final batch in batches)
-      graphql.query(
-        pulseQuery(batch),
-        variables: {'since': iso(since), 'until': iso(now)},
-        cancelToken: cancel,
-        missingPermissions: const {'Zone Analytics Read'},
+      queryDroppingDenied(
+        batch,
+        (zones) => graphql.query(
+          pulseQuery(zones),
+          variables: {'since': iso(since), 'until': iso(now)},
+          cancelToken: cancel,
+          missingPermissions: const {'Zone Analytics Read'},
+        ),
       ),
   ]);
 
-  final out = <String, ZonePulse>{for (final t in tags) t: ZonePulse.empty()};
-  for (final data in results) {
+  final denied = {for (final a in answers) ...a.denied};
+  // Nothing readable at all is the token missing the permission, and the
+  // screen should say exactly that rather than show a page of zeros.
+  if (denied.length >= tags.length) {
+    throw const PermissionFailure(
+      missingPermissions: {'Zone Analytics Read'},
+      requestPath: 'graphql',
+    );
+  }
+
+  final out = <String, ZonePulse>{
+    for (final t in tags)
+      if (!denied.contains(t)) t: ZonePulse.empty(),
+  };
+  for (final data in [for (final a in answers) ...a.results]) {
     final viewer = data['viewer'];
     final nodes = viewer is Map ? viewer['zones'] : null;
     if (nodes is! List) continue;
@@ -214,7 +237,7 @@ final pulseTrafficProvider = FutureProvider.autoDispose<PulseTraffic>((
       out[tag] = bucketZone(series, currentHour);
     }
   }
-  return PulseTraffic(out);
+  return PulseTraffic(out, denied: denied.intersection(tags.toSet()));
 });
 
 /// A tunnel that is not serving, with the account it belongs to.

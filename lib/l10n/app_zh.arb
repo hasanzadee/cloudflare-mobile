@@ -269,5 +269,6 @@
   "zoneHttpsOffBody": "输入 http:// 的访问者会停留在未加密的连接上。",
   "zoneTurnOn": "开启",
   "zoneApply": "应用",
-  "zoneChangeTitle": "要更改{setting}吗？"
+  "zoneChangeTitle": "要更改{setting}吗？",
+  "pulseAnalyticsPartial": "此令牌无法查看分析数据的区域：{count}"
 }

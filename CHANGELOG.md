@@ -39,6 +39,16 @@ untouched.
   them the instant a switch moved.
 - Choice settings open a sheet of options instead of a clipped dropdown.
 
+### Fixed
+
+- A token that may read analytics for only some zones blanked Pulse: the
+  GraphQL API refuses a whole `zoneTag_in` query if any zone in it is off
+  limits, and answers with a 200 and an errors array rather than a 403. Pulse
+  now asks again without the refused zones and says how many it could not
+  read; analytics screens report the refusal as a missing Zone Analytics Read
+  permission, with the link to re-issue the token, instead of printing the raw
+  GraphQL message.
+
 ## [1.0.0] — 2026-08-03
 
 First public release. The project began as a 15-file prototype that could list

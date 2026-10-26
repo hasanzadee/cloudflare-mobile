@@ -167,6 +167,29 @@ class _TrafficHero extends ConsumerWidget {
                   ),
                 ],
               ),
+              // A token scoped to some zones is normal; say which part of the
+              // picture is missing rather than present a partial sum as whole.
+              if (t.denied.isNotEmpty) ...[
+                const SizedBox(height: Gap.md),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.key_off_outlined,
+                      size: 16,
+                      color: context.scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: Gap.sm),
+                    Expanded(
+                      child: Text(
+                        l.pulseAnalyticsPartial(t.denied.length),
+                        style: context.text.bodySmall?.copyWith(
+                          color: context.scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           );
         },

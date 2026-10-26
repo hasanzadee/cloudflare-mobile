@@ -822,4 +822,9 @@ class LRu extends L {
   String zoneChangeTitle(String setting) {
     return 'Изменить «$setting»?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Зон без доступа к аналитике у этого токена: $count';
+  }
 }

@@ -269,5 +269,6 @@
   "zoneHttpsOffBody": "http:// yazan ziyarətçilər şifrəsiz bağlantıda qalır.",
   "zoneTurnOn": "Aktiv et",
   "zoneApply": "Tətbiq et",
-  "zoneChangeTitle": "«{setting}» dəyişdirilsin?"
+  "zoneChangeTitle": "«{setting}» dəyişdirilsin?",
+  "pulseAnalyticsPartial": "Bu tokenin analitikaya girişi olmayan zonalar: {count}"
 }
