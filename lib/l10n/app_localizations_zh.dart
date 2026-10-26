@@ -805,4 +805,9 @@ class LZh extends L {
   String zoneChangeTitle(String setting) {
     return '要更改$setting吗？';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return '此令牌无法查看分析数据的区域：$count';
+  }
 }

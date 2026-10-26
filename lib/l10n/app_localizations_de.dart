@@ -826,4 +826,9 @@ class LDe extends L {
   String zoneChangeTitle(String setting) {
     return '$setting ändern?';
   }
+
+  @override
+  String pulseAnalyticsPartial(int count) {
+    return 'Zonen ohne Analytics-Zugriff mit diesem Token: $count';
+  }
 }

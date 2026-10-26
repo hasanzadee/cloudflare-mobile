@@ -269,5 +269,6 @@
   "zoneHttpsOffBody": "Quien escriba http:// se queda en una conexión sin cifrar.",
   "zoneTurnOn": "Activar",
   "zoneApply": "Aplicar",
-  "zoneChangeTitle": "¿Cambiar {setting}?"
+  "zoneChangeTitle": "¿Cambiar {setting}?",
+  "pulseAnalyticsPartial": "Zonas sin acceso a analíticas con este token: {count}"
 }
