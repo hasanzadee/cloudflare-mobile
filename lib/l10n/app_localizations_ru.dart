@@ -827,4 +827,141 @@ class LRu extends L {
   String pulseAnalyticsPartial(int count) {
     return 'Зон без доступа к аналитике у этого токена: $count';
   }
+
+  @override
+  String get dnsStateProxied => 'Через прокси';
+
+  @override
+  String get dnsStateDnsOnly => 'Только DNS';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return 'Пустить $name через прокси Cloudflare?';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return 'Отключить прокси для $name?';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      'Трафик пойдёт через Cloudflare: кэш, защита, а адрес origin скрыт. Пока прокси включён, TTL управляет Cloudflare.';
+
+  @override
+  String get dnsProxyOffNote =>
+      'Посетители пойдут напрямую на origin: его IP станет публичным, а кэш и файрвол Cloudflare перестанут работать для этого имени.';
+
+  @override
+  String get dnsEmptyTitle => 'Записей пока нет';
+
+  @override
+  String get dnsEmptyBody =>
+      'Запись, добавленная здесь, через несколько секунд появится на NS-серверах Cloudflare.';
+
+  @override
+  String get moreProducts => 'Продукты';
+
+  @override
+  String get moreApp => 'Приложение';
+
+  @override
+  String get moreAlertsSubtitle => 'Политики уведомлений, недавние алерты';
+
+  @override
+  String get moreSettingsSubtitle => 'Тема, язык, профили, блокировка';
+
+  @override
+  String get settingsAddProfileHint =>
+      'Другой аккаунт или токен с другими правами';
+
+  @override
+  String get settingsBiometricHint =>
+      'Ключ хранилища шифруется ключом из Keystore, который открывается только после проверки отпечатка.';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'Биометрия на этом устройстве недоступна';
+
+  @override
+  String get settingsPrivacyHeadline =>
+      'С телефона уходят только запросы к API';
+
+  @override
+  String get settingsAboutBody =>
+      'Открытый код, Apache-2.0. Не связано с Cloudflare, Inc.';
+
+  @override
+  String get securityDeleteRule => 'Удалить это правило?';
+
+  @override
+  String get securityNoIpRules => 'Правил доступа по IP нет';
+
+  @override
+  String get securityEmptyCustomBody =>
+      'Блокируйте, проверяйте или пропускайте запросы по выражению — страна, путь, user agent.';
+
+  @override
+  String get securityEmptyRateLimitBody =>
+      'Ограничьте число запросов от одного клиента за период — по IP и дата-центру.';
+
+  @override
+  String get securityEmptyIpBody =>
+      'Разрешите, заблокируйте или проверяйте IP, подсеть, страну или ASN для всей зоны.';
+
+  @override
+  String get devNoWorkers => 'На этом аккаунте нет Workers';
+
+  @override
+  String get devNoPages => 'На этом аккаунте нет проектов Pages';
+
+  @override
+  String get moreAlertHistory => 'Недавние алерты';
+
+  @override
+  String get ztNoTunnels => 'На этом аккаунте нет туннелей';
+
+  @override
+  String get ztNoApps => 'Приложений Access нет';
+
+  @override
+  String get ztNoGatewayRules => 'Правил Gateway нет';
+
+  @override
+  String ztConnectors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count коннекторов',
+      few: '$count коннектора',
+      one: '$count коннектор',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get onboardTokenBody =>
+      'Cloudflare откроется с уже отмеченными нужными правами. Создайте токен и вставьте его сюда.';
+
+  @override
+  String get onboardPresetFull => 'Чтение и запись';
+
+  @override
+  String get onboardPresetDns => 'Только DNS';
+
+  @override
+  String get onboardPresetRead => 'Только чтение';
+
+  @override
+  String get onboardPinBody =>
+      'Пин-код шифрует ваш токен на этом устройстве. Он никуда не отправляется и не восстанавливается — если забудете, придётся начать заново.';
+
+  @override
+  String get authPasteFirst => 'Сначала вставьте токен';
+
+  @override
+  String get authProfileNameHint => 'Работа, клиент, личное…';
+
+  @override
+  String get commonRecommended => 'Рекомендуется';
 }

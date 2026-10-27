@@ -113,6 +113,8 @@ void main() {
           'd1Query',
           'dnsTitle',
           'zoneTlsTitle',
+          'dnsStateProxied',
+          'moreApp',
           'dnsTtl',
           'dnsTtlAuto',
           'dnsTags',

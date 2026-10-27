@@ -90,6 +90,46 @@ class DnsController
     ref.invalidateSelf();
   }
 
+  /// Turns the orange cloud on or off for one record.
+  ///
+  /// A PATCH rather than the editor's PUT: PUT replaces the record, so it
+  /// would need every per-type field round-tripped just to flip one flag.
+  /// Type, name and content ride along because Cloudflare validates the patch
+  /// against them. The list is updated in place on success — refetching four
+  /// hundred records to move one icon would be the slowest possible answer.
+  Future<void> setProxied(DnsRecordResponse record, {required bool on}) async {
+    final id = record.id;
+    if (id == null) return;
+    final updated = await ref
+        .read(cfApiProvider)
+        .dns
+        .patchRecord(
+          zoneId: arg,
+          dnsRecordId: id,
+          body: DnsRecordPatch(
+            type_: record.type_,
+            name: record.name,
+            content: record.content,
+            proxied: on,
+          ),
+        );
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(
+      current.copyWith(
+        items: [
+          for (final r in current.items)
+            if (r.id == id)
+              // The response is the record as Cloudflare now has it; if it
+              // somehow came back empty, keep ours with the flag flipped.
+              updated.id == null ? r.copyWith(proxied: on) : updated
+            else
+              r,
+        ],
+      ),
+    );
+  }
+
   /// Re-reads one record straight from the API.
   ///
   /// Called when opening the editor: a management app must not offer a Save

@@ -6,6 +6,7 @@ import '../../app/theme.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../core/net/paginator.dart';
 import '../../l10n/app_localizations.dart';
+import '../../ui/ds/ds.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
 import '../zones/zone_extras_screen.dart';
@@ -74,6 +75,7 @@ class AccountExtrasScreen extends ConsumerWidget {
             ..invalidate(turnstileProvider(accountId));
         },
         child: ListView(
+          padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.xl),
           children: [
             SectionHeader(l.moreAlerts),
             ...sectionOf<CfPage<Policies>>(
@@ -102,7 +104,7 @@ class AccountExtrasScreen extends ConsumerWidget {
               ],
             ),
 
-            SectionHeader('${l.moreAlerts} · history'),
+            SectionHeader(l.moreAlertHistory),
             ...sectionOf<CfPage<History>>(
               context,
               ref.watch(alertHistoryProvider(accountId)),

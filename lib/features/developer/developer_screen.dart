@@ -9,6 +9,7 @@ import '../../core/net/failure.dart';
 import '../../core/net/paginator.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/async_view.dart';
+import '../../ui/ds/ds.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
 import 'd1_console_screen.dart';
@@ -83,62 +84,92 @@ class _Workers extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
     final scripts = ref.watch(workerScriptsProvider(accountId));
 
     return AsyncView<CfPage<WorkerScriptListWorkersItem>>(
       value: scripts,
       onRetry: () => ref.invalidate(workerScriptsProvider(accountId)),
       isEmpty: (d) => d.items.isEmpty,
+      empty: EmptyState(
+        icon: Icons.bolt_outlined,
+        tone: Tone.brand,
+        title: l.devNoWorkers,
+      ),
       builder: (page) => RefreshIndicator(
         onRefresh: () async => ref.invalidate(workerScriptsProvider(accountId)),
-        child: ListView.separated(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: Gap.md),
           itemCount: page.items.length,
-          separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, i) {
             final script = page.items[i];
             final routes = script.routes ?? const <Route>[];
-            return ExpansionTile(
-              leading: const Icon(Icons.bolt_outlined),
-              title: Text(script.id ?? '—'),
-              subtitle: Text(
-                [
-                  if (script.usageModel != null) script.usageModel!,
-                  if (script.compatibilityDate != null)
-                    'compat ${script.compatibilityDate}',
-                  if (script.modifiedOn != null)
-                    'modified ${script.modifiedOn!.split('T').first}',
-                ].join(' · '),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              children: [
-                if (routes.isNotEmpty)
-                  for (final r in routes)
-                    ListTile(
-                      dense: true,
-                      leading: const Icon(Icons.alt_route, size: 18),
-                      title: Text(
-                        r.pattern ?? '—',
-                        style: const TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                _CronTriggers(accountId: accountId, script: script.id ?? ''),
-                if (script.handlers != null && script.handlers!.isNotEmpty)
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.functions, size: 18),
-                    title: Text(script.handlers!.join(', ')),
+            return GroupedItem(
+              index: i,
+              count: page.items.length,
+              dividerIndent: 64,
+              child: ExpansionTile(
+                shape: const Border(),
+                collapsedShape: const Border(),
+                leading: const IconTile(icon: Icons.bolt, tone: Tone.brand),
+                title: Text(script.id ?? '—', style: context.text.titleSmall),
+                subtitle: Text(
+                  [
+                    if (script.usageModel != null) script.usageModel!,
+                    if (script.compatibilityDate != null)
+                      'compat ${script.compatibilityDate}',
+                    if (script.modifiedOn != null)
+                      'modified ${script.modifiedOn!.split('T').first}',
+                  ].join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.scheme.onSurfaceVariant,
                   ),
-              ],
+                ),
+                childrenPadding: const EdgeInsets.only(bottom: Gap.sm),
+                children: [
+                  for (final r in routes)
+                    _Detail(icon: Icons.alt_route, text: r.pattern ?? '—'),
+                  _CronTriggers(accountId: accountId, script: script.id ?? ''),
+                  if (script.handlers != null && script.handlers!.isNotEmpty)
+                    _Detail(
+                      icon: Icons.functions,
+                      text: script.handlers!.join(', '),
+                    ),
+                ],
+              ),
             );
           },
         ),
       ),
     );
   }
+}
+
+/// One fact under an expanded Worker: a route, a schedule, a handler.
+class _Detail extends StatelessWidget {
+  const _Detail({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(68, Gap.xs, Gap.lg, Gap.xs),
+    child: Row(
+      children: [
+        Icon(icon, size: 16, color: context.scheme.onSurfaceVariant),
+        const SizedBox(width: Gap.sm),
+        Expanded(
+          child: Text(
+            text,
+            style: context.text.bodySmall?.copyWith(fontFamily: 'monospace'),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _CronTriggers extends ConsumerWidget {
@@ -155,31 +186,19 @@ class _CronTriggers extends ConsumerWidget {
     );
 
     return triggers.when(
-      loading: () => const ListTile(
-        dense: true,
-        leading: SizedBox(
-          width: 18,
-          height: 18,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-        title: Text('…'),
+      loading: () => const Padding(
+        padding: EdgeInsets.fromLTRB(68, Gap.xs, Gap.lg, Gap.xs),
+        child: SkeletonBox(width: 120),
       ),
       // A worker with no cron access is normal, not an error worth shouting about.
       error: (_, _) => const SizedBox.shrink(),
       data: (result) {
-        final schedules = result.schedules ?? const [];
+        final schedules = (result.schedules ?? const [])
+            .map((s) => s.cron ?? '')
+            .where((c) => c.isNotEmpty)
+            .toList();
         if (schedules.isEmpty) return const SizedBox.shrink();
-        return ListTile(
-          dense: true,
-          leading: const Icon(Icons.schedule, size: 18),
-          title: Text(
-            schedules
-                .map((s) => s.cron ?? '')
-                .where((c) => c.isNotEmpty)
-                .join(', '),
-            style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-          ),
-        );
+        return _Detail(icon: Icons.schedule, text: schedules.join(', '));
       },
     );
   }
@@ -192,37 +211,44 @@ class _Pages extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = L.of(context);
     final projects = ref.watch(pagesProjectsProvider(accountId));
 
     return AsyncView<CfPage<Project>>(
       value: projects,
       onRetry: () => ref.invalidate(pagesProjectsProvider(accountId)),
       isEmpty: (d) => d.items.isEmpty,
+      empty: EmptyState(
+        icon: Icons.web_outlined,
+        tone: Tone.info,
+        title: l.devNoPages,
+      ),
       builder: (page) => RefreshIndicator(
         onRefresh: () async => ref.invalidate(pagesProjectsProvider(accountId)),
-        child: ListView.separated(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: Gap.md),
           itemCount: page.items.length,
-          separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, i) {
             final project = page.items[i];
-            return ListTile(
-              leading: const Icon(Icons.web_outlined),
-              title: Text(project.name ?? '—'),
-              subtitle: Text(
-                [
+            return GroupedItem(
+              index: i,
+              count: page.items.length,
+              dividerIndent: 60,
+              child: NavRow(
+                icon: Icons.web_outlined,
+                tone: Tone.info,
+                title: project.name ?? '—',
+                subtitle: [
                   if (project.productionBranch != null)
                     project.productionBranch!,
                   if (project.subdomain != null) project.subdomain!,
                 ].join(' · '),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => _DeploymentsScreen(
-                    accountId: accountId,
-                    project: project.name ?? '',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => _DeploymentsScreen(
+                      accountId: accountId,
+                      project: project.name ?? '',
+                    ),
                   ),
                 ),
               ),
@@ -251,24 +277,52 @@ class _DeploymentsScreen extends ConsumerWidget {
         value: deployments,
         onRetry: () => ref.invalidate(pagesDeploymentsProvider(key)),
         isEmpty: (d) => d.items.isEmpty,
-        builder: (page) => ListView.separated(
+        builder: (page) => ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: Gap.md),
           itemCount: page.items.length,
-          separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, i) {
             final d = page.items[i];
-            return ListTile(
-              leading: Icon(
-                Icons.rocket_launch_outlined,
-                color: context.cf.success,
+            final production = d.environment == 'production';
+            return GroupedItem(
+              index: i,
+              count: page.items.length,
+              child: Padding(
+                padding: const EdgeInsets.all(Gap.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        StatusPill(
+                          d.environment ?? '—',
+                          tone: production ? Tone.success : Tone.neutral,
+                          icon: Icons.rocket_launch_outlined,
+                        ),
+                        const Spacer(),
+                        if (d.createdOn != null)
+                          Text(
+                            d.createdOn!
+                                .replaceFirst('T', ' ')
+                                .split('.')
+                                .first,
+                            style: tabular(
+                              context.text.labelSmall,
+                            )?.copyWith(color: context.scheme.onSurfaceVariant),
+                          ),
+                      ],
+                    ),
+                    if (d.url != null) ...[
+                      const SizedBox(height: Gap.sm),
+                      SelectableText(
+                        d.url!,
+                        style: context.text.bodySmall?.copyWith(
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-              title: Text(d.environment ?? d.id ?? '—'),
-              subtitle: Text(
-                [
-                  if (d.createdOn != null) d.createdOn!,
-                  if (d.url != null) d.url!,
-                ].join('\n'),
-              ),
-              isThreeLine: d.url != null,
             );
           },
         ),
@@ -289,6 +343,10 @@ class _Storage extends ConsumerWidget {
     final d1 = ref.watch(d1DatabasesProvider(accountId));
     final r2 = ref.watch(r2BucketsProvider(accountId));
 
+    void open(Widget screen) => Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => screen));
+
     return RefreshIndicator(
       onRefresh: () async {
         ref
@@ -297,157 +355,140 @@ class _Storage extends ConsumerWidget {
           ..invalidate(r2BucketsProvider(accountId));
       },
       child: ListView(
+        padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.xl),
         children: [
-          _SectionHeader(l.devKvNamespaces),
-          ...kv.when(
-            loading: () => [const _Loading()],
-            error: (e, _) => [_ErrorTile(error: e)],
-            data: (page) => page.items.isEmpty
-                ? [_EmptyTile(l.commonNothingHere)]
-                : [
-                    for (final n in page.items)
-                      ListTile(
-                        leading: const Icon(Icons.storage_outlined),
-                        title: Text(n.title ?? '—'),
-                        subtitle: Text(n.id ?? ''),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: n.id == null
-                            ? null
-                            : () => Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => KvScreen(
-                                    accountId: accountId,
-                                    namespaceId: n.id!,
-                                    title: n.title ?? 'KV',
-                                  ),
-                                ),
-                              ),
-                      ),
-                  ],
-          ),
-          _SectionHeader(l.devD1),
-          ...d1.when(
-            loading: () => [const _Loading()],
-            error: (e, _) => [_ErrorTile(error: e)],
-            data: (page) => page.items.isEmpty
-                ? [_EmptyTile(l.commonNothingHere)]
-                : [
-                    for (final db in page.items)
-                      ListTile(
-                        leading: const Icon(Icons.table_chart_outlined),
-                        title: Text(db.name ?? '—'),
-                        subtitle: Text(db.uuid ?? ''),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: db.uuid == null
-                            ? null
-                            : () => Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => D1ConsoleScreen(
-                                    accountId: accountId,
-                                    databaseId: db.uuid!,
-                                    name: db.name ?? 'D1',
-                                  ),
-                                ),
-                              ),
-                      ),
-                  ],
-          ),
-          _SectionHeader(l.devR2),
-          ...r2.when(
-            loading: () => [const _Loading()],
-            error: (e, _) => [_ErrorTile(error: e)],
-            data: (result) {
-              final buckets = result.buckets ?? const <Bucket>[];
-              return buckets.isEmpty
-                  ? [_EmptyTile(l.commonNothingHere)]
-                  : [
-                      for (final b in buckets)
-                        ListTile(
-                          leading: const Icon(Icons.folder_outlined),
-                          title: Text(b.name ?? '—'),
-                          subtitle: Text(
-                            [
-                              if (b.location != null) b.location!,
-                              if (b.storageClass != null) b.storageClass!,
-                            ].join(' · '),
+          SectionTitle(l.devKvNamespaces),
+          _StorageGroup<CfPage<Namespace>>(
+            value: kv,
+            rows: (page) => [
+              for (final n in page.items)
+                NavRow(
+                  icon: Icons.key_outlined,
+                  tone: Tone.brand,
+                  title: n.title ?? '—',
+                  subtitle: n.id,
+                  onTap: n.id == null
+                      ? null
+                      : () => open(
+                          KvScreen(
+                            accountId: accountId,
+                            namespaceId: n.id!,
+                            title: n.title ?? 'KV',
                           ),
                         ),
-                    ];
-            },
+                ),
+            ],
           ),
-          const SizedBox(height: 24),
+          SectionTitle(l.devD1),
+          _StorageGroup<CfPage<DatabaseResponse>>(
+            value: d1,
+            rows: (page) => [
+              for (final db in page.items)
+                NavRow(
+                  icon: Icons.table_chart_outlined,
+                  tone: Tone.info,
+                  title: db.name ?? '—',
+                  subtitle: db.uuid,
+                  onTap: db.uuid == null
+                      ? null
+                      : () => open(
+                          D1ConsoleScreen(
+                            accountId: accountId,
+                            databaseId: db.uuid!,
+                            name: db.name ?? 'D1',
+                          ),
+                        ),
+                ),
+            ],
+          ),
+          SectionTitle(l.devR2),
+          _StorageGroup<R2ListBucketsResult>(
+            value: r2,
+            rows: (result) => [
+              for (final b in result.buckets ?? const <Bucket>[])
+                Padding(
+                  padding: const EdgeInsets.all(Gap.md),
+                  child: Row(
+                    children: [
+                      const IconTile(
+                        icon: Icons.folder_outlined,
+                        tone: Tone.success,
+                      ),
+                      const SizedBox(width: Gap.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(b.name ?? '—', style: context.text.titleSmall),
+                            Text(
+                              [
+                                if (b.location != null) b.location!,
+                                if (b.storageClass != null) b.storageClass!,
+                              ].join(' · '),
+                              style: context.text.bodySmall?.copyWith(
+                                color: context.scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.text);
-  final String text;
+/// One storage product as a panel: its rows, a quiet line when there are none,
+/// or why it could not be listed — usually a token without that product, which
+/// is information rather than a failure of the screen.
+class _StorageGroup<T> extends StatelessWidget {
+  const _StorageGroup({required this.value, required this.rows});
 
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 18, 16, 6),
-    child: Text(
-      text.toUpperCase(),
-      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.6,
-      ),
-    ),
-  );
-}
-
-class _Loading extends StatelessWidget {
-  const _Loading();
-
-  @override
-  Widget build(BuildContext context) => const ListTile(
-    dense: true,
-    leading: SizedBox(
-      width: 18,
-      height: 18,
-      child: CircularProgressIndicator(strokeWidth: 2),
-    ),
-    title: Text('…'),
-  );
-}
-
-class _EmptyTile extends StatelessWidget {
-  const _EmptyTile(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => ListTile(
-    dense: true,
-    title: Text(
-      text,
-      style: TextStyle(color: Theme.of(context).colorScheme.outline),
-    ),
-  );
-}
-
-class _ErrorTile extends StatelessWidget {
-  const _ErrorTile({required this.error});
-  final Object error;
+  final AsyncValue<T> value;
+  final List<Widget> Function(T data) rows;
 
   @override
   Widget build(BuildContext context) {
-    // A local, because a final field is not promoted by a type test.
-    final e = error;
-    return ListTile(
-      dense: true,
-      leading: Icon(Icons.error_outline, color: context.cf.warning),
-      title: Text(
-        // Usually "this token has no permission for that product", which is
-        // information rather than a failure of the screen.
+    final l = L.of(context);
+    Widget note(IconData icon, String text, {Tone tone = Tone.neutral}) =>
+        Panel(
+          padding: const EdgeInsets.all(Gap.md),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: context.toneColor(tone)),
+              const SizedBox(width: Gap.sm),
+              Expanded(
+                child: Text(
+                  text,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+
+    return value.when(
+      loading: () => const Panel(child: SkeletonBox(height: 36, radius: 10)),
+      error: (e, _) => note(
+        Icons.info_outline,
         e is CfFailure ? e.summary : '$e',
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.bodySmall,
+        tone: Tone.warning,
       ),
+      data: (data) {
+        final list = rows(data);
+        return list.isEmpty
+            ? note(Icons.inbox_outlined, l.commonNothingHere)
+            : RowGroup(children: list);
+      },
     );
   }
 }

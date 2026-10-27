@@ -825,4 +825,140 @@ class LEn extends L {
   String pulseAnalyticsPartial(int count) {
     return 'Zones without analytics access on this token: $count';
   }
+
+  @override
+  String get dnsStateProxied => 'Proxied';
+
+  @override
+  String get dnsStateDnsOnly => 'DNS only';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return 'Proxy $name through Cloudflare?';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return 'Stop proxying $name?';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      'Traffic goes through Cloudflare: cached, protected, and the origin\'s address stays hidden. Cloudflare manages the TTL while this is on.';
+
+  @override
+  String get dnsProxyOffNote =>
+      'Visitors connect straight to your origin, so its IP address becomes public and Cloudflare\'s cache and firewall no longer apply to this name.';
+
+  @override
+  String get dnsEmptyTitle => 'No records yet';
+
+  @override
+  String get dnsEmptyBody =>
+      'A record you add here is live on Cloudflare\'s nameservers within seconds.';
+
+  @override
+  String get moreProducts => 'Products';
+
+  @override
+  String get moreApp => 'App';
+
+  @override
+  String get moreAlertsSubtitle => 'Notification policies, recent alerts';
+
+  @override
+  String get moreSettingsSubtitle => 'Theme, language, profiles, lock';
+
+  @override
+  String get settingsAddProfileHint =>
+      'Another account or a differently scoped key';
+
+  @override
+  String get settingsBiometricHint =>
+      'Wraps the vault key with a Keystore key that only unlocks after a successful fingerprint check.';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'Biometric hardware is not available';
+
+  @override
+  String get settingsPrivacyHeadline =>
+      'Nothing leaves this phone but API calls';
+
+  @override
+  String get settingsAboutBody =>
+      'Open source, Apache-2.0. Not affiliated with Cloudflare, Inc.';
+
+  @override
+  String get securityDeleteRule => 'Delete this rule?';
+
+  @override
+  String get securityNoIpRules => 'No IP access rules';
+
+  @override
+  String get securityEmptyCustomBody =>
+      'Block, challenge or skip requests that match an expression — a country, a path, a user agent.';
+
+  @override
+  String get securityEmptyRateLimitBody =>
+      'Cap how many requests one client may make in a period, per IP and data centre.';
+
+  @override
+  String get securityEmptyIpBody =>
+      'Allow, block or challenge an IP, a range, a country or an ASN across the whole zone.';
+
+  @override
+  String get devNoWorkers => 'No Workers on this account';
+
+  @override
+  String get devNoPages => 'No Pages projects on this account';
+
+  @override
+  String get moreAlertHistory => 'Recent alerts';
+
+  @override
+  String get ztNoTunnels => 'No tunnels on this account';
+
+  @override
+  String get ztNoApps => 'No Access applications';
+
+  @override
+  String get ztNoGatewayRules => 'No Gateway rules';
+
+  @override
+  String ztConnectors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count connectors',
+      one: '1 connector',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get onboardTokenBody =>
+      'Cloudflare opens with the right permissions already ticked. Create the token, then paste it here.';
+
+  @override
+  String get onboardPresetFull => 'Read + write';
+
+  @override
+  String get onboardPresetDns => 'DNS only';
+
+  @override
+  String get onboardPresetRead => 'Read only';
+
+  @override
+  String get onboardPinBody =>
+      'The PIN encrypts your credential on this device. It is never sent anywhere and cannot be recovered — forgetting it means starting over.';
+
+  @override
+  String get authPasteFirst => 'Paste a token first';
+
+  @override
+  String get authProfileNameHint => 'Work, Client, Personal…';
+
+  @override
+  String get commonRecommended => 'Recommended';
 }
