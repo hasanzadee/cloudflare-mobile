@@ -53,16 +53,47 @@ jobs:
             echo "keyPassword=$KEY_PASSWORD"
           } > android/key.properties
 
-      - name: Build split APKs
+      # One build per ABI rather than --split-per-abi, which gives the split
+      # APKs a different versionCode from the universal one (see the comment at
+      # the end of android/app/build.gradle.kts). 2.0.0's universal APK refused
+      # to install over its own arm64 APK because of it.
+      - name: Build APKs
         run: |
-          flutter build apk --release --split-per-abi \
-            --obfuscate --split-debug-info=build/symbols
+          out=build/release-apks
+          mkdir -p "$out"
+          for pair in android-arm:armeabi-v7a android-arm64:arm64-v8a android-x64:x86_64; do
+            platform=${pair%%:*}
+            abi=${pair##*:}
+            flutter build apk --release --target-platform "$platform" \
+              -P onlyAbi="$abi" \
+              --obfuscate --split-debug-info="build/symbols/$abi"
+            cp build/app/outputs/flutter-apk/app-release.apk "$out/app-$abi-release.apk"
+          done
           flutter build apk --release \
-            --obfuscate --split-debug-info=build/symbols
+            --obfuscate --split-debug-info=build/symbols/universal
+          cp build/app/outputs/flutter-apk/app-release.apk "$out/app-release.apk"
+
+      - name: Every APK carries the same versionCode
+        run: |
+          aapt2=$(ls -d "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)
+          codes=$(for f in build/release-apks/*.apk; do
+            "$aapt2" dump badging "$f" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p"
+          done | sort -u)
+          echo "versionCodes: $codes"
+          if [ "$(echo "$codes" | wc -l)" -ne 1 ]; then
+            echo "::error::APKs disagree on versionCode: $codes"
+            exit 1
+          fi
+          # 4004 is the highest code any split APK has shipped with (2.0.0's
+          # x86_64); anything at or below it cannot update that install.
+          if [ "$codes" -le 4004 ]; then
+            echo "::error::versionCode $codes must be above 4004"
+            exit 1
+          fi
 
       - name: Checksums
         run: |
-          cd build/app/outputs/flutter-apk
+          cd build/release-apks
           sha256sum *.apk > SHA256SUMS
           cat SHA256SUMS
 
@@ -70,8 +101,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/app/outputs/flutter-apk/*.apk
-            build/app/outputs/flutter-apk/SHA256SUMS
+            build/release-apks/*.apk
+            build/release-apks/SHA256SUMS
           generate_release_notes: true
 
       - name: Upload debug symbols

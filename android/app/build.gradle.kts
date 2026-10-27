@@ -87,3 +87,31 @@ dependencies {
 flutter {
     source = "../.."
 }
+
+// One ABI per APK without Flutter's --split-per-abi.
+//
+// --split-per-abi makes the Flutter plugin add 1000/2000/4000 to each split
+// APK's versionCode but nothing to the universal one. 2.0.0 shipped arm64 as
+// 2004 and the universal APK as 4, so anyone who had installed a split APK —
+// which the README recommends — got "App not installed" from the universal
+// one: Android read it as a downgrade.
+//
+// The release workflow instead builds each ABI on its own with
+// `--target-platform` and `-P onlyAbi=<abi>`, so every APK of a release
+// carries the plain build number from pubspec.yaml. That number must stay
+// above 4004, the highest code a split APK ever had. The filter keeps plugin
+// libraries for other ABIs out: without it an arm64 APK also carried
+// armeabi-v7a stubs, and a 32-bit phone would pick those and crash for want
+// of libflutter.so.
+//
+// Set on the build types, not defaultConfig: the Flutter plugin puts its own
+// default filters there when it is applied, and the two sets are unioned.
+val onlyAbi = project.findProperty("onlyAbi")?.toString()
+if (onlyAbi != null) {
+    android.buildTypes.forEach { buildType ->
+        buildType.ndk.abiFilters.apply {
+            clear()
+            add(onlyAbi)
+        }
+    }
+}

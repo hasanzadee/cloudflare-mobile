@@ -1,0 +1,3 @@
+Fixes "App not installed" when the universal APK was installed over a per-ABI
+one. Every APK of a release now shares one version code, so any of them
+updates any earlier install.

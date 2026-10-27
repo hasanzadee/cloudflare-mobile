@@ -3,7 +3,9 @@ description: >-
   An open-source Cloudflare management client for Android. Not affiliated with
   Cloudflare, Inc.
 publish_to: 'none'
-version: 2.0.0+4
+# The build number is the Android versionCode of every APK in a release, and
+# must stay above 4004 — see the end of android/app/build.gradle.kts.
+version: 2.0.1+5005
 
 environment:
   sdk: ^3.10.0
