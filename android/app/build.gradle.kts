@@ -99,19 +99,16 @@ flutter {
 // The release workflow instead builds each ABI on its own with
 // `--target-platform` and `-P onlyAbi=<abi>`, so every APK of a release
 // carries the plain build number from pubspec.yaml. That number must stay
-// above 4004, the highest code a split APK ever had. The filter keeps plugin
-// libraries for other ABIs out: without it an arm64 APK also carried
-// armeabi-v7a stubs, and a 32-bit phone would pick those and crash for want
-// of libflutter.so.
+// above 4004, the highest code a split APK ever had.
 //
-// Set on the build types, not defaultConfig: the Flutter plugin puts its own
-// default filters there when it is applied, and the two sets are unioned.
+// The other ABIs' native libraries are excluded at packaging time. Without
+// that an arm64 APK also carried plugin stubs for armeabi-v7a and x86_64, and
+// a 32-bit phone would pick armeabi-v7a and crash for want of libflutter.so.
+// Packaging excludes rather than abiFilters: the Flutter plugin rewrites
+// abiFilters itself — on the build types in 3.38, on defaultConfig in 3.44 —
+// and the sets are unioned, so 2.0.1 shipped with all three ABIs anyway.
 val onlyAbi = project.findProperty("onlyAbi")?.toString()
 if (onlyAbi != null) {
-    android.buildTypes.forEach { buildType ->
-        buildType.ndk.abiFilters.apply {
-            clear()
-            add(onlyAbi)
-        }
-    }
+    val others = listOf("armeabi-v7a", "arm64-v8a", "x86_64", "x86") - onlyAbi
+    android.packaging.jniLibs.excludes += others.map { "lib/$it/**" }
 }

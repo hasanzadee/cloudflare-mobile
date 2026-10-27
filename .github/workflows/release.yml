@@ -91,6 +91,20 @@ jobs:
             exit 1
           fi
 
+      # A per-ABI APK carrying another ABI's directory makes a phone of that
+      # ABI pick it and crash without libflutter.so — 2.0.1 shipped that way.
+      - name: Every per-ABI APK carries only its own ABI
+        run: |
+          for abi in armeabi-v7a arm64-v8a x86_64; do
+            dirs=$(unzip -l "build/release-apks/app-$abi-release.apk" \
+              | grep -o 'lib/[^/]*/' | sort -u | tr '\n' ' ')
+            echo "$abi: $dirs"
+            if [ "$dirs" != "lib/$abi/ " ]; then
+              echo "::error::app-$abi-release.apk contains $dirs"
+              exit 1
+            fi
+          done
+
       - name: Checksums
         run: |
           cd build/release-apks

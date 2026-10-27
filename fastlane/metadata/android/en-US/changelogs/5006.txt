@@ -1,0 +1,2 @@
+Each per-architecture APK now contains only its own architecture, so a
+32-bit phone can no longer end up with a build that crashes on launch.
