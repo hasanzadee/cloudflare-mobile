@@ -810,4 +810,123 @@ class LZh extends L {
   String pulseAnalyticsPartial(int count) {
     return '此令牌无法查看分析数据的区域：$count';
   }
+
+  @override
+  String get dnsStateProxied => '已代理';
+
+  @override
+  String get dnsStateDnsOnly => '仅 DNS';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return '要通过 Cloudflare 代理 $name 吗？';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return '要停止代理 $name 吗？';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      '流量将经过 Cloudflare：可缓存、受保护，源站地址保持隐藏。开启期间 TTL 由 Cloudflare 管理。';
+
+  @override
+  String get dnsProxyOffNote =>
+      '访问者将直接连接源站，其 IP 地址会公开，Cloudflare 的缓存和防火墙不再作用于此名称。';
+
+  @override
+  String get dnsEmptyTitle => '还没有记录';
+
+  @override
+  String get dnsEmptyBody => '在此添加的记录会在几秒内于 Cloudflare 域名服务器上生效。';
+
+  @override
+  String get moreProducts => '产品';
+
+  @override
+  String get moreApp => '应用';
+
+  @override
+  String get moreAlertsSubtitle => '通知策略、最近的告警';
+
+  @override
+  String get moreSettingsSubtitle => '主题、语言、配置文件、锁定';
+
+  @override
+  String get settingsAddProfileHint => '其他账户或权限不同的令牌';
+
+  @override
+  String get settingsBiometricHint => '保险库密钥由 Keystore 密钥封装，只有指纹验证成功后才能解开。';
+
+  @override
+  String get settingsBiometricUnavailable => '此设备没有可用的生物识别硬件';
+
+  @override
+  String get settingsPrivacyHeadline => '只有 API 请求会离开这部手机';
+
+  @override
+  String get settingsAboutBody => '开源，Apache-2.0。与 Cloudflare, Inc. 无关联。';
+
+  @override
+  String get securityDeleteRule => '要删除此规则吗？';
+
+  @override
+  String get securityNoIpRules => '没有 IP 访问规则';
+
+  @override
+  String get securityEmptyCustomBody => '拦截、质询或跳过匹配表达式的请求——国家、路径、User-Agent。';
+
+  @override
+  String get securityEmptyRateLimitBody => '限制单个客户端在一段时间内可发出的请求数，按 IP 和数据中心计算。';
+
+  @override
+  String get securityEmptyIpBody => '在整个区域内允许、拦截或质询某个 IP、IP 段、国家或 ASN。';
+
+  @override
+  String get devNoWorkers => '此账户没有 Workers';
+
+  @override
+  String get devNoPages => '此账户没有 Pages 项目';
+
+  @override
+  String get moreAlertHistory => '最近的告警';
+
+  @override
+  String get ztNoTunnels => '此账户没有隧道';
+
+  @override
+  String get ztNoApps => '没有 Access 应用';
+
+  @override
+  String get ztNoGatewayRules => '没有 Gateway 规则';
+
+  @override
+  String ztConnectors(int count) {
+    return '$count 个连接器';
+  }
+
+  @override
+  String get onboardTokenBody => 'Cloudflare 打开时已勾选所需权限。创建令牌后粘贴到这里。';
+
+  @override
+  String get onboardPresetFull => '读写';
+
+  @override
+  String get onboardPresetDns => '仅 DNS';
+
+  @override
+  String get onboardPresetRead => '只读';
+
+  @override
+  String get onboardPinBody => 'PIN 码会在本设备上加密你的凭据。它不会发送到任何地方，也无法找回——忘记就只能重新开始。';
+
+  @override
+  String get authPasteFirst => '请先粘贴令牌';
+
+  @override
+  String get authProfileNameHint => '工作、客户、个人…';
+
+  @override
+  String get commonRecommended => '推荐';
 }

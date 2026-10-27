@@ -6,6 +6,7 @@ import '../../api/generated/generated.dart';
 import '../../core/net/failure.dart';
 import '../../core/security/vault.dart';
 import '../../l10n/app_localizations.dart';
+import '../../ui/ds/ds.dart';
 import '../../ui/failure_text.dart';
 import '../application/auth_providers.dart';
 import '../data/token_template.dart';
@@ -77,6 +78,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _chooseMethod(L l) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      const BrandMark(size: 64),
+      const SizedBox(height: Gap.lg),
       Text(l.onboardWelcomeTitle, style: context.headline),
       const SizedBox(height: 8),
       Text(
@@ -109,11 +112,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     children: [
       Text(l.authApiToken, style: context.headline),
       const SizedBox(height: 8),
-      Text(
-        'Cloudflare opens with the right permissions already ticked. '
-        'Create the token, then paste it here.',
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
+      Text(l.onboardTokenBody, style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 16),
       // Full access leads: it is the one that makes every screen work, and
       // anyone who wants less already knows they do.
@@ -125,19 +124,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           FilledButton.icon(
             onPressed: () => _open(TokenTemplate.userToken(TokenTemplate.full)),
             icon: const Icon(Icons.all_inclusive),
-            label: const Text('Read + write'),
+            label: Text(l.onboardPresetFull),
           ),
           OutlinedButton.icon(
             onPressed: () =>
                 _open(TokenTemplate.userToken(TokenTemplate.dnsAdmin)),
             icon: const Icon(Icons.dns_outlined),
-            label: const Text('DNS only'),
+            label: Text(l.onboardPresetDns),
           ),
           OutlinedButton.icon(
             onPressed: () =>
                 _open(TokenTemplate.userToken(TokenTemplate.readOnly)),
             icon: const Icon(Icons.visibility_outlined),
-            label: const Text('Read only'),
+            label: Text(l.onboardPresetRead),
           ),
         ],
       ),
@@ -224,11 +223,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     children: [
       Text(l.lockSetPin, style: context.headline),
       const SizedBox(height: 8),
-      Text(
-        'The PIN encrypts your credential on this device. It is never sent '
-        'anywhere and cannot be recovered — forgetting it means starting over.',
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
+      Text(l.onboardPinBody, style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 20),
       TextField(
         controller: _pin,
@@ -290,7 +285,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _verifyToken() async {
     final token = _token.text.trim();
     if (token.isEmpty) {
-      setState(() => _error = 'Paste a token first');
+      setState(() => _error = L.of(context).authPasteFirst);
       return;
     }
     await _verify(
@@ -359,24 +354,53 @@ class _MethodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = onTap != null;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        enabled: enabled,
-        leading: Icon(icon),
-        title: Row(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Gap.sm),
+      child: Panel(
+        onTap: onTap,
+        borderColor: recommended ? Theme.of(context).colorScheme.primary : null,
+        child: Row(
           children: [
-            Flexible(child: Text(title)),
-            if (recommended) ...[
-              const SizedBox(width: 8),
-              const _Pill(text: 'Recommended'),
-            ],
+            IconTile(
+              icon: icon,
+              tone: recommended ? Tone.brand : Tone.warning,
+              size: 44,
+            ),
+            const SizedBox(width: Gap.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      if (recommended) ...[
+                        const SizedBox(width: Gap.sm),
+                        _Pill(text: L.of(context).commonRecommended),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    body,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ],
         ),
-        subtitle: Text(body),
-        trailing: enabled ? const Icon(Icons.chevron_right) : null,
-        onTap: onTap,
       ),
     );
   }

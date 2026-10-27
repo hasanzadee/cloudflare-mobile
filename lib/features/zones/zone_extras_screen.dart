@@ -7,6 +7,7 @@ import '../../auth/application/auth_providers.dart';
 import '../../core/net/failure.dart';
 import '../../core/net/paginator.dart';
 import '../../l10n/app_localizations.dart';
+import '../../ui/ds/ds.dart';
 import '../scope/scope_providers.dart';
 
 // ---------------------------------------------------------------------------
@@ -117,7 +118,7 @@ class ZoneTrafficScreen extends ConsumerWidget {
     final l = L.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('${l.navZones} · $zoneName')),
+      appBar: AppBar(title: Text('${l.trafficPageRules} · $zoneName')),
       body: RefreshIndicator(
         onRefresh: () async {
           ref
@@ -126,6 +127,7 @@ class ZoneTrafficScreen extends ConsumerWidget {
             ..invalidate(waitingRoomsProvider(zoneId));
         },
         child: ListView(
+          padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.xl),
           children: [
             SectionHeader(l.trafficPageRules),
             ...sectionOf<CfPage<PageRule>>(
@@ -230,7 +232,7 @@ class ZoneTlsScreen extends ConsumerWidget {
     final l = L.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('TLS · $zoneName')),
+      appBar: AppBar(title: Text('${l.zoneTlsTitle} · $zoneName')),
       body: RefreshIndicator(
         onRefresh: () async {
           ref
@@ -239,6 +241,7 @@ class ZoneTlsScreen extends ConsumerWidget {
             ..invalidate(dnssecProvider(zoneId));
         },
         child: ListView(
+          padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.xl),
           children: [
             SectionHeader(l.tlsDnssec),
             ...sectionOf<Dnssec>(
@@ -347,7 +350,7 @@ class ZoneEmailScreen extends ConsumerWidget {
     final accountId = ref.watch(scopeProvider).accountId;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Email · $zoneName')),
+      appBar: AppBar(title: Text('${l.zoneEmailTitle} · $zoneName')),
       body: RefreshIndicator(
         onRefresh: () async {
           ref
@@ -358,6 +361,7 @@ class ZoneEmailScreen extends ConsumerWidget {
           }
         },
         child: ListView(
+          padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.xl),
           children: [
             ...sectionOf<Settings2>(
               context,
@@ -448,20 +452,10 @@ class SectionHeader extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
-    child: Text(
-      text.toUpperCase(),
-      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.6,
-      ),
-    ),
-  );
+  Widget build(BuildContext context) => SectionTitle(text);
 }
 
-/// Renders one async section inline.
+/// Renders one async section inline, as a single rounded panel.
 ///
 /// A missing permission or an unconfigured product becomes a single quiet line
 /// rather than an error state — a zone with no load balancers is the normal
@@ -471,44 +465,43 @@ List<Widget> sectionOf<T>(
   AsyncValue<T> value,
   List<Widget> Function(T data) builder,
 ) {
-  return value.when(
-    loading: () => const [
-      ListTile(
-        dense: true,
-        leading: SizedBox(
-          width: 18,
-          height: 18,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-        title: Text('…'),
-      ),
-    ],
-    error: (e, _) => [
-      ListTile(
-        dense: true,
-        leading: Icon(Icons.info_outline, color: context.cf.warning),
-        title: Text(
-          e is CfFailure ? e.summary : '$e',
-          style: Theme.of(context).textTheme.bodySmall,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-    ],
-    data: (data) {
-      final widgets = builder(data);
-      if (widgets.isEmpty) {
-        return [
-          ListTile(
-            dense: true,
-            title: Text(
-              L.of(context).commonNothingHere,
-              style: TextStyle(color: Theme.of(context).colorScheme.outline),
+  Widget quiet(Widget leading, String text) => Panel(
+    padding: const EdgeInsets.all(Gap.md),
+    child: Row(
+      children: [
+        leading,
+        const SizedBox(width: Gap.sm),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: context.text.bodySmall?.copyWith(
+              color: context.scheme.onSurfaceVariant,
             ),
           ),
-        ];
-      }
-      return widgets;
-    },
+        ),
+      ],
+    ),
   );
+
+  return [
+    value.when(
+      loading: () => const Panel(child: SkeletonBox(height: 36, radius: 10)),
+      error: (e, _) => quiet(
+        Icon(Icons.info_outline, size: 18, color: context.cf.warning),
+        e is CfFailure ? e.summary : '$e',
+      ),
+      data: (data) {
+        final widgets = builder(data);
+        if (widgets.isEmpty) {
+          return quiet(
+            Icon(Icons.inbox_outlined, size: 18, color: context.scheme.outline),
+            L.of(context).commonNothingHere,
+          );
+        }
+        return RowGroup(children: widgets);
+      },
+    ),
+  ];
 }

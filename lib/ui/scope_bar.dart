@@ -9,6 +9,7 @@ import '../core/net/paginator.dart';
 import '../features/scope/scope_providers.dart';
 import '../l10n/app_localizations.dart';
 import 'async_view.dart';
+import 'ds/rows.dart';
 
 typedef ZoneQuery = ({String? accountId, String search});
 
@@ -333,11 +334,7 @@ class ScopePrompt extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 44,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          IconTile(icon: icon, size: 64),
           const SizedBox(height: 16),
           Text(
             message,

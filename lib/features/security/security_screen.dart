@@ -7,6 +7,7 @@ import '../../core/net/failure.dart';
 import '../../core/net/paginator.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/async_view.dart';
+import '../../ui/ds/ds.dart';
 import '../../ui/failure_text.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
@@ -86,69 +87,68 @@ class _PhaseRules extends ConsumerWidget {
     final key = (zoneId: zoneId, phase: phase.id);
     final rules = ref.watch(phaseRulesProvider(key));
     final l = L.of(context);
+    final isRateLimit = phase.id == RulesetPhase.rateLimit.id;
+
+    Future<void> add() async {
+      final created = await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        builder: (_) => RuleEditorSheet(
+          zoneId: zoneId,
+          phase: phase.id,
+          // Null when this phase has no ruleset yet, which decides
+          // whether the rule is POSTed or the ruleset is PUT into being.
+          rulesetId: rules.valueOrNull?.id?.toString(),
+          isRateLimit: isRateLimit,
+        ),
+      );
+      if (created ?? false) ref.invalidate(phaseRulesProvider(key));
+    }
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         // Every tab's button says "Add"; the phase makes it identifiable to a
         // test that has to prove the rule landed in the right ruleset.
         key: ValueKey('add-rule-${phase.id}'),
-        onPressed: () async {
-          final created = await showModalBottomSheet<bool>(
-            context: context,
-            isScrollControlled: true,
-            useSafeArea: true,
-            builder: (_) => RuleEditorSheet(
-              zoneId: zoneId,
-              phase: phase.id,
-              // Null when this phase has no ruleset yet, which decides
-              // whether the rule is POSTed or the ruleset is PUT into being.
-              rulesetId: rules.valueOrNull?.id?.toString(),
-              isRateLimit: phase.id == RulesetPhase.rateLimit.id,
-            ),
-          );
-          if (created ?? false) ref.invalidate(phaseRulesProvider(key));
-        },
+        onPressed: add,
         icon: const Icon(Icons.add),
         label: Text(l.commonAdd),
       ),
-      body: _list(context, ref, key, rules, l),
-    );
-  }
-
-  Widget _list(
-    BuildContext context,
-    WidgetRef ref,
-    PhaseKey key,
-    AsyncValue<GetZoneEntrypointRulesetResult?> rules,
-    L l,
-  ) {
-    return AsyncView<GetZoneEntrypointRulesetResult?>(
-      value: rules,
-      onRetry: () => ref.invalidate(phaseRulesProvider(key)),
-      isEmpty: (d) => d == null || (d.rules?.isEmpty ?? true),
-      empty: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(l.securityNoRules, textAlign: TextAlign.center),
+      body: AsyncView<GetZoneEntrypointRulesetResult?>(
+        value: rules,
+        onRetry: () => ref.invalidate(phaseRulesProvider(key)),
+        isEmpty: (d) => d == null || (d.rules?.isEmpty ?? true),
+        empty: EmptyState(
+          icon: isRateLimit ? Icons.speed : Icons.shield_outlined,
+          tone: isRateLimit ? Tone.info : Tone.danger,
+          title: l.securityNoRules,
+          body: isRateLimit
+              ? l.securityEmptyRateLimitBody
+              : l.securityEmptyCustomBody,
         ),
-      ),
-      builder: (ruleset) {
-        final list = ruleset!.rules!;
-        final rulesetId = ruleset.id?.toString() ?? '';
-        return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(phaseRulesProvider(key)),
-          child: ListView.separated(
-            itemCount: list.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
-            itemBuilder: (context, i) => _RuleTile(
-              rule: list[i],
-              zoneId: zoneId,
-              rulesetId: rulesetId,
-              onChanged: () => ref.invalidate(phaseRulesProvider(key)),
+        builder: (ruleset) {
+          final list = ruleset!.rules!;
+          final rulesetId = ruleset.id?.toString() ?? '';
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(phaseRulesProvider(key)),
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: Gap.md, bottom: 96),
+              itemCount: list.length,
+              itemBuilder: (context, i) => GroupedItem(
+                index: i,
+                count: list.length,
+                child: _RuleTile(
+                  rule: list[i],
+                  zoneId: zoneId,
+                  rulesetId: rulesetId,
+                  onChanged: () => ref.invalidate(phaseRulesProvider(key)),
+                ),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
@@ -172,26 +172,48 @@ class _RuleTile extends ConsumerWidget {
     final action = rule.action?.toString() ?? '—';
     final description = rule.description?.toString();
 
-    return ListTile(
-      isThreeLine: true,
-      leading: _ActionBadge(action: action),
-      title: Text(
-        description == null || description.isEmpty ? action : description,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        rule.expression ?? '',
-        style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-        // Two, not three: isThreeLine sizes the tile for a title plus two
-        // lines, so a third wrapped line of expression overflowed it — 7px of
-        // yellow stripes on a phone-width screen.
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.xs, Gap.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    StatusPill(action, tone: actionTone(action)),
+                    const SizedBox(width: Gap.sm),
+                    Expanded(
+                      child: Text(
+                        description == null || description.isEmpty
+                            ? action
+                            : description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.text.titleSmall?.copyWith(
+                          color: enabled
+                              ? null
+                              : context.scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: Gap.sm),
+                Text(
+                  rule.expression ?? '',
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                    color: context.scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Switch(
             value: enabled,
             onChanged: rule.id == null
@@ -199,6 +221,7 @@ class _RuleTile extends ConsumerWidget {
                 : (v) => _toggle(context, ref, enabled: v),
           ),
           PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: context.scheme.outline),
             onSelected: (_) => _delete(context, ref),
             itemBuilder: (context) => [
               PopupMenuItem(
@@ -234,24 +257,20 @@ class _RuleTile extends ConsumerWidget {
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final l = L.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.commonDelete),
-        content: Text(rule.expression ?? ''),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l.commonDelete),
-          ),
-        ],
-      ),
+    final ok = await confirmChanges(
+      context,
+      title: l.securityDeleteRule,
+      tone: Tone.danger,
+      confirmLabel: l.commonDelete,
+      changes: [
+        Change(
+          rule.description?.toString() ?? rule.action?.toString() ?? '',
+          from: rule.expression ?? '',
+          to: '—',
+        ),
+      ],
     );
-    if (ok != true || rule.id == null) return;
+    if (!ok || rule.id == null) return;
 
     try {
       await ref
@@ -264,43 +283,14 @@ class _RuleTile extends ConsumerWidget {
   }
 }
 
-class _ActionBadge extends StatelessWidget {
-  const _ActionBadge({required this.action});
-
-  final String action;
-
-  @override
-  Widget build(BuildContext context) {
-    final cf = context.cf;
-    final color = switch (action) {
-      'block' => cf.danger,
-      'challenge' || 'managed_challenge' || 'js_challenge' => cf.warning,
-      'skip' || 'allow' => cf.success,
-      'log' => cf.post,
-      _ => Theme.of(context).colorScheme.outline,
-    };
-    return Container(
-      width: 62,
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-      ),
-      child: Text(
-        action,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: color,
-          fontSize: 9,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
+/// How an action reads at a glance, here and on Zero Trust gateway rules.
+Tone actionTone(String action) => switch (action) {
+  'block' => Tone.danger,
+  'challenge' || 'managed_challenge' || 'js_challenge' => Tone.warning,
+  'skip' || 'allow' || 'whitelist' => Tone.success,
+  'log' => Tone.info,
+  _ => Tone.neutral,
+};
 
 class _IpAccessRules extends ConsumerWidget {
   const _IpAccessRules({required this.zoneId});
@@ -322,43 +312,71 @@ class _IpAccessRules extends ConsumerWidget {
         value: rules,
         onRetry: () => ref.invalidate(ipAccessRulesProvider(zoneId)),
         isEmpty: (d) => d.items.isEmpty,
+        empty: EmptyState(
+          icon: Icons.public_off_outlined,
+          title: l.securityNoIpRules,
+          body: l.securityEmptyIpBody,
+        ),
         builder: (page) => RefreshIndicator(
           onRefresh: () async => ref.invalidate(ipAccessRulesProvider(zoneId)),
-          child: ListView.separated(
+          child: ListView.builder(
+            padding: const EdgeInsets.only(top: Gap.md, bottom: 96),
             itemCount: page.items.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (context, i) {
               final rule = page.items[i];
-              return ListTile(
-                leading: _ActionBadge(action: rule.mode ?? '—'),
-                title: Text(rule.configuration?.value ?? '—'),
-                subtitle: Text(
-                  [
-                    if (rule.configuration?.target != null)
-                      rule.configuration!.target!,
-                    if (rule.notes != null && rule.notes!.isNotEmpty)
-                      rule.notes!,
-                  ].join(' · '),
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  onPressed: rule.id == null
-                      ? null
-                      : () async {
-                          try {
-                            await ref
-                                .read(securityActionsProvider)
-                                .deleteIpAccessRule(
-                                  zoneId: zoneId,
-                                  ruleId: rule.id!,
-                                );
-                            ref.invalidate(ipAccessRulesProvider(zoneId));
-                          } on CfFailure catch (e) {
-                            if (context.mounted) {
-                              _snack(context, failureMessage(context, e));
-                            }
-                          }
-                        },
+              final mode = rule.mode ?? '—';
+              return GroupedItem(
+                index: i,
+                count: page.items.length,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    Gap.lg,
+                    Gap.md,
+                    Gap.xs,
+                    Gap.md,
+                  ),
+                  child: Row(
+                    children: [
+                      StatusPill(mode, tone: actionTone(mode)),
+                      const SizedBox(width: Gap.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              rule.configuration?.value ?? '—',
+                              style: context.text.titleSmall?.copyWith(
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                            Text(
+                              [
+                                if (rule.configuration?.target != null)
+                                  rule.configuration!.target!,
+                                if (rule.notes != null &&
+                                    rule.notes!.isNotEmpty)
+                                  rule.notes!,
+                              ].join(' · '),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.text.bodySmall?.copyWith(
+                                color: context.scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: context.scheme.outline,
+                        ),
+                        onPressed: rule.id == null
+                            ? null
+                            : () => _deleteIpRule(context, ref, rule),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -366,6 +384,38 @@ class _IpAccessRules extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// v1 deleted an IP rule on the first tap of the bin, with no way back.
+  /// Removing a block can let an attacker straight back in, so it asks.
+  Future<void> _deleteIpRule(
+    BuildContext context,
+    WidgetRef ref,
+    Rule rule,
+  ) async {
+    final l = L.of(context);
+    final ok = await confirmChanges(
+      context,
+      title: l.securityDeleteRule,
+      tone: Tone.danger,
+      confirmLabel: l.commonDelete,
+      changes: [
+        Change(
+          rule.configuration?.target ?? '',
+          from: '${rule.mode ?? ''}  ${rule.configuration?.value ?? ''}',
+          to: '—',
+        ),
+      ],
+    );
+    if (!ok || !context.mounted) return;
+    try {
+      await ref
+          .read(securityActionsProvider)
+          .deleteIpAccessRule(zoneId: zoneId, ruleId: rule.id!);
+      ref.invalidate(ipAccessRulesProvider(zoneId));
+    } on CfFailure catch (e) {
+      if (context.mounted) _snack(context, failureMessage(context, e));
+    }
   }
 
   Future<void> _create(BuildContext context, WidgetRef ref) async {
