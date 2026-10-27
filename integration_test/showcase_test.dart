@@ -155,6 +155,120 @@ Object? _answer(RequestOptions o) {
         {'id': e.key, 'value': e.value, 'editable': true},
     ]);
   }
+  if (path == 'zones/${zone.$1}/dns_records') {
+    Map<String, Object?> rec(
+      String id,
+      String type,
+      String name,
+      String content, {
+      bool proxied = false,
+      bool proxiable = false,
+      int? priority,
+      String? comment,
+    }) => {
+      'id': id,
+      'type': type,
+      'name': name,
+      'content': content,
+      'proxied': proxied,
+      'proxiable': proxiable,
+      'ttl': proxied ? 1 : 3600,
+      'priority': ?priority,
+      'comment': ?comment,
+    };
+    return _envelope(
+      [
+        rec(
+          'r1',
+          'A',
+          'emilll.dev',
+          '185.12.4.7',
+          proxied: true,
+          proxiable: true,
+        ),
+        rec(
+          'r2',
+          'CNAME',
+          'www.emilll.dev',
+          'emilll.dev',
+          proxied: true,
+          proxiable: true,
+        ),
+        rec(
+          'r3',
+          'A',
+          'api.emilll.dev',
+          '10.0.0.4',
+          proxiable: true,
+          comment: 'internal API',
+        ),
+        rec(
+          'r4',
+          'AAAA',
+          'v6.emilll.dev',
+          '2a01:4f8::1',
+          proxied: true,
+          proxiable: true,
+        ),
+        rec('r5', 'MX', 'emilll.dev', 'mx.zoho.eu', priority: 10),
+        rec('r6', 'TXT', 'emilll.dev', 'v=spf1 include:zoho.eu ~all'),
+        rec('r7', 'CAA', 'emilll.dev', '0 issue "letsencrypt.org"'),
+      ],
+      info: {
+        'page': 1,
+        'per_page': 100,
+        'count': 7,
+        'total_count': 7,
+        'total_pages': 1,
+      },
+    );
+  }
+  if (path ==
+      'zones/${zone.$1}/rulesets/phases/http_request_firewall_custom/entrypoint') {
+    Map<String, Object?> rule(
+      String id,
+      String action,
+      String d,
+      String e, {
+      bool on = true,
+    }) => {
+      'id': id,
+      'action': action,
+      'description': d,
+      'expression': e,
+      'enabled': on,
+    };
+    return _envelope({
+      'id': 'rs1',
+      'rules': [
+        rule(
+          'a',
+          'block',
+          'Block admin outside AZ',
+          '(http.request.uri.path contains "/wp-admin" and ip.src.country ne "AZ")',
+        ),
+        rule(
+          'b',
+          'managed_challenge',
+          'Challenge bad bots',
+          '(cf.client.bot eq false and cf.threat_score gt 10)',
+        ),
+        rule(
+          'c',
+          'skip',
+          'Skip OIDC callback',
+          '(http.request.uri.path eq "/oidc/callback")',
+        ),
+        rule(
+          'd',
+          'log',
+          'Log API writes',
+          '(http.request.method in {"POST" "PUT" "DELETE"} and starts_with(http.request.uri.path, "/api"))',
+          on: false,
+        ),
+      ],
+    });
+  }
   if (path == 'accounts/acct1/cfd_tunnel') {
     return _envelope([
       {'id': 't1', 'name': 'pangea-edge', 'status': 'down'},
@@ -289,6 +403,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
+    await hold(tester, '${_dark ? 'dark' : 'light'}-00-lock');
     await tester.enterText(find.byType(TextField), '2468');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle(const Duration(seconds: 6));
@@ -317,5 +432,37 @@ void main() {
     await hold(tester, '$mode-06-under-attack');
     await tester.tap(find.text('Apply'));
     await tester.pumpAndSettle(const Duration(seconds: 2));
+    ScaffoldMessenger.of(
+      tester.element(find.byType(Scaffold).last),
+    ).removeCurrentSnackBar();
+
+    // The hub is a lazy list: the DNS row does not exist until scrolled to.
+    await tester.scrollUntilVisible(
+      find.text('DNS'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('DNS').first);
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+    await hold(tester, '$mode-07-dns');
+
+    await tester.tap(find.byIcon(Icons.cloud_outlined).first);
+    await hold(tester, '$mode-08-dns-proxy');
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    await tester.tap(find.text('Security').last);
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+    await hold(tester, '$mode-09-security');
+
+    await tester.tap(find.text('More').last);
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await hold(tester, '$mode-10-more');
   });
 }
