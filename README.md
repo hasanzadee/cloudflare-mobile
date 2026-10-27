@@ -78,7 +78,8 @@ today, just without bespoke design.
 
 Grab the APK from [Releases](../../releases). `app-arm64-v8a-release.apk` is the
 right one for essentially every modern phone; the universal APK is larger and
-works everywhere.
+works everywhere. Every APK of a release carries the same version code, so
+switching between them later is an ordinary update.
 
 For automatic updates, add this repository to
 [Obtainium](https://github.com/ImranR98/Obtainium) — paste the repository URL
