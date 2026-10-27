@@ -202,7 +202,7 @@ class _AddProfileScreenState extends ConsumerState<AddProfileScreen> {
     controller: _label,
     decoration: InputDecoration(
       labelText: l.authProfileName,
-      hintText: 'Work, Client, Personal…',
+      hintText: L.of(context).authProfileNameHint,
     ),
     autocorrect: false,
   );
@@ -218,7 +218,7 @@ class _AddProfileScreenState extends ConsumerState<AddProfileScreen> {
   Future<void> _saveToken() async {
     final token = _token.text.trim();
     if (token.isEmpty) {
-      setState(() => _error = 'Paste a token first');
+      setState(() => _error = L.of(context).authPasteFirst);
       return;
     }
     await _verifyAndSave(

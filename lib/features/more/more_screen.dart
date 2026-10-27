@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme.dart';
+import '../../auth/application/auth_providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../../ui/ds/ds.dart';
 import '../explorer/explorer_screen.dart';
 import '../settings/settings_screen.dart';
 import '../zerotrust/zerotrust_screen.dart';
@@ -14,6 +17,7 @@ class MoreScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L.of(context);
+    final active = ref.watch(authProvider).valueOrNull?.active;
 
     void open(Widget screen) {
       Navigator.of(
@@ -24,34 +28,79 @@ class MoreScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l.navMore)),
       body: ListView(
+        padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.sm, Gap.lg, Gap.xl),
         children: [
-          ListTile(
-            leading: const Icon(Icons.hub_outlined),
-            title: Text(l.navZeroTrust),
-            subtitle: Text('${l.ztTunnels} · ${l.ztAccess} · ${l.ztGateway}'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => open(const ZeroTrustScreen()),
+          if (active != null)
+            Panel(
+              onTap: () => open(const SettingsScreen()),
+              child: Row(
+                children: [
+                  IconTile(
+                    icon: active.credential.isUnrestricted
+                        ? Icons.warning_amber_outlined
+                        : Icons.vpn_key_outlined,
+                    tone: active.credential.isUnrestricted
+                        ? Tone.danger
+                        : Tone.brand,
+                    size: 44,
+                  ),
+                  const SizedBox(width: Gap.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(active.label, style: context.text.titleMedium),
+                        Text(
+                          active.credential.isUnrestricted
+                              ? l.authGlobalKey
+                              : l.authApiToken,
+                          style: context.text.bodySmall?.copyWith(
+                            color: context.scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: context.scheme.outline),
+                ],
+              ),
+            ),
+          SectionTitle(l.moreProducts),
+          RowGroup(
+            children: [
+              NavRow(
+                icon: Icons.hub_outlined,
+                title: l.navZeroTrust,
+                subtitle: '${l.ztTunnels} · ${l.ztAccess} · ${l.ztGateway}',
+                tone: Tone.info,
+                onTap: () => open(const ZeroTrustScreen()),
+              ),
+              NavRow(
+                icon: Icons.notifications_outlined,
+                title: '${l.moreAlerts} · ${l.moreTurnstile}',
+                subtitle: l.moreAlertsSubtitle,
+                tone: Tone.warning,
+                onTap: () => open(const AccountExtrasScreen()),
+              ),
+              NavRow(
+                icon: Icons.terminal_outlined,
+                title: l.explorerTitle,
+                subtitle: l.explorerSearchHint,
+                tone: Tone.success,
+                onTap: () => open(const ExplorerScreen()),
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.notifications_outlined),
-            title: Text('${l.moreAlerts} · ${l.moreTurnstile}'),
-            subtitle: const Text('Notification policies, recent alerts'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => open(const AccountExtrasScreen()),
-          ),
-          ListTile(
-            leading: const Icon(Icons.terminal_outlined),
-            title: Text(l.explorerTitle),
-            subtitle: Text(l.explorerSearchHint),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => open(const ExplorerScreen()),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.settings_outlined),
-            title: Text(l.settingsTitle),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => open(const SettingsScreen()),
+          SectionTitle(l.moreApp),
+          RowGroup(
+            children: [
+              NavRow(
+                icon: Icons.settings_outlined,
+                title: l.settingsTitle,
+                subtitle: l.moreSettingsSubtitle,
+                onTap: () => open(const SettingsScreen()),
+              ),
+            ],
           ),
         ],
       ),

@@ -6,6 +6,7 @@ import '../../app/theme.dart';
 import '../../core/net/failure.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/async_view.dart';
+import '../../ui/ds/ds.dart';
 import '../../ui/failure_text.dart';
 import '../zones/zones_providers.dart';
 import 'dns_editor.dart';
@@ -25,6 +26,10 @@ class DnsScreen extends ConsumerStatefulWidget {
 class _DnsScreenState extends ConsumerState<DnsScreen> {
   final _scroll = ScrollController();
   final _search = TextEditingController();
+
+  /// Records whose proxy flag is being written, so their cloud shows a
+  /// spinner and cannot be tapped twice.
+  final Set<String> _flipping = {};
 
   @override
   void initState() {
@@ -54,12 +59,15 @@ class _DnsScreenState extends ConsumerState<DnsScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.zoneName),
+            Text(l.dnsTitle),
             Text(
               records.valueOrNull == null
-                  ? l.dnsTitle
-                  : l.dnsRecords(records.value!.items.length),
-              style: Theme.of(context).textTheme.labelSmall,
+                  ? widget.zoneName
+                  : '${widget.zoneName} · '
+                        '${l.dnsRecords(records.value!.items.length)}',
+              style: context.text.labelMedium?.copyWith(
+                color: context.scheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -72,61 +80,43 @@ class _DnsScreenState extends ConsumerState<DnsScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            child: TextField(
+            padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.xs, Gap.lg, 0),
+            child: SearchField(
               controller: _search,
-              decoration: InputDecoration(
-                hintText: l.dnsSearchHint,
-                prefixIcon: const Icon(Icons.search),
-              ),
+              hint: l.dnsSearchHint,
+              onChanged: (_) => setState(() {}),
               onSubmitted: (v) =>
                   ref.read(dnsSearchProvider(widget.zoneId).notifier).state = v
                       .trim(),
+              onClear: () {
+                _search.clear();
+                ref.read(dnsSearchProvider(widget.zoneId).notifier).state = '';
+                setState(() {});
+              },
             ),
           ),
           SizedBox(
-            height: 46,
+            height: 52,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 6, top: 6),
-                  child: FilterChip(
-                    label: Text(l.commonAll),
-                    selected: typeFilter == null,
-                    onSelected: (_) =>
-                        ref
-                                .read(
-                                  dnsTypeFilterProvider(widget.zoneId).notifier,
-                                )
-                                .state =
-                            null,
-                  ),
-                ),
-                for (final t in const [
-                  'A',
-                  'AAAA',
-                  'CNAME',
-                  'TXT',
-                  'MX',
-                  'NS',
-                  'SRV',
-                  'CAA',
-                ])
+                for (final t in [null, ..._quickTypes])
                   Padding(
-                    padding: const EdgeInsets.only(right: 6, top: 6),
-                    child: FilterChip(
-                      label: Text(t),
+                    padding: const EdgeInsets.only(right: 6, top: Gap.sm),
+                    child: ChoiceChip(
+                      label: Text(t ?? l.commonAll),
                       selected: typeFilter == t,
-                      onSelected: (selected) =>
+                      showCheckmark: false,
+                      onSelected: (_) =>
                           ref
-                              .read(
-                                dnsTypeFilterProvider(widget.zoneId).notifier,
-                              )
-                              .state = selected
-                          ? t
-                          : null,
+                                  .read(
+                                    dnsTypeFilterProvider(
+                                      widget.zoneId,
+                                    ).notifier,
+                                  )
+                                  .state =
+                              t,
                     ),
                   ),
               ],
@@ -137,33 +127,106 @@ class _DnsScreenState extends ConsumerState<DnsScreen> {
               value: records,
               onRetry: () => ref.invalidate(dnsProvider(widget.zoneId)),
               isEmpty: (d) => d.items.isEmpty,
-              builder: (data) => RefreshIndicator(
-                onRefresh: () async =>
-                    ref.invalidate(dnsProvider(widget.zoneId)),
-                child: ListView.separated(
-                  controller: _scroll,
-                  itemCount: data.items.length + (data.hasMore ? 1 : 0),
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (context, i) {
-                    if (i >= data.items.length) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    return _RecordTile(
-                      record: data.items[i],
-                      onEdit: () => _openEditor(existing: data.items[i]),
-                      onDelete: () => _confirmDelete(data.items[i]),
-                    );
-                  },
-                ),
+              empty: EmptyState(
+                icon: Icons.dns_outlined,
+                tone: Tone.brand,
+                title: l.dnsEmptyTitle,
+                body: l.dnsEmptyBody,
+                action: l.dnsAddRecord,
+                onAction: () => _openEditor(),
               ),
+              builder: (data) {
+                final count = data.items.length;
+                return RefreshIndicator(
+                  onRefresh: () async =>
+                      ref.invalidate(dnsProvider(widget.zoneId)),
+                  child: ListView.builder(
+                    controller: _scroll,
+                    // Room under the last row for the floating button.
+                    padding: const EdgeInsets.only(top: Gap.xs, bottom: 96),
+                    itemCount: count + (data.hasMore ? 1 : 0),
+                    itemBuilder: (context, i) {
+                      if (i >= count) {
+                        return const Padding(
+                          padding: EdgeInsets.all(Gap.lg),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      final r = data.items[i];
+                      return GroupedItem(
+                        index: i,
+                        count: count,
+                        dividerIndent: 76,
+                        child: _RecordRow(
+                          record: r,
+                          zoneName: widget.zoneName,
+                          flipping: _flipping.contains(r.id),
+                          onEdit: () => _openEditor(existing: r),
+                          onDelete: () => _confirmDelete(r),
+                          onProxy: () => _toggleProxy(r),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
     );
+  }
+
+  static const _quickTypes = [
+    'A',
+    'AAAA',
+    'CNAME',
+    'TXT',
+    'MX',
+    'NS',
+    'SRV',
+    'CAA',
+  ];
+
+  /// The orange cloud, one tap away — through the before/after sheet, because
+  /// turning it off publishes the origin's real IP address.
+  Future<void> _toggleProxy(DnsRecordResponse record) async {
+    final l = L.of(context);
+    final id = record.id;
+    if (id == null) return;
+    final on = !(record.proxied ?? false);
+    final name = record.name ?? '';
+
+    final ok = await confirmChanges(
+      context,
+      title: on ? l.dnsProxyOnTitle(name) : l.dnsProxyOffTitle(name),
+      note: on ? l.dnsProxyOnNote : l.dnsProxyOffNote,
+      tone: on ? Tone.brand : Tone.warning,
+      confirmLabel: l.zoneApply,
+      changes: [
+        Change(
+          '${record.type_ ?? ''} $name  ${record.content ?? ''}',
+          from: on ? l.dnsStateDnsOnly : l.dnsStateProxied,
+          to: on ? l.dnsStateProxied : l.dnsStateDnsOnly,
+        ),
+      ],
+    );
+    if (!ok || !mounted) return;
+
+    setState(() => _flipping.add(id));
+    try {
+      await ref
+          .read(dnsProvider(widget.zoneId).notifier)
+          .setProxied(record, on: on);
+    } on CfFailure catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(failureMessage(context, e))));
+      }
+    } finally {
+      if (mounted) setState(() => _flipping.remove(id));
+    }
   }
 
   /// Opens the editor on a freshly fetched copy.
@@ -201,24 +264,20 @@ class _DnsScreenState extends ConsumerState<DnsScreen> {
 
   Future<void> _confirmDelete(DnsRecordResponse record) async {
     final l = L.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.dnsDeleteConfirm(record.name ?? '')),
-        content: Text('${record.type_ ?? ''}  ${record.content ?? ''}'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l.commonDelete),
-          ),
-        ],
-      ),
+    final ok = await confirmChanges(
+      context,
+      title: l.dnsDeleteConfirm(record.name ?? ''),
+      tone: Tone.danger,
+      confirmLabel: l.commonDelete,
+      changes: [
+        Change(
+          '${record.type_ ?? ''} ${record.name ?? ''}',
+          from: record.content ?? '',
+          to: '—',
+        ),
+      ],
     );
-    if (ok != true || record.id == null) return;
+    if (!ok || record.id == null) return;
 
     try {
       await ref.read(dnsProvider(widget.zoneId).notifier).delete(record.id!);
@@ -231,89 +290,158 @@ class _DnsScreenState extends ConsumerState<DnsScreen> {
   }
 }
 
-class _RecordTile extends StatelessWidget {
-  const _RecordTile({
+/// Record types people scan for most get a colour; the rest stay neutral.
+Tone _typeTone(String type) => switch (type) {
+  'A' || 'AAAA' || 'CNAME' => Tone.brand,
+  'MX' || 'SRV' => Tone.info,
+  'TXT' || 'CAA' => Tone.success,
+  'NS' || 'DS' || 'DNSKEY' => Tone.warning,
+  _ => Tone.neutral,
+};
+
+class _RecordRow extends StatelessWidget {
+  const _RecordRow({
     required this.record,
+    required this.zoneName,
+    required this.flipping,
     required this.onEdit,
     required this.onDelete,
+    required this.onProxy,
   });
 
   final DnsRecordResponse record;
+  final String zoneName;
+  final bool flipping;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onProxy;
 
   @override
   Widget build(BuildContext context) {
-    final proxied = record.proxied ?? false;
+    final l = L.of(context);
     final type = record.type_ ?? '?';
+    final proxied = record.proxied ?? false;
+    final proxiable = record.proxiable ?? false;
+    final tone = _typeTone(type);
 
-    return ListTile(
-      leading: SizedBox(
-        width: 56,
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(6),
+    return InkWell(
+      onTap: onEdit,
+      onLongPress: onDelete,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Gap.md, Gap.md, Gap.xs, Gap.md),
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: context.toneWash(tone),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                type,
+                maxLines: 1,
+                style: context.text.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: tone == Tone.neutral
+                      ? context.scheme.onSurface
+                      : context.toneColor(tone),
+                ),
+              ),
             ),
-            child: Text(
-              type,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
+            const SizedBox(width: Gap.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _shortName(record.name ?? '—'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleSmall,
+                  ),
+                  Text(
+                    _value(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.bodySmall?.copyWith(
+                      fontFamily: 'monospace',
+                      color: context.scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  if (_meta().isNotEmpty)
+                    Text(
+                      _meta(),
+                      maxLines: 1,
+                      style: context.text.labelSmall?.copyWith(
+                        color: context.scheme.outline,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
+            if (proxiable)
+              SizedBox(
+                width: 44,
+                child: flipping
+                    ? const Center(
+                        child: SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : IconButton(
+                        tooltip: proxied
+                            ? l.dnsStateProxied
+                            : l.dnsStateDnsOnly,
+                        onPressed: onProxy,
+                        icon: Icon(
+                          proxied ? Icons.cloud : Icons.cloud_outlined,
+                          color: proxied
+                              ? context.cf.proxied
+                              : context.scheme.outline,
+                        ),
+                      ),
+              ),
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: context.scheme.outline),
+              onSelected: (v) => v == 'edit' ? onEdit() : onDelete(),
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 'edit', child: Text(l.commonEdit)),
+                PopupMenuItem(value: 'delete', child: Text(l.commonDelete)),
+              ],
+            ),
+          ],
         ),
       ),
-      title: Text(record.name ?? '—', overflow: TextOverflow.ellipsis),
-      subtitle: Text(_subtitle(), maxLines: 2, overflow: TextOverflow.ellipsis),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (record.proxiable ?? false)
-            Icon(
-              Icons.cloud,
-              size: 18,
-              color: proxied
-                  ? context.cf.proxied
-                  : Theme.of(context).disabledColor,
-            ),
-          PopupMenuButton<String>(
-            onSelected: (v) => v == 'edit' ? onEdit() : onDelete(),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'edit',
-                child: Text(L.of(context).commonEdit),
-              ),
-              PopupMenuItem(
-                value: 'delete',
-                child: Text(L.of(context).commonDelete),
-              ),
-            ],
-          ),
-        ],
-      ),
-      onTap: onEdit,
     );
   }
 
-  String _subtitle() {
-    final parts = <String>[];
+  /// `www.example.com` reads as `www` inside example.com's own list; the apex
+  /// stays whole so it is never an empty line.
+  String _shortName(String name) {
+    if (name == zoneName) return name;
+    final suffix = '.$zoneName';
+    return name.endsWith(suffix)
+        ? name.substring(0, name.length - suffix.length)
+        : name;
+  }
+
+  String _value() {
     if (record.content != null && record.content!.isNotEmpty) {
-      parts.add(record.content!);
+      return record.content!;
     }
     final data = record.data?.toJson() ?? const <String, Object?>{};
-    if (data.isNotEmpty) {
-      parts.add(
-        data.entries
-            .where((e) => e.value != null)
-            .map((e) => '${e.key}=${e.value}')
-            .join(' '),
-      );
-    }
-    if (record.priority != null) parts.add('priority ${record.priority}');
-    final ttl = record.ttl?.toInt();
-    if (ttl != null) parts.add('TTL ${ttlLabel(ttl)}');
-    return parts.join(' · ');
+    return data.entries
+        .where((e) => e.value != null)
+        .map((e) => '${e.key}=${e.value}')
+        .join(' ');
   }
+
+  String _meta() => [
+    if (record.priority != null) 'priority ${record.priority}',
+    if (record.ttl != null) 'TTL ${ttlLabel(record.ttl!.toInt())}',
+    if (record.comment != null && record.comment!.isNotEmpty) record.comment!,
+  ].join(' · ');
 }

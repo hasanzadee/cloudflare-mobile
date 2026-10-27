@@ -5,8 +5,10 @@ import '../../api/generated/generated.dart';
 import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/async_view.dart';
+import '../../ui/ds/ds.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
+import 'zone_tone.dart';
 import 'zones_providers.dart';
 
 class ZonesScreen extends ConsumerStatefulWidget {
@@ -50,26 +52,18 @@ class _ZonesScreenState extends ConsumerState<ZonesScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-            child: TextField(
+            padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.sm, Gap.lg, Gap.md),
+            child: SearchField(
               controller: _search,
-              decoration: InputDecoration(
-                hintText: l.zonesSearchHint,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _search.text.isEmpty
-                    ? null
-                    : IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _search.clear();
-                          ref.read(zoneSearchProvider.notifier).state = '';
-                          setState(() {});
-                        },
-                      ),
-              ),
+              hint: l.zonesSearchHint,
+              onChanged: (_) => setState(() {}),
               onSubmitted: (v) =>
                   ref.read(zoneSearchProvider.notifier).state = v.trim(),
-              onChanged: (_) => setState(() {}),
+              onClear: () {
+                _search.clear();
+                ref.read(zoneSearchProvider.notifier).state = '';
+                setState(() {});
+              },
             ),
           ),
           Expanded(
@@ -77,31 +71,41 @@ class _ZonesScreenState extends ConsumerState<ZonesScreen> {
               value: zones,
               onRetry: () => ref.invalidate(zonesProvider),
               isEmpty: (d) => d.items.isEmpty,
-              empty: Center(child: Text(l.zonesEmpty)),
-              builder: (data) => RefreshIndicator(
-                onRefresh: () => ref.read(zonesProvider.notifier).refresh(),
-                child: ListView.separated(
-                  controller: _scroll,
-                  itemCount: data.items.length + (data.hasMore ? 1 : 0),
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (context, i) {
-                    if (i >= data.items.length) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(child: CircularProgressIndicator()),
+              empty: EmptyState(icon: Icons.public_off, title: l.zonesEmpty),
+              builder: (data) {
+                final count = data.items.length;
+                return RefreshIndicator(
+                  onRefresh: () => ref.read(zonesProvider.notifier).refresh(),
+                  child: ListView.builder(
+                    controller: _scroll,
+                    padding: const EdgeInsets.only(bottom: Gap.xl),
+                    itemCount: count + (data.hasMore ? 1 : 0),
+                    itemBuilder: (context, i) {
+                      if (i >= count) {
+                        return const Padding(
+                          padding: EdgeInsets.all(Gap.lg),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      final z = data.items[i];
+                      return GroupedItem(
+                        index: i,
+                        count: count,
+                        dividerIndent: 44,
+                        child: _ZoneRow(
+                          zone: z,
+                          onTap: () {
+                            ref
+                                .read(scopeProvider.notifier)
+                                .setZone(z.id, z.name);
+                            widget.onOpenZone(z);
+                          },
+                        ),
                       );
-                    }
-                    return _ZoneTile(
-                      zone: data.items[i],
-                      onTap: () {
-                        final z = data.items[i];
-                        ref.read(scopeProvider.notifier).setZone(z.id, z.name);
-                        widget.onOpenZone(z);
-                      },
-                    );
-                  },
-                ),
-              ),
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -110,8 +114,8 @@ class _ZonesScreenState extends ConsumerState<ZonesScreen> {
   }
 }
 
-class _ZoneTile extends StatelessWidget {
-  const _ZoneTile({required this.zone, required this.onTap});
+class _ZoneRow extends StatelessWidget {
+  const _ZoneRow({required this.zone, required this.onTap});
 
   final Zone zone;
   final VoidCallback onTap;
@@ -119,25 +123,53 @@ class _ZoneTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = zone.status == 'active';
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: active
-            ? context.cf.success.withValues(alpha: 0.15)
-            : context.cf.warning.withValues(alpha: 0.15),
-        child: Icon(
-          active ? Icons.public : Icons.pending_outlined,
-          color: active ? context.cf.success : context.cf.warning,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.sm, Gap.md),
+        child: Row(
+          children: [
+            StatusDot(tone: zoneTone(zone.status)),
+            const SizedBox(width: Gap.md + 2),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    zone.name ?? '—',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleSmall,
+                  ),
+                  Text(
+                    [
+                      if (!active && zone.status != null) zone.status!,
+                      if (zone.plan?.name != null) zone.plan!.name!,
+                    ].join(' · '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.bodySmall?.copyWith(
+                      color: active
+                          ? context.scheme.onSurfaceVariant
+                          : context.toneColor(zoneTone(zone.status)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (zone.paused ?? false)
+              Padding(
+                padding: const EdgeInsets.only(right: Gap.xs),
+                child: Icon(
+                  Icons.pause_circle_outline,
+                  size: 18,
+                  color: context.cf.warning,
+                ),
+              ),
+            Icon(Icons.chevron_right, color: context.scheme.outline),
+          ],
         ),
       ),
-      title: Text(zone.name ?? '—'),
-      subtitle: Text(
-        [
-          if (zone.status != null) zone.status!,
-          if (zone.plan?.name != null) zone.plan!.name!,
-        ].join(' · '),
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
     );
   }
 }

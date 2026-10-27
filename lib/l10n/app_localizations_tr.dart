@@ -824,4 +824,134 @@ class LTr extends L {
   String pulseAnalyticsPartial(int count) {
     return 'Bu tokenin analitik erişimi olmayan bölgeler: $count';
   }
+
+  @override
+  String get dnsStateProxied => 'Proxy açık';
+
+  @override
+  String get dnsStateDnsOnly => 'Yalnızca DNS';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return '$name Cloudflare proxy üzerinden geçsin mi?';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return '$name için proxy kapatılsın mı?';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      'Trafik Cloudflare üzerinden geçer: önbelleğe alınır, korunur ve origin adresi gizli kalır. Açıkken TTL\'yi Cloudflare yönetir.';
+
+  @override
+  String get dnsProxyOffNote =>
+      'Ziyaretçiler doğrudan origin\'e bağlanır: IP adresi herkese açık olur, Cloudflare önbelleği ve güvenlik duvarı bu ad için devre dışı kalır.';
+
+  @override
+  String get dnsEmptyTitle => 'Henüz kayıt yok';
+
+  @override
+  String get dnsEmptyBody =>
+      'Buraya eklediğiniz kayıt birkaç saniye içinde Cloudflare ad sunucularında yayına girer.';
+
+  @override
+  String get moreProducts => 'Ürünler';
+
+  @override
+  String get moreApp => 'Uygulama';
+
+  @override
+  String get moreAlertsSubtitle => 'Bildirim ilkeleri, son uyarılar';
+
+  @override
+  String get moreSettingsSubtitle => 'Tema, dil, profiller, kilit';
+
+  @override
+  String get settingsAddProfileHint =>
+      'Başka bir hesap veya farklı yetkili token';
+
+  @override
+  String get settingsBiometricHint =>
+      'Kasa anahtarı, yalnızca parmak izi doğrulandıktan sonra açılan bir Keystore anahtarıyla sarılır.';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'Biyometrik donanım kullanılamıyor';
+
+  @override
+  String get settingsPrivacyHeadline =>
+      'Bu telefondan yalnızca API çağrıları çıkar';
+
+  @override
+  String get settingsAboutBody =>
+      'Açık kaynak, Apache-2.0. Cloudflare, Inc. ile bağlantılı değildir.';
+
+  @override
+  String get securityDeleteRule => 'Bu kural silinsin mi?';
+
+  @override
+  String get securityNoIpRules => 'IP erişim kuralı yok';
+
+  @override
+  String get securityEmptyCustomBody =>
+      'Bir ifadeyle eşleşen istekleri engelleyin, doğrulayın veya geçirin — ülke, yol, user agent.';
+
+  @override
+  String get securityEmptyRateLimitBody =>
+      'Bir istemcinin bir sürede yapabileceği istek sayısını IP ve veri merkezi başına sınırlayın.';
+
+  @override
+  String get securityEmptyIpBody =>
+      'Tüm bölge için bir IP\'ye, aralığa, ülkeye veya ASN\'ye izin verin, engelleyin ya da doğrulayın.';
+
+  @override
+  String get devNoWorkers => 'Bu hesapta Worker yok';
+
+  @override
+  String get devNoPages => 'Bu hesapta Pages projesi yok';
+
+  @override
+  String get moreAlertHistory => 'Son uyarılar';
+
+  @override
+  String get ztNoTunnels => 'Bu hesapta tünel yok';
+
+  @override
+  String get ztNoApps => 'Access uygulaması yok';
+
+  @override
+  String get ztNoGatewayRules => 'Gateway kuralı yok';
+
+  @override
+  String ztConnectors(int count) {
+    return '$count bağlayıcı';
+  }
+
+  @override
+  String get onboardTokenBody =>
+      'Cloudflare doğru izinler işaretlenmiş olarak açılır. Token\'ı oluşturun ve buraya yapıştırın.';
+
+  @override
+  String get onboardPresetFull => 'Okuma + yazma';
+
+  @override
+  String get onboardPresetDns => 'Yalnızca DNS';
+
+  @override
+  String get onboardPresetRead => 'Salt okunur';
+
+  @override
+  String get onboardPinBody =>
+      'PIN, kimlik bilginizi bu cihazda şifreler. Hiçbir yere gönderilmez ve kurtarılamaz; unutursanız baştan başlamanız gerekir.';
+
+  @override
+  String get authPasteFirst => 'Önce bir token yapıştırın';
+
+  @override
+  String get authProfileNameHint => 'İş, müşteri, kişisel…';
+
+  @override
+  String get commonRecommended => 'Önerilen';
 }

@@ -825,4 +825,132 @@ class LAz extends L {
   String pulseAnalyticsPartial(int count) {
     return 'Bu tokenin analitikaya girişi olmayan zonalar: $count';
   }
+
+  @override
+  String get dnsStateProxied => 'Proksi ilə';
+
+  @override
+  String get dnsStateDnsOnly => 'Yalnız DNS';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return '$name Cloudflare proksisindən keçirilsin?';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return '$name üçün proksi söndürülsün?';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      'Trafik Cloudflare-dən keçəcək: keş, qoruma, origin ünvanı gizli qalır. Proksi aktiv olanda TTL-i Cloudflare idarə edir.';
+
+  @override
+  String get dnsProxyOffNote =>
+      'Ziyarətçilər birbaşa origin-ə qoşulacaq: onun IP ünvanı açıq olacaq, Cloudflare keşi və firewall bu ad üçün işləməyəcək.';
+
+  @override
+  String get dnsEmptyTitle => 'Hələ qeyd yoxdur';
+
+  @override
+  String get dnsEmptyBody =>
+      'Burada əlavə etdiyiniz qeyd bir neçə saniyəyə Cloudflare nameserverlərində görünür.';
+
+  @override
+  String get moreProducts => 'Məhsullar';
+
+  @override
+  String get moreApp => 'Tətbiq';
+
+  @override
+  String get moreAlertsSubtitle => 'Bildiriş siyasətləri, son xəbərdarlıqlar';
+
+  @override
+  String get moreSettingsSubtitle => 'Mövzu, dil, profillər, kilid';
+
+  @override
+  String get settingsAddProfileHint => 'Başqa hesab və ya fərqli icazəli token';
+
+  @override
+  String get settingsBiometricHint =>
+      'Anbar açarı yalnız barmaq izi yoxlamasından sonra açılan Keystore açarı ilə şifrələnir.';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'Bu cihazda biometrik avadanlıq yoxdur';
+
+  @override
+  String get settingsPrivacyHeadline => 'Telefondan yalnız API sorğuları çıxır';
+
+  @override
+  String get settingsAboutBody =>
+      'Açıq mənbə, Apache-2.0. Cloudflare, Inc. ilə əlaqəli deyil.';
+
+  @override
+  String get securityDeleteRule => 'Bu qayda silinsin?';
+
+  @override
+  String get securityNoIpRules => 'IP giriş qaydası yoxdur';
+
+  @override
+  String get securityEmptyCustomBody =>
+      'İfadəyə uyğun sorğuları bloklayın, yoxlayın və ya buraxın — ölkə, yol, user agent.';
+
+  @override
+  String get securityEmptyRateLimitBody =>
+      'Bir müştərinin müəyyən müddətdə edə biləcəyi sorğu sayını IP və data mərkəzi üzrə məhdudlaşdırın.';
+
+  @override
+  String get securityEmptyIpBody =>
+      'Bütün zona üçün IP, diapazon, ölkə və ya ASN-ə icazə verin, bloklayın və ya yoxlayın.';
+
+  @override
+  String get devNoWorkers => 'Bu hesabda Workers yoxdur';
+
+  @override
+  String get devNoPages => 'Bu hesabda Pages layihəsi yoxdur';
+
+  @override
+  String get moreAlertHistory => 'Son xəbərdarlıqlar';
+
+  @override
+  String get ztNoTunnels => 'Bu hesabda tunel yoxdur';
+
+  @override
+  String get ztNoApps => 'Access tətbiqi yoxdur';
+
+  @override
+  String get ztNoGatewayRules => 'Gateway qaydası yoxdur';
+
+  @override
+  String ztConnectors(int count) {
+    return '$count konnektor';
+  }
+
+  @override
+  String get onboardTokenBody =>
+      'Cloudflare lazımi icazələr seçilmiş halda açılacaq. Tokeni yaradın və bura yapışdırın.';
+
+  @override
+  String get onboardPresetFull => 'Oxuma + yazma';
+
+  @override
+  String get onboardPresetDns => 'Yalnız DNS';
+
+  @override
+  String get onboardPresetRead => 'Yalnız oxuma';
+
+  @override
+  String get onboardPinBody =>
+      'PIN kodu tokeninizi bu cihazda şifrələyir. Heç yerə göndərilmir və bərpa olunmur — unutsanız, yenidən başlamalı olacaqsınız.';
+
+  @override
+  String get authPasteFirst => 'Əvvəlcə tokeni yapışdırın';
+
+  @override
+  String get authProfileNameHint => 'İş, müştəri, şəxsi…';
+
+  @override
+  String get commonRecommended => 'Tövsiyə olunur';
 }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../ui/ds/ds.dart';
 import '../application/auth_providers.dart';
 
 class LockScreen extends ConsumerStatefulWidget {
@@ -40,44 +41,60 @@ class _LockScreenState extends ConsumerState<LockScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.lock_outline, size: 44),
-                const SizedBox(height: 16),
-                Text(
-                  l.lockTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _pin,
-                  autofocus: !biometric,
-                  obscureText: true,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    labelText: l.lockPin,
-                    errorText: _wrong ? l.lockWrongPin : null,
+            padding: const EdgeInsets.all(Gap.xl + Gap.sm),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 380),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Center(child: BrandMark()),
+                  const SizedBox(height: Gap.xl),
+                  Text(
+                    l.lockTitle,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  onChanged: (_) {
-                    if (_wrong) setState(() => _wrong = false);
-                  },
-                  onSubmitted: (_) => _unlock(),
-                ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _busy ? null : _unlock,
-                  child: Text(l.commonUnlock),
-                ),
-                if (biometric)
-                  TextButton.icon(
-                    onPressed: _busy ? null : _biometric,
-                    icon: const Icon(Icons.fingerprint),
-                    label: Text(l.lockBiometric),
+                  const SizedBox(height: Gap.xl),
+                  TextField(
+                    controller: _pin,
+                    autofocus: !biometric,
+                    obscureText: true,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall?.copyWith(letterSpacing: 10),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: l.lockPin,
+                      errorText: _wrong ? l.lockWrongPin : null,
+                    ),
+                    onChanged: (_) {
+                      if (_wrong) setState(() => _wrong = false);
+                    },
+                    onSubmitted: (_) => _unlock(),
                   ),
-              ],
+                  const SizedBox(height: Gap.lg),
+                  FilledButton(
+                    onPressed: _busy ? null : _unlock,
+                    child: _busy
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(l.commonUnlock),
+                  ),
+                  if (biometric) ...[
+                    const SizedBox(height: Gap.sm),
+                    OutlinedButton.icon(
+                      onPressed: _busy ? null : _biometric,
+                      icon: const Icon(Icons.fingerprint),
+                      label: Text(l.lockBiometric),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
         ),

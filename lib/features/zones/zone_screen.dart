@@ -15,12 +15,12 @@ import '../analytics/analytics_providers.dart';
 import '../analytics/analytics_queries.dart';
 import '../analytics/analytics_screen.dart';
 import '../dns/dns_screen.dart';
-import '../pulse/pulse_screen.dart' show zoneTone;
 import '../scope/scope_providers.dart';
 import '../security/security_screen.dart';
 import 'purge_screen.dart';
 import 'zone_extras_screen.dart';
 import 'zone_settings_providers.dart';
+import 'zone_tone.dart';
 import 'zones_providers.dart';
 
 export 'purge_screen.dart';

@@ -1626,6 +1626,228 @@ abstract class L {
   /// In en, this message translates to:
   /// **'Zones without analytics access on this token: {count}'**
   String pulseAnalyticsPartial(int count);
+
+  /// No description provided for @dnsStateProxied.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxied'**
+  String get dnsStateProxied;
+
+  /// No description provided for @dnsStateDnsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS only'**
+  String get dnsStateDnsOnly;
+
+  /// No description provided for @dnsProxyOnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy {name} through Cloudflare?'**
+  String dnsProxyOnTitle(String name);
+
+  /// No description provided for @dnsProxyOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop proxying {name}?'**
+  String dnsProxyOffTitle(String name);
+
+  /// No description provided for @dnsProxyOnNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic goes through Cloudflare: cached, protected, and the origin\'s address stays hidden. Cloudflare manages the TTL while this is on.'**
+  String get dnsProxyOnNote;
+
+  /// No description provided for @dnsProxyOffNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Visitors connect straight to your origin, so its IP address becomes public and Cloudflare\'s cache and firewall no longer apply to this name.'**
+  String get dnsProxyOffNote;
+
+  /// No description provided for @dnsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No records yet'**
+  String get dnsEmptyTitle;
+
+  /// No description provided for @dnsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A record you add here is live on Cloudflare\'s nameservers within seconds.'**
+  String get dnsEmptyBody;
+
+  /// No description provided for @moreProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get moreProducts;
+
+  /// No description provided for @moreApp.
+  ///
+  /// In en, this message translates to:
+  /// **'App'**
+  String get moreApp;
+
+  /// No description provided for @moreAlertsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification policies, recent alerts'**
+  String get moreAlertsSubtitle;
+
+  /// No description provided for @moreSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme, language, profiles, lock'**
+  String get moreSettingsSubtitle;
+
+  /// No description provided for @settingsAddProfileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Another account or a differently scoped key'**
+  String get settingsAddProfileHint;
+
+  /// No description provided for @settingsBiometricHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Wraps the vault key with a Keystore key that only unlocks after a successful fingerprint check.'**
+  String get settingsBiometricHint;
+
+  /// No description provided for @settingsBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric hardware is not available'**
+  String get settingsBiometricUnavailable;
+
+  /// No description provided for @settingsPrivacyHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing leaves this phone but API calls'**
+  String get settingsPrivacyHeadline;
+
+  /// No description provided for @settingsAboutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source, Apache-2.0. Not affiliated with Cloudflare, Inc.'**
+  String get settingsAboutBody;
+
+  /// No description provided for @securityDeleteRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this rule?'**
+  String get securityDeleteRule;
+
+  /// No description provided for @securityNoIpRules.
+  ///
+  /// In en, this message translates to:
+  /// **'No IP access rules'**
+  String get securityNoIpRules;
+
+  /// No description provided for @securityEmptyCustomBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Block, challenge or skip requests that match an expression — a country, a path, a user agent.'**
+  String get securityEmptyCustomBody;
+
+  /// No description provided for @securityEmptyRateLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cap how many requests one client may make in a period, per IP and data centre.'**
+  String get securityEmptyRateLimitBody;
+
+  /// No description provided for @securityEmptyIpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow, block or challenge an IP, a range, a country or an ASN across the whole zone.'**
+  String get securityEmptyIpBody;
+
+  /// No description provided for @devNoWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'No Workers on this account'**
+  String get devNoWorkers;
+
+  /// No description provided for @devNoPages.
+  ///
+  /// In en, this message translates to:
+  /// **'No Pages projects on this account'**
+  String get devNoPages;
+
+  /// No description provided for @moreAlertHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent alerts'**
+  String get moreAlertHistory;
+
+  /// No description provided for @ztNoTunnels.
+  ///
+  /// In en, this message translates to:
+  /// **'No tunnels on this account'**
+  String get ztNoTunnels;
+
+  /// No description provided for @ztNoApps.
+  ///
+  /// In en, this message translates to:
+  /// **'No Access applications'**
+  String get ztNoApps;
+
+  /// No description provided for @ztNoGatewayRules.
+  ///
+  /// In en, this message translates to:
+  /// **'No Gateway rules'**
+  String get ztNoGatewayRules;
+
+  /// No description provided for @ztConnectors.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 connector} other{{count} connectors}}'**
+  String ztConnectors(int count);
+
+  /// No description provided for @onboardTokenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudflare opens with the right permissions already ticked. Create the token, then paste it here.'**
+  String get onboardTokenBody;
+
+  /// No description provided for @onboardPresetFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Read + write'**
+  String get onboardPresetFull;
+
+  /// No description provided for @onboardPresetDns.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS only'**
+  String get onboardPresetDns;
+
+  /// No description provided for @onboardPresetRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read only'**
+  String get onboardPresetRead;
+
+  /// No description provided for @onboardPinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The PIN encrypts your credential on this device. It is never sent anywhere and cannot be recovered — forgetting it means starting over.'**
+  String get onboardPinBody;
+
+  /// No description provided for @authPasteFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a token first'**
+  String get authPasteFirst;
+
+  /// No description provided for @authProfileNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Work, Client, Personal…'**
+  String get authProfileNameHint;
+
+  /// No description provided for @commonRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get commonRecommended;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

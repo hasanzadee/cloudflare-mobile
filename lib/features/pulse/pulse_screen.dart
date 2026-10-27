@@ -14,6 +14,7 @@ import '../../ui/failure_text.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
 import '../zerotrust/zerotrust_screen.dart';
+import '../zones/zone_tone.dart';
 import 'pulse_providers.dart';
 
 /// The home tab: the whole account at a glance.
@@ -410,13 +411,6 @@ class _Zones extends ConsumerWidget {
     );
   }
 }
-
-Tone zoneTone(String? status) => switch (status) {
-  'active' => Tone.success,
-  'pending' || 'initializing' => Tone.warning,
-  'moved' || 'deleted' || 'deactivated' => Tone.danger,
-  _ => Tone.neutral,
-};
 
 class _ZoneRow extends StatelessWidget {
   const _ZoneRow({

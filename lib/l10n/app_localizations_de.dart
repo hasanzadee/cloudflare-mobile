@@ -831,4 +831,141 @@ class LDe extends L {
   String pulseAnalyticsPartial(int count) {
     return 'Zonen ohne Analytics-Zugriff mit diesem Token: $count';
   }
+
+  @override
+  String get dnsStateProxied => 'Proxied';
+
+  @override
+  String get dnsStateDnsOnly => 'Nur DNS';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return '$name über Cloudflare leiten?';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return 'Proxy für $name abschalten?';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      'Der Traffic läuft über Cloudflare: gecacht, geschützt, die Adresse des Origins bleibt verborgen. Solange das an ist, verwaltet Cloudflare die TTL.';
+
+  @override
+  String get dnsProxyOffNote =>
+      'Besucher verbinden sich direkt mit deinem Origin: Seine IP-Adresse wird öffentlich, Cloudflares Cache und Firewall greifen für diesen Namen nicht mehr.';
+
+  @override
+  String get dnsEmptyTitle => 'Noch keine Einträge';
+
+  @override
+  String get dnsEmptyBody =>
+      'Ein hier angelegter Eintrag ist binnen Sekunden auf Cloudflares Nameservern aktiv.';
+
+  @override
+  String get moreProducts => 'Produkte';
+
+  @override
+  String get moreApp => 'App';
+
+  @override
+  String get moreAlertsSubtitle =>
+      'Benachrichtigungsrichtlinien, letzte Warnungen';
+
+  @override
+  String get moreSettingsSubtitle => 'Design, Sprache, Profile, Sperre';
+
+  @override
+  String get settingsAddProfileHint =>
+      'Ein anderes Konto oder ein anders berechtigtes Token';
+
+  @override
+  String get settingsBiometricHint =>
+      'Der Tresorschlüssel wird mit einem Keystore-Schlüssel umhüllt, der sich nur nach erfolgreicher Fingerabdruckprüfung öffnet.';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'Keine biometrische Hardware verfügbar';
+
+  @override
+  String get settingsPrivacyHeadline =>
+      'Nur API-Aufrufe verlassen dieses Telefon';
+
+  @override
+  String get settingsAboutBody =>
+      'Open Source, Apache-2.0. Nicht mit Cloudflare, Inc. verbunden.';
+
+  @override
+  String get securityDeleteRule => 'Diese Regel löschen?';
+
+  @override
+  String get securityNoIpRules => 'Keine IP-Zugriffsregeln';
+
+  @override
+  String get securityEmptyCustomBody =>
+      'Anfragen, die zu einem Ausdruck passen, blockieren, prüfen oder durchlassen – ein Land, ein Pfad, ein User-Agent.';
+
+  @override
+  String get securityEmptyRateLimitBody =>
+      'Begrenze, wie viele Anfragen ein Client pro Zeitraum stellen darf – je IP und Rechenzentrum.';
+
+  @override
+  String get securityEmptyIpBody =>
+      'Eine IP, ein Netz, ein Land oder eine ASN für die ganze Zone erlauben, blockieren oder prüfen.';
+
+  @override
+  String get devNoWorkers => 'Keine Workers in diesem Konto';
+
+  @override
+  String get devNoPages => 'Keine Pages-Projekte in diesem Konto';
+
+  @override
+  String get moreAlertHistory => 'Letzte Warnungen';
+
+  @override
+  String get ztNoTunnels => 'Keine Tunnel in diesem Konto';
+
+  @override
+  String get ztNoApps => 'Keine Access-Anwendungen';
+
+  @override
+  String get ztNoGatewayRules => 'Keine Gateway-Regeln';
+
+  @override
+  String ztConnectors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Connectors',
+      one: '1 Connector',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get onboardTokenBody =>
+      'Cloudflare öffnet sich mit den passenden Berechtigungen bereits angehakt. Token erstellen, dann hier einfügen.';
+
+  @override
+  String get onboardPresetFull => 'Lesen + Schreiben';
+
+  @override
+  String get onboardPresetDns => 'Nur DNS';
+
+  @override
+  String get onboardPresetRead => 'Nur lesen';
+
+  @override
+  String get onboardPinBody =>
+      'Die PIN verschlüsselt deine Zugangsdaten auf diesem Gerät. Sie wird nirgendwohin gesendet und lässt sich nicht wiederherstellen – wer sie vergisst, fängt von vorn an.';
+
+  @override
+  String get authPasteFirst => 'Zuerst ein Token einfügen';
+
+  @override
+  String get authProfileNameHint => 'Arbeit, Kunde, Privat …';
+
+  @override
+  String get commonRecommended => 'Empfohlen';
 }

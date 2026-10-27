@@ -831,4 +831,140 @@ class LFr extends L {
   String pulseAnalyticsPartial(int count) {
     return 'Zones sans accès aux statistiques avec ce jeton : $count';
   }
+
+  @override
+  String get dnsStateProxied => 'Via proxy';
+
+  @override
+  String get dnsStateDnsOnly => 'DNS uniquement';
+
+  @override
+  String dnsProxyOnTitle(String name) {
+    return 'Faire passer $name par le proxy Cloudflare ?';
+  }
+
+  @override
+  String dnsProxyOffTitle(String name) {
+    return 'Arrêter le proxy pour $name ?';
+  }
+
+  @override
+  String get dnsProxyOnNote =>
+      'Le trafic passe par Cloudflare : mis en cache, protégé, et l\'adresse de l\'origine reste cachée. Tant que c\'est activé, Cloudflare gère le TTL.';
+
+  @override
+  String get dnsProxyOffNote =>
+      'Les visiteurs se connectent directement à votre origine : son adresse IP devient publique et le cache et le pare-feu de Cloudflare ne s\'appliquent plus à ce nom.';
+
+  @override
+  String get dnsEmptyTitle => 'Aucun enregistrement pour l\'instant';
+
+  @override
+  String get dnsEmptyBody =>
+      'Un enregistrement ajouté ici est actif sur les serveurs de noms de Cloudflare en quelques secondes.';
+
+  @override
+  String get moreProducts => 'Produits';
+
+  @override
+  String get moreApp => 'Application';
+
+  @override
+  String get moreAlertsSubtitle => 'Règles de notification, alertes récentes';
+
+  @override
+  String get moreSettingsSubtitle => 'Thème, langue, profils, verrouillage';
+
+  @override
+  String get settingsAddProfileHint =>
+      'Un autre compte ou un jeton avec d\'autres droits';
+
+  @override
+  String get settingsBiometricHint =>
+      'La clé du coffre est chiffrée par une clé du Keystore qui ne s\'ouvre qu\'après une empreinte validée.';
+
+  @override
+  String get settingsBiometricUnavailable =>
+      'Aucun matériel biométrique disponible';
+
+  @override
+  String get settingsPrivacyHeadline =>
+      'Seuls les appels d\'API quittent ce téléphone';
+
+  @override
+  String get settingsAboutBody =>
+      'Open source, Apache-2.0. Sans lien avec Cloudflare, Inc.';
+
+  @override
+  String get securityDeleteRule => 'Supprimer cette règle ?';
+
+  @override
+  String get securityNoIpRules => 'Aucune règle d\'accès IP';
+
+  @override
+  String get securityEmptyCustomBody =>
+      'Bloquez, vérifiez ou laissez passer les requêtes qui correspondent à une expression : un pays, un chemin, un user agent.';
+
+  @override
+  String get securityEmptyRateLimitBody =>
+      'Limitez le nombre de requêtes qu\'un client peut faire sur une période, par IP et centre de données.';
+
+  @override
+  String get securityEmptyIpBody =>
+      'Autorisez, bloquez ou vérifiez une IP, une plage, un pays ou un ASN pour toute la zone.';
+
+  @override
+  String get devNoWorkers => 'Aucun Worker sur ce compte';
+
+  @override
+  String get devNoPages => 'Aucun projet Pages sur ce compte';
+
+  @override
+  String get moreAlertHistory => 'Alertes récentes';
+
+  @override
+  String get ztNoTunnels => 'Aucun tunnel sur ce compte';
+
+  @override
+  String get ztNoApps => 'Aucune application Access';
+
+  @override
+  String get ztNoGatewayRules => 'Aucune règle Gateway';
+
+  @override
+  String ztConnectors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count connecteurs',
+      one: '1 connecteur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get onboardTokenBody =>
+      'Cloudflare s\'ouvre avec les bonnes autorisations déjà cochées. Créez le jeton, puis collez-le ici.';
+
+  @override
+  String get onboardPresetFull => 'Lecture + écriture';
+
+  @override
+  String get onboardPresetDns => 'DNS uniquement';
+
+  @override
+  String get onboardPresetRead => 'Lecture seule';
+
+  @override
+  String get onboardPinBody =>
+      'Le code PIN chiffre vos identifiants sur cet appareil. Il n\'est jamais envoyé nulle part et ne peut pas être récupéré : l\'oublier, c\'est recommencer.';
+
+  @override
+  String get authPasteFirst => 'Collez d\'abord un jeton';
+
+  @override
+  String get authProfileNameHint => 'Travail, client, perso…';
+
+  @override
+  String get commonRecommended => 'Recommandé';
 }
