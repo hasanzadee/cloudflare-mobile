@@ -2,6 +2,7 @@ import 'package:cloudflare_mobile/auth/application/auth_providers.dart';
 import 'package:cloudflare_mobile/auth/domain/cf_credential.dart';
 import 'package:cloudflare_mobile/core/net/cf_client.dart';
 import 'package:cloudflare_mobile/core/security/vault.dart';
+import 'package:cloudflare_mobile/l10n/app_localizations.dart';
 import 'package:cloudflare_mobile/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// spend minutes posing:
 ///
 ///     flutter test integration_test/showcase_test.dart \
-///       --dart-define=SHOWCASE=true [--dart-define=SHOWCASE_DARK=true]
+///       --dart-define=SHOWCASE=true [--dart-define=SHOWCASE_DARK=true] \
+///       [--dart-define=SHOWCASE_LANG=ru]
 ///
 /// It prints `SHOT <name>` and holds the frame for a few seconds; the host
 /// script runs `adb exec-out screencap` when it sees the line.
 const bool _enabled = bool.fromEnvironment('SHOWCASE');
 const bool _dark = bool.fromEnvironment('SHOWCASE_DARK');
+
+/// UI language for the run, e.g. `ru` for the Russian store listing. Every
+/// tap below goes through the app's own strings, so any language works.
+const String _lang = String.fromEnvironment(
+  'SHOWCASE_LANG',
+  defaultValue: 'en',
+);
 
 const _zones = [
   ('3f1c0a7d2e9b4c6a8f5e1d2c3b4a5968', 'emilll.dev', 'active', 'Free Website'),
@@ -384,6 +393,7 @@ void main() {
     await prefs.clear();
     await prefs.setBool('ui.block_screenshots', false);
     await prefs.setString('ui.theme_mode', _dark ? 'dark' : 'light');
+    await prefs.setString('ui.locale', _lang);
 
     final vault = Vault();
     await vault.wipe();
@@ -403,12 +413,13 @@ void main() {
       ),
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
-    await hold(tester, '${_dark ? 'dark' : 'light'}-00-lock');
+    await hold(tester, '$_lang-${_dark ? 'dark' : 'light'}-00-lock');
     await tester.enterText(find.byType(TextField), '2468');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle(const Duration(seconds: 6));
 
-    final mode = _dark ? 'dark' : 'light';
+    final mode = '$_lang-${_dark ? 'dark' : 'light'}';
+    final l = L.of(tester.element(find.byType(Scaffold).first));
     await hold(tester, '$mode-01-pulse');
 
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -500));
@@ -423,14 +434,14 @@ void main() {
 
     await tester.drag(find.byType(Scrollable).first, const Offset(0, 2000));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Switch to Full (strict)'));
+    await tester.tap(find.text(l.zoneSslUseStrict));
     await hold(tester, '$mode-05-change-sheet');
-    await tester.tap(find.text('Cancel'));
+    await tester.tap(find.text(l.commonCancel));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Under attack'));
+    await tester.tap(find.text(l.zoneUnderAttack));
     await hold(tester, '$mode-06-under-attack');
-    await tester.tap(find.text('Apply'));
+    await tester.tap(find.text(l.zoneApply));
     await tester.pumpAndSettle(const Duration(seconds: 2));
     ScaffoldMessenger.of(
       tester.element(find.byType(Scaffold).last),
@@ -438,30 +449,32 @@ void main() {
 
     // The hub is a lazy list: the DNS row does not exist until scrolled to.
     await tester.scrollUntilVisible(
-      find.text('DNS'),
+      find.text(l.dnsTitle),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('DNS').first);
+    await tester.tap(find.text(l.dnsTitle).first);
     await tester.pumpAndSettle(const Duration(seconds: 3));
     await hold(tester, '$mode-07-dns');
 
     await tester.tap(find.byIcon(Icons.cloud_outlined).first);
     await hold(tester, '$mode-08-dns-proxy');
-    await tester.tap(find.text('Cancel'));
+    await tester.tap(find.text(l.commonCancel));
     await tester.pumpAndSettle();
 
-    await tester.pageBack();
+    // By widget, not tester.pageBack(): that finds the button by its English
+    // "Back" tooltip and finds nothing in any other language.
+    await tester.tap(find.byType(BackButton).last);
     await tester.pumpAndSettle();
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton).last);
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    await tester.tap(find.text('Security').last);
+    await tester.tap(find.text(l.navSecurity).last);
     await tester.pumpAndSettle(const Duration(seconds: 3));
     await hold(tester, '$mode-09-security');
 
-    await tester.tap(find.text('More').last);
+    await tester.tap(find.text(l.navMore).last);
     await tester.pumpAndSettle(const Duration(seconds: 2));
     await hold(tester, '$mode-10-more');
   });
