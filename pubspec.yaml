@@ -5,7 +5,7 @@ description: >-
 publish_to: 'none'
 # The build number is the Android versionCode of every APK in a release, and
 # must stay above 4004 — see the end of android/app/build.gradle.kts.
-version: 2.0.1+5005
+version: 2.0.2+5006
 
 environment:
   sdk: ^3.10.0

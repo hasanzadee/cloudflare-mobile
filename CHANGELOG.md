@@ -4,6 +4,16 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [2.0.2] — 2026-10-27
+
+### Fixed
+
+- 2.0.1's per-ABI APKs also carried other ABIs' plugin libraries (but not
+  `libflutter.so` for them), so a 32-bit phone given the arm64 APK would have
+  installed it as armeabi-v7a and crashed on launch. The other ABIs are now
+  excluded at packaging time, which the Flutter plugin cannot override, and
+  the release refuses to publish an APK holding more than its own ABI.
+
 ## [2.0.1] — 2026-10-27
 
 ### Fixed
@@ -193,7 +203,8 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/hasanzadee/cloudflare-mobile/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/hasanzadee/cloudflare-mobile/releases/tag/v1.0.0
