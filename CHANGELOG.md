@@ -4,6 +4,19 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [2.0.1] — 2026-10-27
+
+### Fixed
+
+- The universal `app-release.apk` refused to install over any per-ABI APK —
+  including 2.0.0's own `app-arm64-v8a-release.apk` — with "App not
+  installed". `--split-per-abi` gave the per-ABI files a versionCode of
+  1000/2000/4000 plus the build number and the universal file the bare build
+  number, so Android read the universal APK as a downgrade. Every APK of a
+  release is now built for its ABI on its own and carries one shared
+  versionCode (5005 for this release), and the release workflow refuses to
+  publish if they ever disagree.
+
 ## [2.0.0] — 2026-10-27
 
 A redesign. Every screen is rebuilt on a design system, the home tab becomes
@@ -180,6 +193,7 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/hasanzadee/cloudflare-mobile/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/hasanzadee/cloudflare-mobile/releases/tag/v1.0.0
