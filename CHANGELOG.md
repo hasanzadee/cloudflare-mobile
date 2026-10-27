@@ -4,9 +4,13 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
-The start of v2: a design system, and the two screens people open first
-rebuilt on it. The networking core, the vault and the generated client are
-untouched.
+## [2.0.0] — 2026-10-27
+
+A redesign. Every screen is rebuilt on a design system, the home tab becomes
+Pulse, and every change that decides whether visitors reach a site now shows
+the old and new value before it is written. The networking core, the vault and
+the generated client are untouched, so a 1.0.0 install updates in place with
+its profiles and PIN.
 
 ### Added
 
@@ -25,6 +29,18 @@ untouched.
   pending nameservers). Under attack, Development mode and Purge are big
   buttons. Today's traffic, then the way into DNS, Security, SSL/TLS, rules and
   email, then the curated settings.
+- **DNS, rebuilt.** Records grouped by zone with the type colour-coded and
+  the zone suffix trimmed (`www`, not `www.example.com`); the orange cloud
+  toggles proxying in one tap, through the before/after sheet, because turning
+  it off publishes the origin's IP. Filter chips, a proper empty state.
+- **Security, Developer and Zero Trust on the new system.** Rules with their
+  action as a coloured pill and the expression readable; Workers, Pages, KV,
+  D1 and R2 as grouped panels; tunnels sorted broken-first with status dots;
+  Access policies and Gateway rules with their decision at a glance. Empty
+  tabs say what belongs there instead of "Nothing here".
+- **Analytics, More, Settings, lock and onboarding** restyled: metrics in
+  panels, grouped settings, a brand mark on the lock screen and a PIN field
+  that reads as one.
 - **Under attack remembers what it replaced.** Switching it off restores the
   security level the zone had before, instead of assuming Medium.
 - `integration_test/showcase_test.dart` poses every new screen against a fake
@@ -41,6 +57,14 @@ untouched.
 
 ### Fixed
 
+- Deleting an IP access rule happened on the first tap of the bin. It now asks,
+  like every other delete; removing a block can let an attacker straight back
+  in.
+- The traffic chart's smoothed curve dipped below zero between a quiet hour
+  and a spike.
+- About twenty strings were hard-coded in English (onboarding presets, the
+  PIN explanation, settings hints, screen titles) and are now translated into
+  all eight languages.
 - A token that may read analytics for only some zones blanked Pulse: the
   GraphQL API refuses a whole `zoneTag_in` query if any zone in it is off
   limits, and answers with a 200 and an errors array rather than a 403. Pulse
@@ -156,5 +180,6 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/hasanzadee/cloudflare-mobile/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/hasanzadee/cloudflare-mobile/releases/tag/v1.0.0

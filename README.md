@@ -26,10 +26,10 @@ Cloudflare API, not just the ones with a hand-built screen.
 | <img src="docs/screenshots/01-pulse.jpg" width="270"> | <img src="docs/screenshots/02-zone.jpg" width="270"> |
 | The whole account at a glance: 24-hour traffic across every zone, tunnels that are down, zones still pending, busiest zones first. | The zone's state and what is wrong with it first, with the fix one tap away; Under attack, Development mode and Purge as big buttons. |
 
-| Every risky change asks first | Dark |
+| DNS | Every risky change asks first |
 |---|---|
-| <img src="docs/screenshots/03-change-sheet.jpg" width="270"> | <img src="docs/screenshots/04-zone-dark.jpg" width="270"> |
-| SSL mode, security level, the TLS floor and friends show the old and new value before anything is written. | Neutral surfaces with Cloudflare orange as the only accent, in both themes. |
+| <img src="docs/screenshots/03-dns.jpg" width="270"> | <img src="docs/screenshots/04-proxy-dark.jpg" width="270"> |
+| Records grouped with the type colour-coded and the zone suffix trimmed; the orange cloud toggles in one tap. | Proxying, SSL mode, security level, deletes — the old and new value side by side before anything is written. |
 
 Screenshots come from `integration_test/showcase_test.dart`, which drives the
 real app against a fake account — no real zones in them.
@@ -45,8 +45,11 @@ handling written down rather than hand-waved.
 
 | Area | State |
 |---|---|
+| Pulse — 24-hour traffic across every zone, broken tunnels and pending zones first | ✅ |
+| Zone hub — state, one-tap fixes, Under attack / Development mode / Purge buttons | ✅ |
+| Before/after confirmation for every write that changes how a site is served | ✅ |
 | Zones — list, search, paginate, details | ✅ |
-| DNS — all 21 record types with structured forms, proxy toggle, TTL, comments | ✅ |
+| DNS — all 21 record types with structured forms, one-tap orange cloud, TTL, comments | ✅ |
 | API explorer — every endpoint, typed inputs, enum pickers, body templates | ✅ |
 | Multi-profile credentials, PIN + hardware-bound biometric unlock | ✅ |
 | WAF custom rules and rate limiting — enable/disable, delete | ✅ |

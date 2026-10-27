@@ -1,0 +1,10 @@
+A redesign.
+
+Pulse replaces Home: traffic across every zone, broken tunnels and pending zones
+first. The zone screen leads with its state and one-tap fixes; Under attack,
+Development mode and Purge are big buttons. The orange cloud toggles in one tap.
+
+Every change that decides whether visitors reach a site — SSL mode, security
+level, proxying, deletes — shows the old and new value before it is written.
+
+Updates 1.0.0 in place; profiles and PIN are kept.
