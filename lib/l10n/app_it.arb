@@ -305,7 +305,7 @@
   "ztNoApps": "Nessuna applicazione Access",
   "ztNoGatewayRules": "Nessuna regola Gateway",
   "ztConnectors": "{count, plural, =1{1 connettore} other{{count} connettori}}",
-  "onboardTokenBody": "Cloudflare si apre con le autorizzazioni giuste già selezionate. Crea il token, poi incollalo qui.",
+  "onboardTokenBody": "Cloudflare si apre con la maggior parte delle autorizzazioni già selezionate. Aggiungi a mano quelle elencate qui sotto, crea il token e incollalo qui.",
   "onboardPresetFull": "Lettura + scrittura",
   "onboardPresetDns": "Solo DNS",
   "onboardPresetRead": "Sola lettura",

@@ -332,12 +332,12 @@ operations:
   - id: account-load-balancer-pools-list-pools
     as: listPools
     group: traffic
-    perms: [Load Balancers Read]
+    perms: ['Load Balancing: Monitors and Pools Read']
 
   - id: account-load-balancer-monitors-list-monitors
     as: listMonitors
     group: traffic
-    perms: [Load Balancers Read]
+    perms: ['Load Balancing: Monitors and Pools Read']
 
   - id: waiting-room-list-waiting-rooms
     as: listWaitingRooms
@@ -384,17 +384,17 @@ operations:
   - id: email-routing-settings-get-email-routing-settings
     as: getEmailRouting
     group: email
-    perms: [Email Routing Read]
+    perms: [Email Routing Rules Read]
 
   - id: email-routing-routing-rules-list-routing-rules
     as: listEmailRules
     group: email
-    perms: [Email Routing Read]
+    perms: [Email Routing Rules Read]
 
   - id: email-routing-destination-addresses-list-destination-addresses
     as: listDestinationAddresses
     group: email
-    perms: [Email Routing Read]
+    perms: [Email Routing Addresses Read]
 
   - id: accounts-turnstile-widgets-list
     as: listTurnstileWidgets

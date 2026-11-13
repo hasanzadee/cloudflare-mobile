@@ -965,7 +965,7 @@ class LDe extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare öffnet sich mit den passenden Berechtigungen bereits angehakt. Token erstellen, dann hier einfügen.';
+      'Cloudflare öffnet sich mit den meisten Berechtigungen bereits angekreuzt. Füge die unten aufgeführten von Hand hinzu, erstelle das Token und füge es dann hier ein.';
 
   @override
   String get onboardPresetFull => 'Lesen + Schreiben';

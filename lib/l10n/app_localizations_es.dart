@@ -962,7 +962,7 @@ class LEs extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare se abre con los permisos correctos ya marcados. Crea el token y pégalo aquí.';
+      'Cloudflare se abre con la mayoría de los permisos ya marcados. Añade a mano los que aparecen abajo, crea el token y pégalo aquí.';
 
   @override
   String get onboardPresetFull => 'Lectura y escritura';

@@ -961,7 +961,7 @@ class LRu extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare откроется с уже отмеченными нужными правами. Создайте токен и вставьте его сюда.';
+      'Cloudflare откроется, и большинство прав уже будут отмечены. Добавьте вручную те, что перечислены ниже, создайте токен и вставьте его сюда.';
 
   @override
   String get onboardPresetFull => 'Чтение и запись';

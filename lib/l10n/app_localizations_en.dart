@@ -958,7 +958,7 @@ class LEn extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare opens with the right permissions already ticked. Create the token, then paste it here.';
+      'Cloudflare opens with most permissions already ticked. Add the ones listed below by hand, create the token, then paste it here.';
 
   @override
   String get onboardPresetFull => 'Read + write';

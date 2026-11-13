@@ -305,7 +305,7 @@
   "ztNoApps": "Access uygulaması yok",
   "ztNoGatewayRules": "Gateway kuralı yok",
   "ztConnectors": "{count} bağlayıcı",
-  "onboardTokenBody": "Cloudflare doğru izinler işaretlenmiş olarak açılır. Token'ı oluşturun ve buraya yapıştırın.",
+  "onboardTokenBody": "Cloudflare izinlerin çoğu zaten işaretlenmiş olarak açılır. Aşağıda listelenenleri elle ekleyin, belirteci oluşturun ve buraya yapıştırın.",
   "onboardPresetFull": "Okuma + yazma",
   "onboardPresetDns": "Yalnızca DNS",
   "onboardPresetRead": "Salt okunur",

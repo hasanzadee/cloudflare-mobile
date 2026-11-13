@@ -1,5 +1,22 @@
 import 'dart:convert';
 
+/// Which of the token form's three resource menus a permission sits under.
+///
+/// The form asks for this first, and the same product can appear under more
+/// than one: load balancers are a Zone permission, their pools and monitors an
+/// Account one. Naming the group without its scope sends people to the wrong
+/// dropdown.
+enum CfScope {
+  account('Account'),
+  zone('Zone'),
+  user('User');
+
+  const CfScope(this.label);
+
+  /// How the dashboard labels the menu entry.
+  final String label;
+}
+
 /// One Cloudflare permission group the app needs.
 ///
 /// [group] is the exact wording of the checkbox in the dashboard's token form,
@@ -8,13 +25,22 @@ import 'dart:convert';
 /// smaller namespace — see [TokenTemplate.allKeys]. A null key means the token
 /// form cannot pre-select this one and the user must tick it themselves.
 class CfPermission {
-  const CfPermission(this.group, this.type, {this.key, this.why});
+  const CfPermission(
+    this.group,
+    this.type, {
+    required this.scope,
+    this.key,
+    this.why,
+  });
 
   /// Name shown in the dashboard, e.g. `Zone WAF`.
   final String group;
 
   /// `read`, `edit` or `purge`.
   final String type;
+
+  /// Null only for a 403 label that matched nothing in [TokenTemplate.full].
+  final CfScope? scope;
 
   /// Template-URL key, or null when no key exists for this group.
   final String? key;
@@ -31,8 +57,11 @@ class CfPermission {
     _ => 'Edit',
   };
 
+  /// One checklist line, in the order the form asks: scope, group, level.
+  String get line => [?scope?.label, '$group — $level'].join(' · ');
+
   @override
-  String toString() => '$group — $level';
+  String toString() => line;
 }
 
 /// Builds Cloudflare dashboard deep links that pre-fill the API token form.
@@ -97,49 +126,162 @@ class TokenTemplate {
 
   /// Read and write across every screen this app has.
   ///
-  /// Eight of these have no template key. That is not an oversight to fix
+  /// Ten of these have no template key. That is not an oversight to fix
   /// later: Cloudflare's template format simply has no key for them, and
   /// inventing one gets it dropped without a word — which is how an earlier
   /// version shipped a "full access" link that produced a token with no DNS.
   static const List<CfPermission> full = [
     // Zone
-    CfPermission('Zone', 'edit', key: 'zone'),
-    CfPermission('DNS', 'edit', key: 'dns'),
-    CfPermission('Zone Settings', 'edit', key: 'zone_settings'),
-    CfPermission('Cache Purge', 'purge', key: 'cache'),
-    CfPermission('Firewall Services', 'edit', key: 'firewall_services'),
-    CfPermission('Page Rules', 'edit', key: 'page_rules'),
-    CfPermission('SSL and Certificates', 'edit', key: 'ssl_and_certificates'),
-    CfPermission('Zone Analytics', 'read', key: 'analytics'),
+    CfPermission('Zone', 'edit', scope: CfScope.zone, key: 'zone'),
+    CfPermission('DNS', 'edit', scope: CfScope.zone, key: 'dns'),
+    CfPermission(
+      'Zone Settings',
+      'edit',
+      scope: CfScope.zone,
+      key: 'zone_settings',
+    ),
+    CfPermission('Cache Purge', 'purge', scope: CfScope.zone, key: 'cache'),
+    CfPermission(
+      'Firewall Services',
+      'edit',
+      scope: CfScope.zone,
+      key: 'firewall_services',
+    ),
+    CfPermission('Page Rules', 'edit', scope: CfScope.zone, key: 'page_rules'),
+    CfPermission(
+      'SSL and Certificates',
+      'edit',
+      scope: CfScope.zone,
+      key: 'ssl_and_certificates',
+    ),
+    CfPermission(
+      'Zone Analytics',
+      'read',
+      scope: CfScope.zone,
+      key: 'analytics',
+    ),
+    CfPermission(
+      'Workers Routes',
+      'edit',
+      scope: CfScope.zone,
+      key: 'workers_routes',
+    ),
     // Account
-    CfPermission('Account Settings', 'read', key: 'account_settings'),
-    CfPermission('Account Analytics', 'read', key: 'account_analytics'),
-    CfPermission('API Tokens', 'read', key: 'account_api_tokens'),
-    CfPermission('Workers Scripts', 'edit', key: 'workers_scripts'),
-    CfPermission('Workers KV Storage', 'edit', key: 'workers_kv_storage'),
-    CfPermission('Workers Routes', 'edit', key: 'workers_routes'),
-    CfPermission('Workers R2 Storage', 'edit', key: 'workers_r2'),
-    CfPermission('D1', 'edit', key: 'd1'),
-    CfPermission('Queues', 'edit', key: 'queues'),
-    CfPermission('Pages', 'edit', key: 'page'),
+    CfPermission(
+      'Account Settings',
+      'read',
+      scope: CfScope.account,
+      key: 'account_settings',
+    ),
+    CfPermission(
+      'Account Analytics',
+      'read',
+      scope: CfScope.account,
+      key: 'account_analytics',
+    ),
+    CfPermission(
+      'Workers Scripts',
+      'edit',
+      scope: CfScope.account,
+      key: 'workers_scripts',
+    ),
+    CfPermission(
+      'Workers KV Storage',
+      'edit',
+      scope: CfScope.account,
+      key: 'workers_kv_storage',
+    ),
+    CfPermission(
+      'Workers R2 Storage',
+      'edit',
+      scope: CfScope.account,
+      key: 'workers_r2',
+    ),
+    CfPermission('D1', 'edit', scope: CfScope.account, key: 'd1'),
+    CfPermission('Queues', 'edit', scope: CfScope.account, key: 'queues'),
+    CfPermission('Pages', 'edit', scope: CfScope.account, key: 'page'),
+    CfPermission(
+      'API Tokens',
+      'read',
+      scope: CfScope.account,
+      key: 'account_api_tokens',
+    ),
     // Zero Trust
-    CfPermission('Access: Apps and Policies', 'edit', key: 'access'),
+    CfPermission(
+      'Access: Apps and Policies',
+      'edit',
+      scope: CfScope.account,
+      key: 'access',
+    ),
     CfPermission(
       'Access: Organizations, Identity Providers, and Groups',
       'edit',
+      scope: CfScope.account,
       key: 'access_acct',
     ),
-    CfPermission('Zero Trust', 'edit', key: 'teams'),
+    CfPermission('Zero Trust', 'edit', scope: CfScope.account, key: 'teams'),
 
     // No template key exists for any of the following.
-    CfPermission('Zone WAF', 'edit', why: 'Custom rules and rate limiting'),
-    CfPermission('Cloudflare Tunnel', 'read', why: 'Tunnels and connectors'),
-    CfPermission('Email Routing Rules', 'read', why: 'Email routing'),
-    CfPermission('Load Balancers', 'read', why: 'Load balancers'),
-    CfPermission('Waiting Room', 'read', why: 'Waiting rooms'),
-    CfPermission('Turnstile', 'read', why: 'Turnstile widgets'),
-    CfPermission('Notifications', 'read', why: 'Alert policies and history'),
-    CfPermission('User Details', 'read', why: 'Your profile'),
+    CfPermission(
+      'Zone WAF',
+      'edit',
+      scope: CfScope.zone,
+      why: 'Custom rules and rate limiting',
+    ),
+    CfPermission(
+      'Load Balancers',
+      'read',
+      scope: CfScope.zone,
+      why: 'Load balancers',
+    ),
+    CfPermission(
+      'Waiting Room',
+      'read',
+      scope: CfScope.zone,
+      why: 'Waiting rooms',
+    ),
+    CfPermission(
+      'Email Routing Rules',
+      'read',
+      scope: CfScope.zone,
+      why: 'Email routing settings and rules',
+    ),
+    CfPermission(
+      'Load Balancing: Monitors and Pools',
+      'read',
+      scope: CfScope.account,
+      why: 'Load balancer pools and monitors',
+    ),
+    CfPermission(
+      'Email Routing Addresses',
+      'read',
+      scope: CfScope.account,
+      why: 'Email routing destination addresses',
+    ),
+    CfPermission(
+      'Cloudflare Tunnel',
+      'read',
+      scope: CfScope.account,
+      why: 'Tunnels and connectors',
+    ),
+    CfPermission(
+      'Turnstile',
+      'read',
+      scope: CfScope.account,
+      why: 'Turnstile widgets',
+    ),
+    CfPermission(
+      'Notifications',
+      'read',
+      scope: CfScope.account,
+      why: 'Alert policies and history',
+    ),
+    CfPermission(
+      'User Details',
+      'read',
+      scope: CfScope.user,
+      why: 'Your profile',
+    ),
   ];
 
   /// Read-only across everything the app can show.
@@ -150,15 +292,25 @@ class TokenTemplate {
   static List<CfPermission> get readOnly => [
     for (final p in full)
       if (p.type != 'purge')
-        CfPermission(p.group, 'read', key: p.key, why: p.why),
+        CfPermission(p.group, 'read', scope: p.scope, key: p.key, why: p.why),
   ];
 
   /// Everything the DNS screens need, and nothing else.
   static const List<CfPermission> dnsAdmin = [
-    CfPermission('Zone', 'read', key: 'zone'),
-    CfPermission('DNS', 'edit', key: 'dns'),
-    CfPermission('Zone Settings', 'read', key: 'zone_settings'),
-    CfPermission('Account Settings', 'read', key: 'account_settings'),
+    CfPermission('Zone', 'read', scope: CfScope.zone, key: 'zone'),
+    CfPermission('DNS', 'edit', scope: CfScope.zone, key: 'dns'),
+    CfPermission(
+      'Zone Settings',
+      'read',
+      scope: CfScope.zone,
+      key: 'zone_settings',
+    ),
+    CfPermission(
+      'Account Settings',
+      'read',
+      scope: CfScope.account,
+      key: 'account_settings',
+    ),
   ];
 
   /// The subset the dashboard form has to be told about by hand.
@@ -167,7 +319,7 @@ class TokenTemplate {
 
   /// The checklist text, shaped so it can be pasted somewhere useful.
   static String manualChecklist(List<CfPermission> permissions) =>
-      manualIn(permissions).map((p) => '${p.group} — ${p.level}').join('\n');
+      manualIn(permissions).map((p) => p.line).join('\n');
 
   static List<Map<String, String>> _encode(List<CfPermission> permissions) {
     final out = <Map<String, String>>[];
@@ -225,13 +377,18 @@ class TokenTemplate {
 
     final out = <CfPermission>[];
     for (final label in missingLabels) {
-      final lower = label.toLowerCase();
+      final wanted = _normalize(label);
       final match = candidates.firstWhere(
-        (p) => lower.startsWith(p.group.toLowerCase()),
-        orElse: () => CfPermission(label, 'edit'),
+        (p) => wanted.startsWith(_normalize(p.group)),
+        orElse: () => CfPermission(label, 'edit', scope: null),
       );
       if (!out.any((p) => p.group == match.group)) out.add(match);
     }
     return out;
   }
+
+  /// Labels drop the dashboard's punctuation: the 403 for
+  /// "Access: Apps and Policies" names "Access Apps and Policies Read".
+  static String _normalize(String s) =>
+      s.toLowerCase().replaceAll(RegExp(r'[:,]'), '');
 }

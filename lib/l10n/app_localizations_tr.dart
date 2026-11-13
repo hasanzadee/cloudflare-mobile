@@ -951,7 +951,7 @@ class LTr extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare doğru izinler işaretlenmiş olarak açılır. Token\'ı oluşturun ve buraya yapıştırın.';
+      'Cloudflare izinlerin çoğu zaten işaretlenmiş olarak açılır. Aşağıda listelenenleri elle ekleyin, belirteci oluşturun ve buraya yapıştırın.';
 
   @override
   String get onboardPresetFull => 'Okuma + yazma';
