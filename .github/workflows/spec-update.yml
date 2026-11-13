@@ -47,8 +47,56 @@ jobs:
       - if: env.unchanged == 'false'
         run: dart run tool/openapi/generate.dart
 
+      # A spec change that breaks the app still opens the PR, as a draft that
+      # says what broke. Failing before the PR meant every run from mid-October
+      # on died here, red in a tab nobody watches, until someone went looking.
+      # The PR is also the only check it gets: a PR opened with GITHUB_TOKEN
+      # does not trigger the CI workflow.
       - if: env.unchanged == 'false'
+        id: analyze
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos 2>&1 | tee "$RUNNER_TEMP/analyze.txt"
+
+      - if: env.unchanged == 'false'
+        id: tests
+        continue-on-error: true
         run: flutter test
+
+      - if: env.unchanged == 'false'
+        name: Describe the result
+        id: describe
+        env:
+          ANALYZE: ${{ steps.analyze.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
+        run: |
+          {
+            echo 'body<<EOF'
+            echo 'Automated refresh of `spec/openapi.json` plus regenerated client.'
+            echo
+            echo 'Review the diff under `lib/api/generated/` — it shows precisely'
+            echo 'which allowlisted operations changed shape. `assets/spec/*.json`'
+            echo 'changes are expected on every upstream release and are not worth'
+            echo 'reading line by line.'
+            echo
+            echo "- analyzer: **$ANALYZE**"
+            echo "- tests: **$TESTS**"
+            if [ "$ANALYZE" != success ]; then
+              echo
+              echo 'The new spec breaks the app. Analyzer errors:'
+              echo
+              echo '```'
+              grep -E '^\s*error ' "$RUNNER_TEMP/analyze.txt" | head -40
+              echo '```'
+            fi
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          if [ "$ANALYZE" = success ] && [ "$TESTS" = success ]; then
+            echo 'draft=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'draft=true' >> "$GITHUB_OUTPUT"
+          fi
 
       - if: env.unchanged == 'false'
         uses: peter-evans/create-pull-request@v6
@@ -56,10 +104,11 @@ jobs:
           branch: chore/spec-update
           title: 'chore(spec): refresh the Cloudflare API description'
           commit-message: 'chore(spec): refresh the Cloudflare API description'
-          body: |
-            Automated refresh of `spec/openapi.json` plus regenerated client.
+          draft: ${{ steps.describe.outputs.draft }}
+          body: ${{ steps.describe.outputs.body }}
 
-            Review the diff under `lib/api/generated/` — it shows precisely
-            which allowlisted operations changed shape. `assets/spec/*.json`
-            changes are expected on every upstream release and are not worth
-            reading line by line.
+      # Still red when the spec broke something, so the run list says so too.
+      - if: env.unchanged == 'false' && steps.describe.outputs.draft == 'true'
+        run: |
+          echo "::error::The refreshed spec breaks the analyzer or the tests; see the draft PR."
+          exit 1

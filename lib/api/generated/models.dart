@@ -10,6 +10,7 @@ class Account {
   const Account({
     this.createdOn,
     this.id,
+    this.legacyFlags,
     this.managedBy,
     this.name,
     this.settings,
@@ -20,6 +21,7 @@ class Account {
   factory Account.fromJson(Map<String, Object?> json) => Account(
     createdOn: asString(json['created_on']),
     id: asString(json['id']),
+    legacyFlags: asModel(json['legacy_flags'], AccountLegacyFlags.fromJson),
     managedBy: asModel(json['managed_by'], AccountManagedBy.fromJson),
     name: asString(json['name']),
     settings: asModel(json['settings'], AccountSettings.fromJson),
@@ -33,10 +35,14 @@ class Account {
   /// Identifier
   final String? id;
 
+  /// Legacy account flags.
+  final AccountLegacyFlags? legacyFlags;
+
   /// Parent container details
   final AccountManagedBy? managedBy;
 
-  /// Account name
+  /// Account name. When creating or updating an account, the name is limited to
+  /// 65 UTF-8 bytes.
   final String? name;
 
   /// Account settings
@@ -53,6 +59,7 @@ class Account {
   static const Set<String> _knownKeys = {
     'created_on',
     'id',
+    'legacy_flags',
     'managed_by',
     'name',
     'settings',
@@ -63,6 +70,7 @@ class Account {
     ...extra,
     if (createdOn != null) 'created_on': createdOn!,
     if (id != null) 'id': id!,
+    if (legacyFlags != null) 'legacy_flags': legacyFlags!.toJson(),
     if (managedBy != null) 'managed_by': managedBy!.toJson(),
     if (name != null) 'name': name!,
     if (settings != null) 'settings': settings!.toJson(),
@@ -72,6 +80,7 @@ class Account {
   Account copyWith({
     String? createdOn,
     String? id,
+    AccountLegacyFlags? legacyFlags,
     AccountManagedBy? managedBy,
     String? name,
     AccountSettings? settings,
@@ -80,10 +89,109 @@ class Account {
   }) => Account(
     createdOn: createdOn ?? this.createdOn,
     id: id ?? this.id,
+    legacyFlags: legacyFlags ?? this.legacyFlags,
     managedBy: managedBy ?? this.managedBy,
     name: name ?? this.name,
     settings: settings ?? this.settings,
     type_: type_ ?? this.type_,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Legacy account flags.
+class AccountLegacyFlags {
+  const AccountLegacyFlags({
+    this.enterpriseZoneQuota,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory AccountLegacyFlags.fromJson(Map<String, Object?> json) =>
+      AccountLegacyFlags(
+        enterpriseZoneQuota: asModel(
+          json['enterprise_zone_quota'],
+          AccountLegacyFlagsEnterpriseZoneQuota.fromJson,
+        ),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Enterprise zone quota for standard and enterprise accounts. Accounts without
+  /// a quota have a maximum of 0.
+  final AccountLegacyFlagsEnterpriseZoneQuota? enterpriseZoneQuota;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'enterprise_zone_quota'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (enterpriseZoneQuota != null)
+      'enterprise_zone_quota': enterpriseZoneQuota!.toJson(),
+  };
+
+  AccountLegacyFlags copyWith({
+    AccountLegacyFlagsEnterpriseZoneQuota? enterpriseZoneQuota,
+    Map<String, Object?>? extra,
+  }) => AccountLegacyFlags(
+    enterpriseZoneQuota: enterpriseZoneQuota ?? this.enterpriseZoneQuota,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Enterprise zone quota for standard and enterprise accounts. Accounts without
+/// a quota have a maximum of 0.
+class AccountLegacyFlagsEnterpriseZoneQuota {
+  const AccountLegacyFlagsEnterpriseZoneQuota({
+    this.available,
+    this.current,
+    this.maximum,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory AccountLegacyFlagsEnterpriseZoneQuota.fromJson(
+    Map<String, Object?> json,
+  ) => AccountLegacyFlagsEnterpriseZoneQuota(
+    available: asInt(json['available']),
+    current: asInt(json['current']),
+    maximum: asInt(json['maximum']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Number of additional Enterprise zones available. Returns 0 if the quota is
+  /// not allocated or is exhausted.
+  final int? available;
+
+  /// Current number of Enterprise zones.
+  final int? current;
+
+  /// Maximum number of Enterprise zones allowed.
+  final int? maximum;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'available', 'current', 'maximum'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (available != null) 'available': available!,
+    if (current != null) 'current': current!,
+    if (maximum != null) 'maximum': maximum!,
+  };
+
+  AccountLegacyFlagsEnterpriseZoneQuota copyWith({
+    int? available,
+    int? current,
+    int? maximum,
+    Map<String, Object?>? extra,
+  }) => AccountLegacyFlagsEnterpriseZoneQuota(
+    available: available ?? this.available,
+    current: current ?? this.current,
+    maximum: maximum ?? this.maximum,
     extra: extra ?? this.extra,
   );
 }
@@ -93,6 +201,8 @@ class AccountManagedBy {
   const AccountManagedBy({
     this.parentOrgId,
     this.parentOrgName,
+    this.rootOrgId,
+    this.shouldDisplayParentOrgs,
     this.extra = const <String, Object?>{},
   });
 
@@ -100,6 +210,8 @@ class AccountManagedBy {
       AccountManagedBy(
         parentOrgId: asString(json['parent_org_id']),
         parentOrgName: asString(json['parent_org_name']),
+        rootOrgId: asString(json['root_org_id']),
+        shouldDisplayParentOrgs: asBool(json['should_display_parent_orgs']),
         extra: extraOf(json, _knownKeys),
       );
 
@@ -109,26 +221,45 @@ class AccountManagedBy {
   /// Name of the parent Organization, if one exists
   final String? parentOrgName;
 
+  /// ID of the root Organization, if one exists
+  final String? rootOrgId;
+
+  /// Indicates whether the parent Organization hierarchy should be displayed
+  final bool? shouldDisplayParentOrgs;
+
   /// Keys returned by Cloudflare that this spec snapshot does
   /// not describe. Preserved so an edit round-trip cannot
   /// silently drop them.
   final Map<String, Object?> extra;
 
-  static const Set<String> _knownKeys = {'parent_org_id', 'parent_org_name'};
+  static const Set<String> _knownKeys = {
+    'parent_org_id',
+    'parent_org_name',
+    'root_org_id',
+    'should_display_parent_orgs',
+  };
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
     if (parentOrgId != null) 'parent_org_id': parentOrgId!,
     if (parentOrgName != null) 'parent_org_name': parentOrgName!,
+    if (rootOrgId != null) 'root_org_id': rootOrgId!,
+    if (shouldDisplayParentOrgs != null)
+      'should_display_parent_orgs': shouldDisplayParentOrgs!,
   };
 
   AccountManagedBy copyWith({
     String? parentOrgId,
     String? parentOrgName,
+    String? rootOrgId,
+    bool? shouldDisplayParentOrgs,
     Map<String, Object?>? extra,
   }) => AccountManagedBy(
     parentOrgId: parentOrgId ?? this.parentOrgId,
     parentOrgName: parentOrgName ?? this.parentOrgName,
+    rootOrgId: rootOrgId ?? this.rootOrgId,
+    shouldDisplayParentOrgs:
+        shouldDisplayParentOrgs ?? this.shouldDisplayParentOrgs,
     extra: extra ?? this.extra,
   );
 }
@@ -322,6 +453,7 @@ class AppPolicyResponse {
     this.id,
     this.include,
     this.name,
+    this.policyResolutionAccountId,
     this.require,
     this.updatedAt,
     this.approvalGroups,
@@ -332,41 +464,43 @@ class AppPolicyResponse {
     this.purposeJustificationPrompt,
     this.purposeJustificationRequired,
     this.sessionDuration,
+    this.accountId,
     this.precedence,
     this.extra = const <String, Object?>{},
   });
 
-  factory AppPolicyResponse.fromJson(Map<String, Object?> json) =>
-      AppPolicyResponse(
-        createdAt: asString(json['created_at']),
-        decision: asString(json['decision']),
-        exclude: asModelList(json['exclude'], Rule2.fromJson),
-        id: asString(json['id']),
-        include: asModelList(json['include'], Rule2.fromJson),
-        name: asString(json['name']),
-        require: asModelList(json['require'], Rule2.fromJson),
-        updatedAt: asString(json['updated_at']),
-        approvalGroups: asModelList(
-          json['approval_groups'],
-          ApprovalGroup.fromJson,
-        ),
-        approvalRequired: asBool(json['approval_required']),
-        connectionRules: asModel(
-          json['connection_rules'],
-          ConnectionRules.fromJson,
-        ),
-        isolationRequired: asBool(json['isolation_required']),
-        mfaConfig: asModel(json['mfa_config'], MfaConfig.fromJson),
-        purposeJustificationPrompt: asString(
-          json['purpose_justification_prompt'],
-        ),
-        purposeJustificationRequired: asBool(
-          json['purpose_justification_required'],
-        ),
-        sessionDuration: asString(json['session_duration']),
-        precedence: asInt(json['precedence']),
-        extra: extraOf(json, _knownKeys),
-      );
+  factory AppPolicyResponse.fromJson(
+    Map<String, Object?> json,
+  ) => AppPolicyResponse(
+    createdAt: asString(json['created_at']),
+    decision: asString(json['decision']),
+    exclude: asModelList(json['exclude'], Rule2.fromJson),
+    id: asString(json['id']),
+    include: asModelList(json['include'], Rule2.fromJson),
+    name: asString(json['name']),
+    policyResolutionAccountId: asString(json['policy_resolution_account_id']),
+    require: asModelList(json['require'], Rule2.fromJson),
+    updatedAt: asString(json['updated_at']),
+    approvalGroups: asModelList(
+      json['approval_groups'],
+      ApprovalGroup.fromJson,
+    ),
+    approvalRequired: asBool(json['approval_required']),
+    connectionRules: asModel(
+      json['connection_rules'],
+      ConnectionRules.fromJson,
+    ),
+    isolationRequired: asBool(json['isolation_required']),
+    mfaConfig: asModel(json['mfa_config'], MfaConfig.fromJson),
+    purposeJustificationPrompt: asString(json['purpose_justification_prompt']),
+    purposeJustificationRequired: asBool(
+      json['purpose_justification_required'],
+    ),
+    sessionDuration: asString(json['session_duration']),
+    accountId: asString(json['account_id']),
+    precedence: asInt(json['precedence']),
+    extra: extraOf(json, _knownKeys),
+  );
 
   final String? createdAt;
 
@@ -388,6 +522,11 @@ class AppPolicyResponse {
 
   /// The name of the Access policy.
   final String? name;
+
+  /// The account ID used to resolve policy resources and identity for
+  /// cross-account WARP authentication. The account must be trusted by the
+  /// account that owns this policy.
+  final String? policyResolutionAccountId;
 
   /// Rules evaluated with an AND logical operator. To match the policy, a user
   /// must meet all of the Require rules.
@@ -424,6 +563,9 @@ class AppPolicyResponse {
   /// µs), ms, s, m, h.
   final String? sessionDuration;
 
+  /// Identifier.
+  final String? accountId;
+
   /// The order of execution for this policy. Must be unique for each policy
   /// within an app.
   final int? precedence;
@@ -440,6 +582,7 @@ class AppPolicyResponse {
     'id',
     'include',
     'name',
+    'policy_resolution_account_id',
     'require',
     'updated_at',
     'approval_groups',
@@ -450,6 +593,7 @@ class AppPolicyResponse {
     'purpose_justification_prompt',
     'purpose_justification_required',
     'session_duration',
+    'account_id',
     'precedence',
   };
 
@@ -461,6 +605,8 @@ class AppPolicyResponse {
     if (id != null) 'id': id!,
     if (include != null) 'include': include!.map((e) => e.toJson()).toList(),
     if (name != null) 'name': name!,
+    if (policyResolutionAccountId != null)
+      'policy_resolution_account_id': policyResolutionAccountId!,
     if (require != null) 'require': require!.map((e) => e.toJson()).toList(),
     if (updatedAt != null) 'updated_at': updatedAt!,
     if (approvalGroups != null)
@@ -474,6 +620,7 @@ class AppPolicyResponse {
     if (purposeJustificationRequired != null)
       'purpose_justification_required': purposeJustificationRequired!,
     if (sessionDuration != null) 'session_duration': sessionDuration!,
+    if (accountId != null) 'account_id': accountId!,
     if (precedence != null) 'precedence': precedence!,
   };
 
@@ -484,6 +631,7 @@ class AppPolicyResponse {
     String? id,
     List<Rule2>? include,
     String? name,
+    String? policyResolutionAccountId,
     List<Rule2>? require,
     String? updatedAt,
     List<ApprovalGroup>? approvalGroups,
@@ -494,6 +642,7 @@ class AppPolicyResponse {
     String? purposeJustificationPrompt,
     bool? purposeJustificationRequired,
     String? sessionDuration,
+    String? accountId,
     int? precedence,
     Map<String, Object?>? extra,
   }) => AppPolicyResponse(
@@ -503,6 +652,8 @@ class AppPolicyResponse {
     id: id ?? this.id,
     include: include ?? this.include,
     name: name ?? this.name,
+    policyResolutionAccountId:
+        policyResolutionAccountId ?? this.policyResolutionAccountId,
     require: require ?? this.require,
     updatedAt: updatedAt ?? this.updatedAt,
     approvalGroups: approvalGroups ?? this.approvalGroups,
@@ -515,6 +666,235 @@ class AppPolicyResponse {
     purposeJustificationRequired:
         purposeJustificationRequired ?? this.purposeJustificationRequired,
     sessionDuration: sessionDuration ?? this.sessionDuration,
+    accountId: accountId ?? this.accountId,
+    precedence: precedence ?? this.precedence,
+    extra: extra ?? this.extra,
+  );
+}
+
+class AppPolicyResult {
+  const AppPolicyResult({
+    this.createdAt,
+    this.decision,
+    this.exclude,
+    this.id,
+    this.include,
+    this.name,
+    this.policyResolutionAccountId,
+    this.require,
+    this.updatedAt,
+    this.approvalGroups,
+    this.approvalRequired,
+    this.connectionRules,
+    this.isolationRequired,
+    this.mfaConfig,
+    this.purposeJustificationPrompt,
+    this.purposeJustificationRequired,
+    this.sessionDuration,
+    this.accountId,
+    this.precedence,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory AppPolicyResult.fromJson(
+    Map<String, Object?> json,
+  ) => AppPolicyResult(
+    createdAt: asString(json['created_at']),
+    decision: asString(json['decision']),
+    exclude: asModelList(json['exclude'], Rule2.fromJson),
+    id: asString(json['id']),
+    include: asModelList(json['include'], Rule2.fromJson),
+    name: asString(json['name']),
+    policyResolutionAccountId: asString(json['policy_resolution_account_id']),
+    require: asModelList(json['require'], Rule2.fromJson),
+    updatedAt: asString(json['updated_at']),
+    approvalGroups: asModelList(
+      json['approval_groups'],
+      ApprovalGroup.fromJson,
+    ),
+    approvalRequired: asBool(json['approval_required']),
+    connectionRules: asModel(
+      json['connection_rules'],
+      ConnectionRulesInfra.fromJson,
+    ),
+    isolationRequired: asBool(json['isolation_required']),
+    mfaConfig: asModel(json['mfa_config'], InfraMfaConfig.fromJson),
+    purposeJustificationPrompt: asString(json['purpose_justification_prompt']),
+    purposeJustificationRequired: asBool(
+      json['purpose_justification_required'],
+    ),
+    sessionDuration: asString(json['session_duration']),
+    accountId: asString(json['account_id']),
+    precedence: asInt(json['precedence']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  final String? createdAt;
+
+  /// The action Access will take if a user matches this policy. Infrastructure
+  /// application policies can only use the Allow action. Allowed values: `allow`,
+  /// `deny`, `non_identity`, `bypass`.
+  final String? decision;
+
+  /// Rules evaluated with a NOT logical operator. To match the policy, a user
+  /// cannot meet any of the Exclude rules.
+  final List<Rule2>? exclude;
+
+  /// The UUID of the policy
+  final String? id;
+
+  /// Rules evaluated with an OR logical operator. A user needs to meet only one
+  /// of the Include rules.
+  final List<Rule2>? include;
+
+  /// The name of the Access policy.
+  final String? name;
+
+  /// The account ID used to resolve policy resources and identity for
+  /// cross-account WARP authentication. The account must be trusted by the
+  /// account that owns this policy.
+  final String? policyResolutionAccountId;
+
+  /// Rules evaluated with an AND logical operator. To match the policy, a user
+  /// must meet all of the Require rules.
+  final List<Rule2>? require;
+  final String? updatedAt;
+
+  /// Administrators who can approve a temporary authentication request.
+  final List<ApprovalGroup>? approvalGroups;
+
+  /// Requires the user to request access from an administrator at the start of
+  /// each session.
+  final bool? approvalRequired;
+
+  /// The rules that define how users may connect to the targets secured by your
+  /// application.
+  final ConnectionRulesInfra? connectionRules;
+
+  /// Require this application to be served in an isolated browser for users
+  /// matching this policy. 'Client Web Isolation' must be on for the account in
+  /// order to use this feature.
+  final bool? isolationRequired;
+
+  /// Configures multi-factor authentication (MFA) settings for infrastructure
+  /// applications.
+  final InfraMfaConfig? mfaConfig;
+
+  /// A custom message that will appear on the purpose justification screen.
+  final String? purposeJustificationPrompt;
+
+  /// Require users to enter a justification when they log in to the application.
+  final bool? purposeJustificationRequired;
+
+  /// The amount of time that tokens issued for the application will be valid.
+  /// Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or
+  /// µs), ms, s, m, h.
+  final String? sessionDuration;
+
+  /// Identifier.
+  final String? accountId;
+
+  /// The order of execution for this policy. Must be unique for each policy
+  /// within an app.
+  final int? precedence;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'created_at',
+    'decision',
+    'exclude',
+    'id',
+    'include',
+    'name',
+    'policy_resolution_account_id',
+    'require',
+    'updated_at',
+    'approval_groups',
+    'approval_required',
+    'connection_rules',
+    'isolation_required',
+    'mfa_config',
+    'purpose_justification_prompt',
+    'purpose_justification_required',
+    'session_duration',
+    'account_id',
+    'precedence',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (createdAt != null) 'created_at': createdAt!,
+    if (decision != null) 'decision': decision!,
+    if (exclude != null) 'exclude': exclude!.map((e) => e.toJson()).toList(),
+    if (id != null) 'id': id!,
+    if (include != null) 'include': include!.map((e) => e.toJson()).toList(),
+    if (name != null) 'name': name!,
+    if (policyResolutionAccountId != null)
+      'policy_resolution_account_id': policyResolutionAccountId!,
+    if (require != null) 'require': require!.map((e) => e.toJson()).toList(),
+    if (updatedAt != null) 'updated_at': updatedAt!,
+    if (approvalGroups != null)
+      'approval_groups': approvalGroups!.map((e) => e.toJson()).toList(),
+    if (approvalRequired != null) 'approval_required': approvalRequired!,
+    if (connectionRules != null) 'connection_rules': connectionRules!.toJson(),
+    if (isolationRequired != null) 'isolation_required': isolationRequired!,
+    if (mfaConfig != null) 'mfa_config': mfaConfig!.toJson(),
+    if (purposeJustificationPrompt != null)
+      'purpose_justification_prompt': purposeJustificationPrompt!,
+    if (purposeJustificationRequired != null)
+      'purpose_justification_required': purposeJustificationRequired!,
+    if (sessionDuration != null) 'session_duration': sessionDuration!,
+    if (accountId != null) 'account_id': accountId!,
+    if (precedence != null) 'precedence': precedence!,
+  };
+
+  AppPolicyResult copyWith({
+    String? createdAt,
+    String? decision,
+    List<Rule2>? exclude,
+    String? id,
+    List<Rule2>? include,
+    String? name,
+    String? policyResolutionAccountId,
+    List<Rule2>? require,
+    String? updatedAt,
+    List<ApprovalGroup>? approvalGroups,
+    bool? approvalRequired,
+    ConnectionRulesInfra? connectionRules,
+    bool? isolationRequired,
+    InfraMfaConfig? mfaConfig,
+    String? purposeJustificationPrompt,
+    bool? purposeJustificationRequired,
+    String? sessionDuration,
+    String? accountId,
+    int? precedence,
+    Map<String, Object?>? extra,
+  }) => AppPolicyResult(
+    createdAt: createdAt ?? this.createdAt,
+    decision: decision ?? this.decision,
+    exclude: exclude ?? this.exclude,
+    id: id ?? this.id,
+    include: include ?? this.include,
+    name: name ?? this.name,
+    policyResolutionAccountId:
+        policyResolutionAccountId ?? this.policyResolutionAccountId,
+    require: require ?? this.require,
+    updatedAt: updatedAt ?? this.updatedAt,
+    approvalGroups: approvalGroups ?? this.approvalGroups,
+    approvalRequired: approvalRequired ?? this.approvalRequired,
+    connectionRules: connectionRules ?? this.connectionRules,
+    isolationRequired: isolationRequired ?? this.isolationRequired,
+    mfaConfig: mfaConfig ?? this.mfaConfig,
+    purposeJustificationPrompt:
+        purposeJustificationPrompt ?? this.purposeJustificationPrompt,
+    purposeJustificationRequired:
+        purposeJustificationRequired ?? this.purposeJustificationRequired,
+    sessionDuration: sessionDuration ?? this.sessionDuration,
+    accountId: accountId ?? this.accountId,
     precedence: precedence ?? this.precedence,
     extra: extra ?? this.extra,
   );
@@ -526,9 +906,16 @@ class AppResponse {
     this.createdAt,
     this.id,
     this.updatedAt,
+    this.allowedIdps,
+    this.destinations,
+    this.domain,
+    this.name,
+    this.oauthConfiguration,
+    this.selfHostedDomains,
+    this.type_,
+    this.userPopulations,
     this.allowAuthenticateViaWarp,
     this.allowIframe,
-    this.allowedIdps,
     this.appLauncherVisible,
     this.autoRedirectToIdentity,
     this.corsHeaders,
@@ -536,26 +923,20 @@ class AppResponse {
     this.customDenyUrl,
     this.customNonIdentityDenyUrl,
     this.customPages,
-    this.destinations,
-    this.domain,
     this.eagerRedirectCookieSetting,
     this.enableBindingCookie,
     this.httpOnlyCookieAttribute,
     this.logoUrl,
     this.mfaConfig,
-    this.name,
-    this.oauthConfiguration,
     this.optionsPreflightBypass,
     this.pathCookieAttribute,
     this.readServiceTokensFromHeader,
     this.sameSiteCookieAttribute,
     this.scimConfig,
-    this.selfHostedDomains,
     this.serviceAuth401Redirect,
     this.sessionDuration,
     this.skipInterstitial,
     this.tags,
-    this.type_,
     this.useClientlessIsolationAppLauncherUrl,
     this.policies,
     this.saasApp,
@@ -574,9 +955,28 @@ class AppResponse {
     createdAt: json['created_at'],
     id: asString(json['id']),
     updatedAt: json['updated_at'],
+    allowedIdps: asPrimitiveList<String>(json['allowed_idps'], asString),
+    destinations: asModelList(
+      json['destinations'],
+      AppResponseDestinationsItem.fromJson,
+    ),
+    domain: asString(json['domain']),
+    name: asString(json['name']),
+    oauthConfiguration: asModel(
+      json['oauth_configuration'],
+      OauthConfiguration.fromJson,
+    ),
+    selfHostedDomains: asPrimitiveList<String>(
+      json['self_hosted_domains'],
+      asString,
+    ),
+    type_: json['type'],
+    userPopulations: asPrimitiveList<String>(
+      json['user_populations'],
+      asString,
+    ),
     allowAuthenticateViaWarp: asBool(json['allow_authenticate_via_warp']),
     allowIframe: asBool(json['allow_iframe']),
-    allowedIdps: asPrimitiveList<String>(json['allowed_idps'], asString),
     appLauncherVisible: asBool(json['app_launcher_visible']),
     autoRedirectToIdentity: asBool(json['auto_redirect_to_identity']),
     corsHeaders: asModel(json['cors_headers'], CorsHeaders.fromJson),
@@ -584,21 +984,11 @@ class AppResponse {
     customDenyUrl: asString(json['custom_deny_url']),
     customNonIdentityDenyUrl: asString(json['custom_non_identity_deny_url']),
     customPages: asPrimitiveList<String>(json['custom_pages'], asString),
-    destinations: asModelList(
-      json['destinations'],
-      AppResponseDestinationsItem.fromJson,
-    ),
-    domain: asString(json['domain']),
     eagerRedirectCookieSetting: asBool(json['eager_redirect_cookie_setting']),
     enableBindingCookie: asBool(json['enable_binding_cookie']),
     httpOnlyCookieAttribute: asBool(json['http_only_cookie_attribute']),
     logoUrl: asString(json['logo_url']),
     mfaConfig: asModel(json['mfa_config'], MfaConfig.fromJson),
-    name: asString(json['name']),
-    oauthConfiguration: asModel(
-      json['oauth_configuration'],
-      OauthConfiguration.fromJson,
-    ),
     optionsPreflightBypass: asBool(json['options_preflight_bypass']),
     pathCookieAttribute: asBool(json['path_cookie_attribute']),
     readServiceTokensFromHeader: asString(
@@ -606,15 +996,10 @@ class AppResponse {
     ),
     sameSiteCookieAttribute: asString(json['same_site_cookie_attribute']),
     scimConfig: asModel(json['scim_config'], ScimConfig.fromJson),
-    selfHostedDomains: asPrimitiveList<String>(
-      json['self_hosted_domains'],
-      asString,
-    ),
     serviceAuth401Redirect: asBool(json['service_auth_401_redirect']),
     sessionDuration: asString(json['session_duration']),
     skipInterstitial: asBool(json['skip_interstitial']),
     tags: asPrimitiveList<String>(json['tags'], asString),
-    type_: json['type'],
     useClientlessIsolationAppLauncherUrl: asBool(
       json['use_clientless_isolation_app_launcher_url'],
     ),
@@ -647,6 +1032,39 @@ class AppResponse {
   final String? id;
   final Object? updatedAt;
 
+  /// The identity providers your users can select when connecting to this
+  /// application. Defaults to all IdPs configured in your account.
+  final List<String>? allowedIdps;
+
+  /// List of destinations secured by Access. This supersedes
+  /// `self_hosted_domains` to allow for more flexibility in defining different
+  /// types of domains. If `destinations` are provided, then `self_hosted_domains`
+  /// will be ignored.
+  final List<AppResponseDestinationsItem>? destinations;
+
+  /// The primary hostname and path secured by Access. This domain will be
+  /// displayed if the app is visible in the App Launcher.
+  final String? domain;
+
+  /// The name of the application.
+  final String? name;
+
+  /// **Beta:** Optional configuration for managing an OAuth authorization flow
+  /// controlled by Access. When set, Access will act as the OAuth authorization
+  /// server for this application. Only compatible with OAuth clients that support
+  /// [RFC 8707](https://datatracker.ietf.org/doc/html/rfc8707) (Resource
+  /// Indicators for OAuth 2.0). This feature is currently in beta.
+  final OauthConfiguration? oauthConfiguration;
+
+  /// List of public domains that Access will secure. This field is deprecated in
+  /// favor of `destinations` and will be supported until **November 21, 2025.**
+  /// If `destinations` are provided, then `self_hosted_domains` will be ignored.
+  final List<String>? selfHostedDomains;
+  final Object? type_;
+
+  /// The single user population associated with this application.
+  final List<String>? userPopulations;
+
   /// When set to true, users can authenticate to this application using their
   /// WARP session. When set to false this application will always require direct
   /// IdP authentication. This setting always overrides the organization setting
@@ -655,10 +1073,6 @@ class AppResponse {
 
   /// Enables loading application content in an iFrame.
   final bool? allowIframe;
-
-  /// The identity providers your users can select when connecting to this
-  /// application. Defaults to all IdPs configured in your account.
-  final List<String>? allowedIdps;
 
   /// Displays the application in the App Launcher.
   final bool? appLauncherVisible;
@@ -683,16 +1097,6 @@ class AppResponse {
   /// The custom pages that will be displayed when applicable for this application
   final List<String>? customPages;
 
-  /// List of destinations secured by Access. This supersedes
-  /// `self_hosted_domains` to allow for more flexibility in defining different
-  /// types of domains. If `destinations` are provided, then `self_hosted_domains`
-  /// will be ignored.
-  final List<AppResponseDestinationsItem>? destinations;
-
-  /// The primary hostname and path secured by Access. This domain will be
-  /// displayed if the app is visible in the App Launcher.
-  final String? domain;
-
   /// Preemptively sets the Access session cookie on every hostname in a
   /// multi-hostname self-hosted application during the initial redirect chain,
   /// rather than setting it lazily on first visit. Defaults to true. Set to false
@@ -712,16 +1116,6 @@ class AppResponse {
 
   /// Configures multi-factor authentication (MFA) settings.
   final MfaConfig? mfaConfig;
-
-  /// The name of the application.
-  final String? name;
-
-  /// **Beta:** Optional configuration for managing an OAuth authorization flow
-  /// controlled by Access. When set, Access will act as the OAuth authorization
-  /// server for this application. Only compatible with OAuth clients that support
-  /// [RFC 8707](https://datatracker.ietf.org/doc/html/rfc8707) (Resource
-  /// Indicators for OAuth 2.0). This feature is currently in beta.
-  final OauthConfiguration? oauthConfiguration;
 
   /// Allows options preflight requests to bypass Access authentication and go
   /// directly to the origin. Cannot turn on if cors_headers is set.
@@ -748,18 +1142,13 @@ class AppResponse {
   /// currently in closed beta.
   final ScimConfig? scimConfig;
 
-  /// List of public domains that Access will secure. This field is deprecated in
-  /// favor of `destinations` and will be supported until **November 21, 2025.**
-  /// If `destinations` are provided, then `self_hosted_domains` will be ignored.
-  final List<String>? selfHostedDomains;
-
   /// Returns a 401 status code when the request is blocked by a Service Auth
   /// policy.
   final bool? serviceAuth401Redirect;
 
   /// The amount of time that tokens issued for this application will be valid.
   /// Must be in the format `300ms` or `2h45m`. Valid time units are: ns, us (or
-  /// µs), ms, s, m, h. Note: unsupported for infrastructure type applications.
+  /// µs), ms, s, m, h.
   final String? sessionDuration;
 
   /// Enables automatic authentication through cloudflared.
@@ -768,7 +1157,6 @@ class AppResponse {
   /// The tags you want assigned to an application. Tags are used to filter
   /// applications in the App Launcher dashboard.
   final List<String>? tags;
-  final Object? type_;
 
   /// Determines if users can access this application via a clientless browser
   /// isolation URL. This allows users to access private domains without
@@ -807,9 +1195,16 @@ class AppResponse {
     'created_at',
     'id',
     'updated_at',
+    'allowed_idps',
+    'destinations',
+    'domain',
+    'name',
+    'oauth_configuration',
+    'self_hosted_domains',
+    'type',
+    'user_populations',
     'allow_authenticate_via_warp',
     'allow_iframe',
-    'allowed_idps',
     'app_launcher_visible',
     'auto_redirect_to_identity',
     'cors_headers',
@@ -817,26 +1212,20 @@ class AppResponse {
     'custom_deny_url',
     'custom_non_identity_deny_url',
     'custom_pages',
-    'destinations',
-    'domain',
     'eager_redirect_cookie_setting',
     'enable_binding_cookie',
     'http_only_cookie_attribute',
     'logo_url',
     'mfa_config',
-    'name',
-    'oauth_configuration',
     'options_preflight_bypass',
     'path_cookie_attribute',
     'read_service_tokens_from_header',
     'same_site_cookie_attribute',
     'scim_config',
-    'self_hosted_domains',
     'service_auth_401_redirect',
     'session_duration',
     'skip_interstitial',
     'tags',
-    'type',
     'use_clientless_isolation_app_launcher_url',
     'policies',
     'saas_app',
@@ -855,10 +1244,19 @@ class AppResponse {
     if (createdAt != null) 'created_at': createdAt!,
     if (id != null) 'id': id!,
     if (updatedAt != null) 'updated_at': updatedAt!,
+    if (allowedIdps != null) 'allowed_idps': allowedIdps!,
+    if (destinations != null)
+      'destinations': destinations!.map((e) => e.toJson()).toList(),
+    if (domain != null) 'domain': domain!,
+    if (name != null) 'name': name!,
+    if (oauthConfiguration != null)
+      'oauth_configuration': oauthConfiguration!.toJson(),
+    if (selfHostedDomains != null) 'self_hosted_domains': selfHostedDomains!,
+    if (type_ != null) 'type': type_!,
+    if (userPopulations != null) 'user_populations': userPopulations!,
     if (allowAuthenticateViaWarp != null)
       'allow_authenticate_via_warp': allowAuthenticateViaWarp!,
     if (allowIframe != null) 'allow_iframe': allowIframe!,
-    if (allowedIdps != null) 'allowed_idps': allowedIdps!,
     if (appLauncherVisible != null) 'app_launcher_visible': appLauncherVisible!,
     if (autoRedirectToIdentity != null)
       'auto_redirect_to_identity': autoRedirectToIdentity!,
@@ -868,9 +1266,6 @@ class AppResponse {
     if (customNonIdentityDenyUrl != null)
       'custom_non_identity_deny_url': customNonIdentityDenyUrl!,
     if (customPages != null) 'custom_pages': customPages!,
-    if (destinations != null)
-      'destinations': destinations!.map((e) => e.toJson()).toList(),
-    if (domain != null) 'domain': domain!,
     if (eagerRedirectCookieSetting != null)
       'eager_redirect_cookie_setting': eagerRedirectCookieSetting!,
     if (enableBindingCookie != null)
@@ -879,9 +1274,6 @@ class AppResponse {
       'http_only_cookie_attribute': httpOnlyCookieAttribute!,
     if (logoUrl != null) 'logo_url': logoUrl!,
     if (mfaConfig != null) 'mfa_config': mfaConfig!.toJson(),
-    if (name != null) 'name': name!,
-    if (oauthConfiguration != null)
-      'oauth_configuration': oauthConfiguration!.toJson(),
     if (optionsPreflightBypass != null)
       'options_preflight_bypass': optionsPreflightBypass!,
     if (pathCookieAttribute != null)
@@ -891,13 +1283,11 @@ class AppResponse {
     if (sameSiteCookieAttribute != null)
       'same_site_cookie_attribute': sameSiteCookieAttribute!,
     if (scimConfig != null) 'scim_config': scimConfig!.toJson(),
-    if (selfHostedDomains != null) 'self_hosted_domains': selfHostedDomains!,
     if (serviceAuth401Redirect != null)
       'service_auth_401_redirect': serviceAuth401Redirect!,
     if (sessionDuration != null) 'session_duration': sessionDuration!,
     if (skipInterstitial != null) 'skip_interstitial': skipInterstitial!,
     if (tags != null) 'tags': tags!,
-    if (type_ != null) 'type': type_!,
     if (useClientlessIsolationAppLauncherUrl != null)
       'use_clientless_isolation_app_launcher_url':
           useClientlessIsolationAppLauncherUrl!,
@@ -922,9 +1312,16 @@ class AppResponse {
     Object? createdAt,
     String? id,
     Object? updatedAt,
+    List<String>? allowedIdps,
+    List<AppResponseDestinationsItem>? destinations,
+    String? domain,
+    String? name,
+    OauthConfiguration? oauthConfiguration,
+    List<String>? selfHostedDomains,
+    Object? type_,
+    List<String>? userPopulations,
     bool? allowAuthenticateViaWarp,
     bool? allowIframe,
-    List<String>? allowedIdps,
     bool? appLauncherVisible,
     bool? autoRedirectToIdentity,
     CorsHeaders? corsHeaders,
@@ -932,26 +1329,20 @@ class AppResponse {
     String? customDenyUrl,
     String? customNonIdentityDenyUrl,
     List<String>? customPages,
-    List<AppResponseDestinationsItem>? destinations,
-    String? domain,
     bool? eagerRedirectCookieSetting,
     bool? enableBindingCookie,
     bool? httpOnlyCookieAttribute,
     String? logoUrl,
     MfaConfig? mfaConfig,
-    String? name,
-    OauthConfiguration? oauthConfiguration,
     bool? optionsPreflightBypass,
     bool? pathCookieAttribute,
     String? readServiceTokensFromHeader,
     String? sameSiteCookieAttribute,
     ScimConfig? scimConfig,
-    List<String>? selfHostedDomains,
     bool? serviceAuth401Redirect,
     String? sessionDuration,
     bool? skipInterstitial,
     List<String>? tags,
-    Object? type_,
     bool? useClientlessIsolationAppLauncherUrl,
     List<AppPolicyResponse>? policies,
     AppResponseSaasApp? saasApp,
@@ -968,10 +1359,17 @@ class AppResponse {
     createdAt: createdAt ?? this.createdAt,
     id: id ?? this.id,
     updatedAt: updatedAt ?? this.updatedAt,
+    allowedIdps: allowedIdps ?? this.allowedIdps,
+    destinations: destinations ?? this.destinations,
+    domain: domain ?? this.domain,
+    name: name ?? this.name,
+    oauthConfiguration: oauthConfiguration ?? this.oauthConfiguration,
+    selfHostedDomains: selfHostedDomains ?? this.selfHostedDomains,
+    type_: type_ ?? this.type_,
+    userPopulations: userPopulations ?? this.userPopulations,
     allowAuthenticateViaWarp:
         allowAuthenticateViaWarp ?? this.allowAuthenticateViaWarp,
     allowIframe: allowIframe ?? this.allowIframe,
-    allowedIdps: allowedIdps ?? this.allowedIdps,
     appLauncherVisible: appLauncherVisible ?? this.appLauncherVisible,
     autoRedirectToIdentity:
         autoRedirectToIdentity ?? this.autoRedirectToIdentity,
@@ -981,8 +1379,6 @@ class AppResponse {
     customNonIdentityDenyUrl:
         customNonIdentityDenyUrl ?? this.customNonIdentityDenyUrl,
     customPages: customPages ?? this.customPages,
-    destinations: destinations ?? this.destinations,
-    domain: domain ?? this.domain,
     eagerRedirectCookieSetting:
         eagerRedirectCookieSetting ?? this.eagerRedirectCookieSetting,
     enableBindingCookie: enableBindingCookie ?? this.enableBindingCookie,
@@ -990,8 +1386,6 @@ class AppResponse {
         httpOnlyCookieAttribute ?? this.httpOnlyCookieAttribute,
     logoUrl: logoUrl ?? this.logoUrl,
     mfaConfig: mfaConfig ?? this.mfaConfig,
-    name: name ?? this.name,
-    oauthConfiguration: oauthConfiguration ?? this.oauthConfiguration,
     optionsPreflightBypass:
         optionsPreflightBypass ?? this.optionsPreflightBypass,
     pathCookieAttribute: pathCookieAttribute ?? this.pathCookieAttribute,
@@ -1000,13 +1394,11 @@ class AppResponse {
     sameSiteCookieAttribute:
         sameSiteCookieAttribute ?? this.sameSiteCookieAttribute,
     scimConfig: scimConfig ?? this.scimConfig,
-    selfHostedDomains: selfHostedDomains ?? this.selfHostedDomains,
     serviceAuth401Redirect:
         serviceAuth401Redirect ?? this.serviceAuth401Redirect,
     sessionDuration: sessionDuration ?? this.sessionDuration,
     skipInterstitial: skipInterstitial ?? this.skipInterstitial,
     tags: tags ?? this.tags,
-    type_: type_ ?? this.type_,
     useClientlessIsolationAppLauncherUrl:
         useClientlessIsolationAppLauncherUrl ??
         this.useClientlessIsolationAppLauncherUrl,
@@ -1026,6 +1418,7 @@ class AppResponse {
 
 class AppResponseDestinationsItem {
   const AppResponseDestinationsItem({
+    this.overrides,
     this.type_,
     this.uri,
     this.cidr,
@@ -1040,6 +1433,10 @@ class AppResponseDestinationsItem {
 
   factory AppResponseDestinationsItem.fromJson(Map<String, Object?> json) =>
       AppResponseDestinationsItem(
+        overrides: asModelList(
+          json['overrides'],
+          AppResponseDestinationsItemOverridesItem.fromJson,
+        ),
         type_: asString(json['type']),
         uri: asString(json['uri']),
         cidr: asString(json['cidr']),
@@ -1051,6 +1448,11 @@ class AppResponseDestinationsItem {
         workerId: asString(json['worker_id']),
         extra: extraOf(json, _knownKeys),
       );
+
+  /// Rules that override how Access handles requests to this destination. Each
+  /// rule can make a matching path public, bypassing Access authentication.
+  /// Overrides are supported for public destinations and Worker destinations.
+  final List<AppResponseDestinationsItemOverridesItem>? overrides;
 
   /// Allowed values: `all_preview_workers`.
   final String? type_;
@@ -1091,6 +1493,7 @@ class AppResponseDestinationsItem {
   final Map<String, Object?> extra;
 
   static const Set<String> _knownKeys = {
+    'overrides',
     'type',
     'uri',
     'cidr',
@@ -1104,6 +1507,8 @@ class AppResponseDestinationsItem {
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
+    if (overrides != null)
+      'overrides': overrides!.map((e) => e.toJson()).toList(),
     if (type_ != null) 'type': type_!,
     if (uri != null) 'uri': uri!,
     if (cidr != null) 'cidr': cidr!,
@@ -1116,6 +1521,7 @@ class AppResponseDestinationsItem {
   };
 
   AppResponseDestinationsItem copyWith({
+    List<AppResponseDestinationsItemOverridesItem>? overrides,
     String? type_,
     String? uri,
     String? cidr,
@@ -1127,6 +1533,7 @@ class AppResponseDestinationsItem {
     String? workerId,
     Map<String, Object?>? extra,
   }) => AppResponseDestinationsItem(
+    overrides: overrides ?? this.overrides,
     type_: type_ ?? this.type_,
     uri: uri ?? this.uri,
     cidr: cidr ?? this.cidr,
@@ -1136,6 +1543,54 @@ class AppResponseDestinationsItem {
     vnetId: vnetId ?? this.vnetId,
     mcpServerId: mcpServerId ?? this.mcpServerId,
     workerId: workerId ?? this.workerId,
+    extra: extra ?? this.extra,
+  );
+}
+
+class AppResponseDestinationsItemOverridesItem {
+  const AppResponseDestinationsItemOverridesItem({
+    this.behavior,
+    this.pathPattern,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory AppResponseDestinationsItemOverridesItem.fromJson(
+    Map<String, Object?> json,
+  ) => AppResponseDestinationsItemOverridesItem(
+    behavior: asString(json['behavior']),
+    pathPattern: asString(json['path_pattern']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// The behavior to apply to matching requests. Allowed values: `public`.
+  final String? behavior;
+
+  /// The request path pattern to match. Wildcards (`*`) are supported, but each
+  /// path segment may have at most one wildcard. Unlike the `uri` in public
+  /// destinations, override path patterns do not implicitly cover subpaths; to do
+  /// that, use a wildcard.
+  final String? pathPattern;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'behavior', 'path_pattern'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (behavior != null) 'behavior': behavior!,
+    if (pathPattern != null) 'path_pattern': pathPattern!,
+  };
+
+  AppResponseDestinationsItemOverridesItem copyWith({
+    String? behavior,
+    String? pathPattern,
+    Map<String, Object?>? extra,
+  }) => AppResponseDestinationsItemOverridesItem(
+    behavior: behavior ?? this.behavior,
+    pathPattern: pathPattern ?? this.pathPattern,
     extra: extra ?? this.extra,
   );
 }
@@ -1982,7 +2437,7 @@ class Bucket {
   final String? creationDate;
 
   /// Jurisdiction where objects in this bucket are guaranteed to be stored.
-  /// Allowed values: `default`, `eu`, `fedramp`.
+  /// Allowed values: `default`, `eu`, `us`, `fedramp`, `fedramp-high`.
   final String? jurisdiction;
 
   /// Location of the bucket. Allowed values: `apac`, `eeur`, `enam`, `weur`,
@@ -2237,7 +2692,7 @@ class CertificatePack {
   /// empty.
   final List<String>? hosts;
 
-  /// Identifier.
+  /// The unique identifier for a certificate_pack.
   final String? id;
 
   /// Identifier of the primary certificate in a pack.
@@ -2805,6 +3260,42 @@ class ConnectionRules {
   }) => ConnectionRules(rdp: rdp ?? this.rdp, extra: extra ?? this.extra);
 }
 
+/// The rules that define how users may connect to the targets secured by your
+/// application.
+class ConnectionRulesInfra {
+  const ConnectionRulesInfra({
+    this.ssh,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ConnectionRulesInfra.fromJson(Map<String, Object?> json) =>
+      ConnectionRulesInfra(
+        ssh: asModel(json['ssh'], ConnectionRulesSsh.fromJson),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The SSH-specific rules that define how users may connect to the targets
+  /// secured by your application.
+  final ConnectionRulesSsh? ssh;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'ssh'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (ssh != null) 'ssh': ssh!.toJson(),
+  };
+
+  ConnectionRulesInfra copyWith({
+    ConnectionRulesSsh? ssh,
+    Map<String, Object?>? extra,
+  }) => ConnectionRulesInfra(ssh: ssh ?? this.ssh, extra: extra ?? this.extra);
+}
+
 /// The RDP-specific rules that define clipboard behavior for RDP connections.
 class ConnectionRulesRdp {
   const ConnectionRulesRdp({
@@ -2865,6 +3356,52 @@ class ConnectionRulesRdp {
     allowedClipboardRemoteToLocalFormats:
         allowedClipboardRemoteToLocalFormats ??
         this.allowedClipboardRemoteToLocalFormats,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// The SSH-specific rules that define how users may connect to the targets
+/// secured by your application.
+class ConnectionRulesSsh {
+  const ConnectionRulesSsh({
+    this.allowEmailAlias,
+    this.usernames,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ConnectionRulesSsh.fromJson(Map<String, Object?> json) =>
+      ConnectionRulesSsh(
+        allowEmailAlias: asBool(json['allow_email_alias']),
+        usernames: asPrimitiveList<String>(json['usernames'], asString),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Enables using Identity Provider email alias as SSH username.
+  final bool? allowEmailAlias;
+
+  /// Contains the Unix usernames that may be used when connecting over SSH.
+  final List<String>? usernames;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'allow_email_alias', 'usernames'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (allowEmailAlias != null) 'allow_email_alias': allowEmailAlias!,
+    if (usernames != null) 'usernames': usernames!,
+  };
+
+  ConnectionRulesSsh copyWith({
+    bool? allowEmailAlias,
+    List<String>? usernames,
+    Map<String, Object?>? extra,
+  }) => ConnectionRulesSsh(
+    allowEmailAlias: allowEmailAlias ?? this.allowEmailAlias,
+    usernames: usernames ?? this.usernames,
     extra: extra ?? this.extra,
   );
 }
@@ -3045,13 +3582,13 @@ class CreateZoneRulesetRuleBody {
 
   factory CreateZoneRulesetRuleBody.fromJson(Map<String, Object?> json) =>
       CreateZoneRulesetRuleBody(
-        action: json['action'],
+        action: asString(json['action']),
         actionParameters: asModel(
           json['action_parameters'],
           CreateZoneRulesetRuleBodyActionParameters.fromJson,
         ),
         categories: asPrimitiveList<String>(json['categories'], asString),
-        description: json['description'],
+        description: asString(json['description']),
         enabled: json['enabled'],
         exposedCredentialCheck: asModel(
           json['exposed_credential_check'],
@@ -3072,12 +3609,12 @@ class CreateZoneRulesetRuleBody {
       );
 
   /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final CreateZoneRulesetRuleBodyActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
+  final String? description;
   final Object? enabled;
 
   /// Configuration for exposed credential checking.
@@ -3148,10 +3685,10 @@ class CreateZoneRulesetRuleBody {
   };
 
   CreateZoneRulesetRuleBody copyWith({
-    Object? action,
+    String? action,
     CreateZoneRulesetRuleBodyActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
+    String? description,
     Object? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
@@ -3307,8 +3844,6 @@ class CreateZoneRulesetRuleResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -3324,8 +3859,9 @@ class CreateZoneRulesetRuleResult {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -3444,7 +3980,7 @@ class CustomHostname {
   /// The custom hostname that will point to your hostname via CNAME.
   final String? hostname;
 
-  /// Identifier.
+  /// Custom hostname identifier tag.
   final String? id;
 
   /// This is a record which can be placed to activate a hostname.
@@ -3558,7 +4094,7 @@ class DatabaseResponse {
 
   /// Specify the location to restrict the D1 database to run and store data. If
   /// this option is present, the location hint is ignored. Allowed values: `eu`,
-  /// `fedramp`.
+  /// `fedramp`, `us`.
   final String? jurisdiction;
 
   /// D1 database name.
@@ -3639,8 +4175,6 @@ class DeleteZoneRulesetRuleResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -3656,8 +4190,9 @@ class DeleteZoneRulesetRuleResult {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -3784,7 +4319,7 @@ class Deployment {
   /// Id of the deployment.
   final String? id;
 
-  /// If the deployment has been skipped.
+  /// Whether the deployment was skipped.
   final bool? isSkipped;
 
   /// The status of the deployment.
@@ -3796,7 +4331,8 @@ class Deployment {
   /// Id of the project.
   final String? projectId;
 
-  /// Name of the project.
+  /// Name of the Pages project. Must begin with a lowercase letter or digit and
+  /// contain only lowercase letters, digits, and hyphens.
   final String? projectName;
 
   /// Short Id (8 character) of the deployment.
@@ -3804,7 +4340,8 @@ class Deployment {
 
   /// Why the deployment was skipped. Allowed values: `commit_message`,
   /// `preview_deployments_disabled`, `production_deployments_disabled`,
-  /// `path_config`, `branch_config`, `pages_to_workers_conversion`.
+  /// `path_config`, `branch_config`, `pages_to_workers_conversion`,
+  /// `superseded_queued_build`.
   final String? skipReason;
 
   /// Configs for the project source control.
@@ -3907,6 +4444,328 @@ class Deployment {
     stages: stages ?? this.stages,
     url: url ?? this.url,
     usesFunctions: usesFunctions ?? this.usesFunctions,
+    extra: extra ?? this.extra,
+  );
+}
+
+class DeploymentConfigValues {
+  const DeploymentConfigValues({
+    this.aiBindings,
+    this.alwaysUseLatestCompatibilityDate,
+    this.analyticsEngineDatasets,
+    this.browsers,
+    this.buildImageMajorVersion,
+    this.compatibilityDate,
+    this.compatibilityFlags,
+    this.d1Databases,
+    this.durableObjectNamespaces,
+    this.envVars,
+    this.failOpen,
+    this.hyperdriveBindings,
+    this.kvNamespaces,
+    this.limits,
+    this.mtlsCertificates,
+    this.placement,
+    this.queueProducers,
+    this.r2Buckets,
+    this.services,
+    this.usageModel,
+    this.vectorizeBindings,
+    this.wranglerConfigHash,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory DeploymentConfigValues.fromJson(Map<String, Object?> json) =>
+      DeploymentConfigValues(
+        aiBindings: asMap(json['ai_bindings']),
+        alwaysUseLatestCompatibilityDate: asBool(
+          json['always_use_latest_compatibility_date'],
+        ),
+        analyticsEngineDatasets: asMap(json['analytics_engine_datasets']),
+        browsers: asMap(json['browsers']),
+        buildImageMajorVersion: asInt(json['build_image_major_version']),
+        compatibilityDate: asString(json['compatibility_date']),
+        compatibilityFlags: asPrimitiveList<String>(
+          json['compatibility_flags'],
+          asString,
+        ),
+        d1Databases: asMap(json['d1_databases']),
+        durableObjectNamespaces: asMap(json['durable_object_namespaces']),
+        envVars: asMap(json['env_vars']),
+        failOpen: asBool(json['fail_open']),
+        hyperdriveBindings: asMap(json['hyperdrive_bindings']),
+        kvNamespaces: asMap(json['kv_namespaces']),
+        limits: asModel(json['limits'], DeploymentConfigValuesLimits.fromJson),
+        mtlsCertificates: asMap(json['mtls_certificates']),
+        placement: asModel(
+          json['placement'],
+          DeploymentConfigValuesPlacement.fromJson,
+        ),
+        queueProducers: asMap(json['queue_producers']),
+        r2Buckets: asMap(json['r2_buckets']),
+        services: asMap(json['services']),
+        usageModel: asString(json['usage_model']),
+        vectorizeBindings: asMap(json['vectorize_bindings']),
+        wranglerConfigHash: asString(json['wrangler_config_hash']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Constellation bindings used for Pages Functions.
+  final Map<String, Object?>? aiBindings;
+
+  /// Whether to always use the latest compatibility date for Pages Functions.
+  final bool? alwaysUseLatestCompatibilityDate;
+
+  /// Analytics Engine bindings used for Pages Functions.
+  final Map<String, Object?>? analyticsEngineDatasets;
+
+  /// Browser bindings used for Pages Functions.
+  final Map<String, Object?>? browsers;
+
+  /// The major version of the build image to use for Pages Functions. Version 1
+  /// is retired and its projects are moved to version 3. Once a project's builds
+  /// have been moved, this is the version the builds run on and
+  /// `build_image_auto_upgrade` is set on the project.
+  final int? buildImageMajorVersion;
+
+  /// Compatibility date used for Pages Functions.
+  final String? compatibilityDate;
+
+  /// Compatibility flags used for Pages Functions.
+  final List<String>? compatibilityFlags;
+
+  /// D1 databases used for Pages Functions.
+  final Map<String, Object?>? d1Databases;
+
+  /// Durable Object namespaces used for Pages Functions.
+  final Map<String, Object?>? durableObjectNamespaces;
+
+  /// Environment variables used for builds and Pages Functions.
+  final Map<String, Object?>? envVars;
+
+  /// Whether to fail open when the deployment config cannot be applied.
+  final bool? failOpen;
+
+  /// Hyperdrive bindings used for Pages Functions.
+  final Map<String, Object?>? hyperdriveBindings;
+
+  /// KV namespaces used for Pages Functions.
+  final Map<String, Object?>? kvNamespaces;
+
+  /// Limits for Pages Functions.
+  final DeploymentConfigValuesLimits? limits;
+
+  /// mTLS bindings used for Pages Functions.
+  final Map<String, Object?>? mtlsCertificates;
+
+  /// Placement setting used for Pages Functions.
+  final DeploymentConfigValuesPlacement? placement;
+
+  /// Queue Producer bindings used for Pages Functions.
+  final Map<String, Object?>? queueProducers;
+
+  /// R2 buckets used for Pages Functions.
+  final Map<String, Object?>? r2Buckets;
+
+  /// Services used for Pages Functions.
+  final Map<String, Object?>? services;
+
+  /// The usage model for Pages Functions. Allowed values: `standard`, `bundled`,
+  /// `unbound`.
+  final String? usageModel;
+
+  /// Vectorize bindings used for Pages Functions.
+  final Map<String, Object?>? vectorizeBindings;
+
+  /// Hash of the Wrangler configuration used for the deployment.
+  final String? wranglerConfigHash;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'ai_bindings',
+    'always_use_latest_compatibility_date',
+    'analytics_engine_datasets',
+    'browsers',
+    'build_image_major_version',
+    'compatibility_date',
+    'compatibility_flags',
+    'd1_databases',
+    'durable_object_namespaces',
+    'env_vars',
+    'fail_open',
+    'hyperdrive_bindings',
+    'kv_namespaces',
+    'limits',
+    'mtls_certificates',
+    'placement',
+    'queue_producers',
+    'r2_buckets',
+    'services',
+    'usage_model',
+    'vectorize_bindings',
+    'wrangler_config_hash',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (aiBindings != null) 'ai_bindings': aiBindings!,
+    if (alwaysUseLatestCompatibilityDate != null)
+      'always_use_latest_compatibility_date': alwaysUseLatestCompatibilityDate!,
+    if (analyticsEngineDatasets != null)
+      'analytics_engine_datasets': analyticsEngineDatasets!,
+    if (browsers != null) 'browsers': browsers!,
+    if (buildImageMajorVersion != null)
+      'build_image_major_version': buildImageMajorVersion!,
+    if (compatibilityDate != null) 'compatibility_date': compatibilityDate!,
+    if (compatibilityFlags != null) 'compatibility_flags': compatibilityFlags!,
+    if (d1Databases != null) 'd1_databases': d1Databases!,
+    if (durableObjectNamespaces != null)
+      'durable_object_namespaces': durableObjectNamespaces!,
+    if (envVars != null) 'env_vars': envVars!,
+    if (failOpen != null) 'fail_open': failOpen!,
+    if (hyperdriveBindings != null) 'hyperdrive_bindings': hyperdriveBindings!,
+    if (kvNamespaces != null) 'kv_namespaces': kvNamespaces!,
+    if (limits != null) 'limits': limits!.toJson(),
+    if (mtlsCertificates != null) 'mtls_certificates': mtlsCertificates!,
+    if (placement != null) 'placement': placement!.toJson(),
+    if (queueProducers != null) 'queue_producers': queueProducers!,
+    if (r2Buckets != null) 'r2_buckets': r2Buckets!,
+    if (services != null) 'services': services!,
+    if (usageModel != null) 'usage_model': usageModel!,
+    if (vectorizeBindings != null) 'vectorize_bindings': vectorizeBindings!,
+    if (wranglerConfigHash != null) 'wrangler_config_hash': wranglerConfigHash!,
+  };
+
+  DeploymentConfigValues copyWith({
+    Map<String, Object?>? aiBindings,
+    bool? alwaysUseLatestCompatibilityDate,
+    Map<String, Object?>? analyticsEngineDatasets,
+    Map<String, Object?>? browsers,
+    int? buildImageMajorVersion,
+    String? compatibilityDate,
+    List<String>? compatibilityFlags,
+    Map<String, Object?>? d1Databases,
+    Map<String, Object?>? durableObjectNamespaces,
+    Map<String, Object?>? envVars,
+    bool? failOpen,
+    Map<String, Object?>? hyperdriveBindings,
+    Map<String, Object?>? kvNamespaces,
+    DeploymentConfigValuesLimits? limits,
+    Map<String, Object?>? mtlsCertificates,
+    DeploymentConfigValuesPlacement? placement,
+    Map<String, Object?>? queueProducers,
+    Map<String, Object?>? r2Buckets,
+    Map<String, Object?>? services,
+    String? usageModel,
+    Map<String, Object?>? vectorizeBindings,
+    String? wranglerConfigHash,
+    Map<String, Object?>? extra,
+  }) => DeploymentConfigValues(
+    aiBindings: aiBindings ?? this.aiBindings,
+    alwaysUseLatestCompatibilityDate:
+        alwaysUseLatestCompatibilityDate ??
+        this.alwaysUseLatestCompatibilityDate,
+    analyticsEngineDatasets:
+        analyticsEngineDatasets ?? this.analyticsEngineDatasets,
+    browsers: browsers ?? this.browsers,
+    buildImageMajorVersion:
+        buildImageMajorVersion ?? this.buildImageMajorVersion,
+    compatibilityDate: compatibilityDate ?? this.compatibilityDate,
+    compatibilityFlags: compatibilityFlags ?? this.compatibilityFlags,
+    d1Databases: d1Databases ?? this.d1Databases,
+    durableObjectNamespaces:
+        durableObjectNamespaces ?? this.durableObjectNamespaces,
+    envVars: envVars ?? this.envVars,
+    failOpen: failOpen ?? this.failOpen,
+    hyperdriveBindings: hyperdriveBindings ?? this.hyperdriveBindings,
+    kvNamespaces: kvNamespaces ?? this.kvNamespaces,
+    limits: limits ?? this.limits,
+    mtlsCertificates: mtlsCertificates ?? this.mtlsCertificates,
+    placement: placement ?? this.placement,
+    queueProducers: queueProducers ?? this.queueProducers,
+    r2Buckets: r2Buckets ?? this.r2Buckets,
+    services: services ?? this.services,
+    usageModel: usageModel ?? this.usageModel,
+    vectorizeBindings: vectorizeBindings ?? this.vectorizeBindings,
+    wranglerConfigHash: wranglerConfigHash ?? this.wranglerConfigHash,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Limits for Pages Functions.
+class DeploymentConfigValuesLimits {
+  const DeploymentConfigValuesLimits({
+    this.cpuMs,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory DeploymentConfigValuesLimits.fromJson(Map<String, Object?> json) =>
+      DeploymentConfigValuesLimits(
+        cpuMs: asInt(json['cpu_ms']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// CPU time limit in milliseconds.
+  final int? cpuMs;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'cpu_ms'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (cpuMs != null) 'cpu_ms': cpuMs!,
+  };
+
+  DeploymentConfigValuesLimits copyWith({
+    int? cpuMs,
+    Map<String, Object?>? extra,
+  }) => DeploymentConfigValuesLimits(
+    cpuMs: cpuMs ?? this.cpuMs,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Placement setting used for Pages Functions.
+class DeploymentConfigValuesPlacement {
+  const DeploymentConfigValuesPlacement({
+    this.mode,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory DeploymentConfigValuesPlacement.fromJson(Map<String, Object?> json) =>
+      DeploymentConfigValuesPlacement(
+        mode: asString(json['mode']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Placement mode.
+  final String? mode;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'mode'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (mode != null) 'mode': mode!,
+  };
+
+  DeploymentConfigValuesPlacement copyWith({
+    String? mode,
+    Map<String, Object?>? extra,
+  }) => DeploymentConfigValuesPlacement(
+    mode: mode ?? this.mode,
     extra: extra ?? this.extra,
   );
 }
@@ -5348,6 +6207,142 @@ class ExportsReconciliationRename {
   );
 }
 
+/// Summary of what the declarative exports reconciliation did on this upload.
+/// Present only on uploads that included an `exports` block. Reconciliation
+/// acts on Durable Object entries; `type: worker` entries in the same map do
+/// not participate. Every array is always present (possibly empty) so clients
+/// can iterate unconditionally. Clients should surface `warnings` prominently,
+/// render `info` at lower visibility, and use `removable_entries` as the "safe
+/// to delete from your config" hint.
+class ExportsReconciliationResult {
+  const ExportsReconciliationResult({
+    this.created,
+    this.deleted,
+    this.info,
+    this.removableEntries,
+    this.renamed,
+    this.transferPending,
+    this.transferred,
+    this.updated,
+    this.warnings,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ExportsReconciliationResult.fromJson(Map<String, Object?> json) =>
+      ExportsReconciliationResult(
+        created: asPrimitiveList<String>(json['created'], asString),
+        deleted: asPrimitiveList<String>(json['deleted'], asString),
+        info: asModelList(json['info'], ExportsReconciliationInfo.fromJson),
+        removableEntries: asPrimitiveList<String>(
+          json['removable_entries'],
+          asString,
+        ),
+        renamed: asModelList(
+          json['renamed'],
+          ExportsReconciliationRename.fromJson,
+        ),
+        transferPending: asModelList(
+          json['transfer_pending'],
+          ExportsReconciliationTransferPending.fromJson,
+        ),
+        transferred: asModelList(
+          json['transferred'],
+          ExportsReconciliationTransfer.fromJson,
+        ),
+        updated: asPrimitiveList<String>(json['updated'], asString),
+        warnings: asModelList(
+          json['warnings'],
+          ExportsReconciliationWarning.fromJson,
+        ),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Class names for which a new namespace was provisioned.
+  final List<String>? created;
+
+  /// Class names whose namespace was deleted by a `deleted` tombstone.
+  final List<String>? deleted;
+
+  /// Non-blocking info entries (stale tombstones, tombstone applied with class
+  /// still in code). See `exports_reconciliation_info`.
+  final List<ExportsReconciliationInfo>? info;
+
+  /// Source class names whose tombstone entry is now stale and safe to delete
+  /// from `exports` (no remaining referencing scripts).
+  final List<String>? removableEntries;
+
+  /// Applied `renamed` tombstones.
+  final List<ExportsReconciliationRename>? renamed;
+
+  /// Phase-1 transfer hints recorded on the target side.
+  final List<ExportsReconciliationTransferPending>? transferPending;
+
+  /// Committed `transferred` tombstones (phase-2).
+  final List<ExportsReconciliationTransfer>? transferred;
+
+  /// Class names whose provisioned namespace was mutated in place.
+  final List<String>? updated;
+
+  /// Non-blocking warnings. See `exports_reconciliation_warning`.
+  final List<ExportsReconciliationWarning>? warnings;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'created',
+    'deleted',
+    'info',
+    'removable_entries',
+    'renamed',
+    'transfer_pending',
+    'transferred',
+    'updated',
+    'warnings',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (created != null) 'created': created!,
+    if (deleted != null) 'deleted': deleted!,
+    if (info != null) 'info': info!.map((e) => e.toJson()).toList(),
+    if (removableEntries != null) 'removable_entries': removableEntries!,
+    if (renamed != null) 'renamed': renamed!.map((e) => e.toJson()).toList(),
+    if (transferPending != null)
+      'transfer_pending': transferPending!.map((e) => e.toJson()).toList(),
+    if (transferred != null)
+      'transferred': transferred!.map((e) => e.toJson()).toList(),
+    if (updated != null) 'updated': updated!,
+    if (warnings != null) 'warnings': warnings!.map((e) => e.toJson()).toList(),
+  };
+
+  ExportsReconciliationResult copyWith({
+    List<String>? created,
+    List<String>? deleted,
+    List<ExportsReconciliationInfo>? info,
+    List<String>? removableEntries,
+    List<ExportsReconciliationRename>? renamed,
+    List<ExportsReconciliationTransferPending>? transferPending,
+    List<ExportsReconciliationTransfer>? transferred,
+    List<String>? updated,
+    List<ExportsReconciliationWarning>? warnings,
+    Map<String, Object?>? extra,
+  }) => ExportsReconciliationResult(
+    created: created ?? this.created,
+    deleted: deleted ?? this.deleted,
+    info: info ?? this.info,
+    removableEntries: removableEntries ?? this.removableEntries,
+    renamed: renamed ?? this.renamed,
+    transferPending: transferPending ?? this.transferPending,
+    transferred: transferred ?? this.transferred,
+    updated: updated ?? this.updated,
+    warnings: warnings ?? this.warnings,
+    extra: extra ?? this.extra,
+  );
+}
+
 /// A single committed `transferred` tombstone (phase-2 commit).
 class ExportsReconciliationTransfer {
   const ExportsReconciliationTransfer({
@@ -5600,6 +6595,7 @@ class Filters {
     this.airportCode,
     this.alertTriggerPreferences,
     this.alertTriggerPreferencesValue,
+    this.checkId,
     this.enabled,
     this.environment,
     this.event,
@@ -5621,6 +6617,7 @@ class Filters {
     this.product,
     this.projectId,
     this.protocol,
+    this.queryId,
     this.queryTag,
     this.requestsPerSecond,
     this.selectors,
@@ -5630,6 +6627,8 @@ class Filters {
     this.targetHostname,
     this.targetIp,
     this.targetZoneName,
+    this.tokenId,
+    this.totalSpendDollars,
     this.trafficExclusions,
     this.tunnelId,
     this.tunnelName,
@@ -5659,6 +6658,7 @@ class Filters {
       json['alert_trigger_preferences_value'],
       asString,
     ),
+    checkId: asPrimitiveList<String>(json['check_id'], asString),
     enabled: asPrimitiveList<String>(json['enabled'], asString),
     environment: asPrimitiveList<String>(json['environment'], asString),
     event: asPrimitiveList<String>(json['event'], asString),
@@ -5686,6 +6686,7 @@ class Filters {
     product: asPrimitiveList<String>(json['product'], asString),
     projectId: asPrimitiveList<String>(json['project_id'], asString),
     protocol: asPrimitiveList<String>(json['protocol'], asString),
+    queryId: asPrimitiveList<String>(json['query_id'], asString),
     queryTag: asPrimitiveList<String>(json['query_tag'], asString),
     requestsPerSecond: asPrimitiveList<String>(
       json['requests_per_second'],
@@ -5698,6 +6699,11 @@ class Filters {
     targetHostname: asPrimitiveList<String>(json['target_hostname'], asString),
     targetIp: asPrimitiveList<String>(json['target_ip'], asString),
     targetZoneName: asPrimitiveList<String>(json['target_zone_name'], asString),
+    tokenId: asPrimitiveList<String>(json['token_id'], asString),
+    totalSpendDollars: asPrimitiveList<String>(
+      json['total_spend_dollars'],
+      asString,
+    ),
     trafficExclusions: asPrimitiveList<String>(
       json['traffic_exclusions'],
       asString,
@@ -5730,6 +6736,12 @@ class Filters {
 
   /// Usage depends on specific alert type
   final List<String>? alertTriggerPreferencesValue;
+
+  /// Used for configuring magic_endpoint_healthcheck_alert. Takes one or more
+  /// health check IDs, each a UUID. That alert type requires check_id together
+  /// with alert_trigger_preferences set to slo, a numeric
+  /// alert_trigger_preferences_value, and selectors set to failures.
+  final List<String>? checkId;
 
   /// Used for configuring load_balancing_pool_enablement_alert
   final List<String>? enabled;
@@ -5794,6 +6806,11 @@ class Filters {
   /// Used for configuring advanced_ddos_attack_l4_alert
   final List<String>? protocol;
 
+  /// Used for configuring stakeout_saved_query_daily_digest_alert and
+  /// stakeout_saved_query_immediate_alert, which require it. Takes exactly one
+  /// value, the saved query ID.
+  final List<String>? queryId;
+
   /// Usage depends on specific alert type
   final List<String>? queryTag;
 
@@ -5820,6 +6837,14 @@ class Filters {
 
   /// Used for configuring advanced_ddos_attack_l7_alert
   final List<String>? targetZoneName;
+
+  /// Access service token IDs to include for expiring_service_token_alert. Omit
+  /// this property to include all current and future service tokens.
+  final List<String>? tokenId;
+
+  /// Used for configuring billing_budget_alert. Takes exactly one value, the
+  /// budget threshold in US dollars, as a string greater than zero.
+  final List<String>? totalSpendDollars;
 
   /// Used for configuring traffic_anomalies_alert
   final List<String>? trafficExclusions;
@@ -5852,6 +6877,7 @@ class Filters {
     'airport_code',
     'alert_trigger_preferences',
     'alert_trigger_preferences_value',
+    'check_id',
     'enabled',
     'environment',
     'event',
@@ -5873,6 +6899,7 @@ class Filters {
     'product',
     'project_id',
     'protocol',
+    'query_id',
     'query_tag',
     'requests_per_second',
     'selectors',
@@ -5882,6 +6909,8 @@ class Filters {
     'target_hostname',
     'target_ip',
     'target_zone_name',
+    'token_id',
+    'total_spend_dollars',
     'traffic_exclusions',
     'tunnel_id',
     'tunnel_name',
@@ -5901,6 +6930,7 @@ class Filters {
       'alert_trigger_preferences': alertTriggerPreferences!,
     if (alertTriggerPreferencesValue != null)
       'alert_trigger_preferences_value': alertTriggerPreferencesValue!,
+    if (checkId != null) 'check_id': checkId!,
     if (enabled != null) 'enabled': enabled!,
     if (environment != null) 'environment': environment!,
     if (event != null) 'event': event!,
@@ -5922,6 +6952,7 @@ class Filters {
     if (product != null) 'product': product!,
     if (projectId != null) 'project_id': projectId!,
     if (protocol != null) 'protocol': protocol!,
+    if (queryId != null) 'query_id': queryId!,
     if (queryTag != null) 'query_tag': queryTag!,
     if (requestsPerSecond != null) 'requests_per_second': requestsPerSecond!,
     if (selectors != null) 'selectors': selectors!,
@@ -5931,6 +6962,8 @@ class Filters {
     if (targetHostname != null) 'target_hostname': targetHostname!,
     if (targetIp != null) 'target_ip': targetIp!,
     if (targetZoneName != null) 'target_zone_name': targetZoneName!,
+    if (tokenId != null) 'token_id': tokenId!,
+    if (totalSpendDollars != null) 'total_spend_dollars': totalSpendDollars!,
     if (trafficExclusions != null) 'traffic_exclusions': trafficExclusions!,
     if (tunnelId != null) 'tunnel_id': tunnelId!,
     if (tunnelName != null) 'tunnel_name': tunnelName!,
@@ -5947,6 +6980,7 @@ class Filters {
     List<String>? airportCode,
     List<String>? alertTriggerPreferences,
     List<String>? alertTriggerPreferencesValue,
+    List<String>? checkId,
     List<String>? enabled,
     List<String>? environment,
     List<String>? event,
@@ -5968,6 +7002,7 @@ class Filters {
     List<String>? product,
     List<String>? projectId,
     List<String>? protocol,
+    List<String>? queryId,
     List<String>? queryTag,
     List<String>? requestsPerSecond,
     List<String>? selectors,
@@ -5977,6 +7012,8 @@ class Filters {
     List<String>? targetHostname,
     List<String>? targetIp,
     List<String>? targetZoneName,
+    List<String>? tokenId,
+    List<String>? totalSpendDollars,
     List<String>? trafficExclusions,
     List<String>? tunnelId,
     List<String>? tunnelName,
@@ -5994,6 +7031,7 @@ class Filters {
         alertTriggerPreferences ?? this.alertTriggerPreferences,
     alertTriggerPreferencesValue:
         alertTriggerPreferencesValue ?? this.alertTriggerPreferencesValue,
+    checkId: checkId ?? this.checkId,
     enabled: enabled ?? this.enabled,
     environment: environment ?? this.environment,
     event: event ?? this.event,
@@ -6015,6 +7053,7 @@ class Filters {
     product: product ?? this.product,
     projectId: projectId ?? this.projectId,
     protocol: protocol ?? this.protocol,
+    queryId: queryId ?? this.queryId,
     queryTag: queryTag ?? this.queryTag,
     requestsPerSecond: requestsPerSecond ?? this.requestsPerSecond,
     selectors: selectors ?? this.selectors,
@@ -6024,6 +7063,8 @@ class Filters {
     targetHostname: targetHostname ?? this.targetHostname,
     targetIp: targetIp ?? this.targetIp,
     targetZoneName: targetZoneName ?? this.targetZoneName,
+    tokenId: tokenId ?? this.tokenId,
+    totalSpendDollars: totalSpendDollars ?? this.totalSpendDollars,
     trafficExclusions: trafficExclusions ?? this.trafficExclusions,
     tunnelId: tunnelId ?? this.tunnelId,
     tunnelName: tunnelName ?? this.tunnelName,
@@ -6133,8 +7174,6 @@ class GetZoneEntrypointRulesetResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -6150,8 +7189,9 @@ class GetZoneEntrypointRulesetResult {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -6241,8 +7281,6 @@ class GetZoneRulesetResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -6258,8 +7296,9 @@ class GetZoneRulesetResult {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -6428,6 +7467,70 @@ class History {
   );
 }
 
+/// Configures multi-factor authentication (MFA) settings for infrastructure
+/// applications.
+class InfraMfaConfig {
+  const InfraMfaConfig({
+    this.allowedAuthenticators,
+    this.mfaDisabled,
+    this.sessionDuration,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory InfraMfaConfig.fromJson(Map<String, Object?> json) => InfraMfaConfig(
+    allowedAuthenticators: asPrimitiveList<String>(
+      json['allowed_authenticators'],
+      asString,
+    ),
+    mfaDisabled: asBool(json['mfa_disabled']),
+    sessionDuration: asString(json['session_duration']),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Lists the MFA methods that users can authenticate with. For infrastructure
+  /// applications, supported values are `piv_key` and `ssh_fido2_key`.
+  final List<String>? allowedAuthenticators;
+
+  /// Indicates whether to disable MFA for this resource. This option is available
+  /// at the application and policy level.
+  final bool? mfaDisabled;
+
+  /// Defines the duration of an MFA session. Must be in minutes (m) or hours (h).
+  /// Minimum: 0m. Maximum: 720h (30 days). Examples: `5m` or `24h`.
+  final String? sessionDuration;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'allowed_authenticators',
+    'mfa_disabled',
+    'session_duration',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (allowedAuthenticators != null)
+      'allowed_authenticators': allowedAuthenticators!,
+    if (mfaDisabled != null) 'mfa_disabled': mfaDisabled!,
+    if (sessionDuration != null) 'session_duration': sessionDuration!,
+  };
+
+  InfraMfaConfig copyWith({
+    List<String>? allowedAuthenticators,
+    bool? mfaDisabled,
+    String? sessionDuration,
+    Map<String, Object?>? extra,
+  }) => InfraMfaConfig(
+    allowedAuthenticators: allowedAuthenticators ?? this.allowedAuthenticators,
+    mfaDisabled: mfaDisabled ?? this.mfaDisabled,
+    sessionDuration: sessionDuration ?? this.sessionDuration,
+    extra: extra ?? this.extra,
+  );
+}
+
 class IpAccessRulesForAZoneCreateAnIpAccessRuleBody {
   const IpAccessRulesForAZoneCreateAnIpAccessRuleBody({
     this.configuration,
@@ -6578,6 +7681,8 @@ class Key {
   /// The time, measured in number of seconds since the UNIX epoch, at which the
   /// key will expire. This property is omitted for keys that will not expire.
   final num? expiration;
+
+  /// Arbitrary JSON that is associated with a key.
   final Map<String, Object?>? metadata;
 
   /// A key's name. The name may be at most 512 bytes. All printable,
@@ -6761,8 +7866,6 @@ class ListZoneRulesetsItem {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -6778,8 +7881,9 @@ class ListZoneRulesetsItem {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -7206,9 +8310,9 @@ class LoadBalancerRulesItem {
   final RuleOverrides? overrides;
 
   /// The order in which rules should be executed in relation to each other. Lower
-  /// values are executed first. Values do not need to be sequential. If no value
-  /// is provided for any rule the array order of the rules field will be used to
-  /// assign a priority.
+  /// values are executed first. Values do not need to be sequential. If all
+  /// priorities are omitted or zero, the API assigns priorities based on the
+  /// array order of the rules field.
   final int? priority;
 
   /// If this rule's condition is true, this causes rule evaluation to stop after
@@ -8030,6 +9134,8 @@ class Monitor {
 class Namespace {
   const Namespace({
     this.id,
+    this.jurisdiction,
+    this.mode,
     this.supportsUrlEncoding,
     this.title,
     this.extra = const <String, Object?>{},
@@ -8037,20 +9143,33 @@ class Namespace {
 
   factory Namespace.fromJson(Map<String, Object?> json) => Namespace(
     id: asString(json['id']),
+    jurisdiction: asString(json['jurisdiction']),
+    mode: asString(json['mode']),
     supportsUrlEncoding: asBool(json['supports_url_encoding']),
     title: asString(json['title']),
     extra: extraOf(json, _knownKeys),
   );
 
-  /// Namespace identifier tag.
+  /// ID of the Workers KV namespace.
   final String? id;
+
+  /// Specify the jurisdiction to restrict the KV namespace to durably store data
+  /// within. Can only be set at namespace creation time. Allowed values: `eu`,
+  /// `fedramp`, `us`.
+  final String? jurisdiction;
+
+  /// The mode of the Workers KV namespace. Specify `instant` when creating a
+  /// namespace to create a KV Instant namespace. Omit this field when creating a
+  /// namespace to create a classic namespace. Currently, `instant` is the only
+  /// supported explicit value. Allowed values: `instant`.
+  final String? mode;
 
   /// True if keys written on the URL will be URL-decoded before storing. For
   /// example, if set to "true", a key written on the URL as "%3F" will be stored
   /// as "?".
   final bool? supportsUrlEncoding;
 
-  /// A human-readable string name for a Namespace.
+  /// Human-readable string name for a Workers KV namespace.
   final String? title;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -8060,6 +9179,8 @@ class Namespace {
 
   static const Set<String> _knownKeys = {
     'id',
+    'jurisdiction',
+    'mode',
     'supports_url_encoding',
     'title',
   };
@@ -8067,6 +9188,8 @@ class Namespace {
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
     if (id != null) 'id': id!,
+    if (jurisdiction != null) 'jurisdiction': jurisdiction!,
+    if (mode != null) 'mode': mode!,
     if (supportsUrlEncoding != null)
       'supports_url_encoding': supportsUrlEncoding!,
     if (title != null) 'title': title!,
@@ -8074,11 +9197,15 @@ class Namespace {
 
   Namespace copyWith({
     String? id,
+    String? jurisdiction,
+    String? mode,
     bool? supportsUrlEncoding,
     String? title,
     Map<String, Object?>? extra,
   }) => Namespace(
     id: id ?? this.id,
+    jurisdiction: jurisdiction ?? this.jurisdiction,
+    mode: mode ?? this.mode,
     supportsUrlEncoding: supportsUrlEncoding ?? this.supportsUrlEncoding,
     title: title ?? this.title,
     extra: extra ?? this.extra,
@@ -8324,22 +9451,31 @@ class OauthConfigurationGrant {
 }
 
 /// Observability settings for the Worker.
-class Observability {
-  const Observability({
+class Observability2 {
+  const Observability2({
+    this.agents,
     this.enabled,
     this.headSamplingRate,
+    this.issues,
     this.logs,
+    this.redactQueryString,
     this.traces,
     this.extra = const <String, Object?>{},
   });
 
-  factory Observability.fromJson(Map<String, Object?> json) => Observability(
+  factory Observability2.fromJson(Map<String, Object?> json) => Observability2(
+    agents: asModel(json['agents'], Observability2Agents.fromJson),
     enabled: asBool(json['enabled']),
     headSamplingRate: asNum(json['head_sampling_rate']),
-    logs: asModel(json['logs'], ObservabilityLogs.fromJson),
-    traces: asModel(json['traces'], ObservabilityTraces.fromJson),
+    issues: asModel(json['issues'], Observability2Issues.fromJson),
+    logs: asModel(json['logs'], Observability2Logs.fromJson),
+    redactQueryString: asBool(json['redact_query_string']),
+    traces: asModel(json['traces'], Observability2Traces.fromJson),
     extra: extraOf(json, _knownKeys),
   );
+
+  /// Agents observability settings for the Worker.
+  final Observability2Agents? agents;
 
   /// Whether observability is enabled for the Worker.
   final bool? enabled;
@@ -8348,11 +9484,17 @@ class Observability {
   /// Default is 1.
   final num? headSamplingRate;
 
+  /// Real-time Issues settings for the Worker.
+  final Observability2Issues? issues;
+
   /// Log settings for the Worker.
-  final ObservabilityLogs? logs;
+  final Observability2Logs? logs;
+
+  /// Whether query strings are removed from request URLs in logs and traces.
+  final bool? redactQueryString;
 
   /// Trace settings for the Worker.
-  final ObservabilityTraces? traces;
+  final Observability2Traces? traces;
 
   /// Keys returned by Cloudflare that this spec snapshot does
   /// not describe. Preserved so an edit round-trip cannot
@@ -8360,38 +9502,152 @@ class Observability {
   final Map<String, Object?> extra;
 
   static const Set<String> _knownKeys = {
+    'agents',
     'enabled',
     'head_sampling_rate',
+    'issues',
     'logs',
+    'redact_query_string',
     'traces',
   };
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
+    if (agents != null) 'agents': agents!.toJson(),
     if (enabled != null) 'enabled': enabled!,
     if (headSamplingRate != null) 'head_sampling_rate': headSamplingRate!,
+    if (issues != null) 'issues': issues!.toJson(),
     if (logs != null) 'logs': logs!.toJson(),
+    if (redactQueryString != null) 'redact_query_string': redactQueryString!,
     if (traces != null) 'traces': traces!.toJson(),
   };
 
-  Observability copyWith({
+  Observability2 copyWith({
+    Observability2Agents? agents,
     bool? enabled,
     num? headSamplingRate,
-    ObservabilityLogs? logs,
-    ObservabilityTraces? traces,
+    Observability2Issues? issues,
+    Observability2Logs? logs,
+    bool? redactQueryString,
+    Observability2Traces? traces,
     Map<String, Object?>? extra,
-  }) => Observability(
+  }) => Observability2(
+    agents: agents ?? this.agents,
     enabled: enabled ?? this.enabled,
     headSamplingRate: headSamplingRate ?? this.headSamplingRate,
+    issues: issues ?? this.issues,
     logs: logs ?? this.logs,
+    redactQueryString: redactQueryString ?? this.redactQueryString,
     traces: traces ?? this.traces,
     extra: extra ?? this.extra,
   );
 }
 
+/// Agents observability settings for the Worker.
+class Observability2Agents {
+  const Observability2Agents({
+    this.destinations,
+    this.enabled,
+    this.headSamplingRate,
+    this.persist,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Observability2Agents.fromJson(Map<String, Object?> json) =>
+      Observability2Agents(
+        destinations: asPrimitiveList<String>(json['destinations'], asString),
+        enabled: asBool(json['enabled']),
+        headSamplingRate: asNum(json['head_sampling_rate']),
+        persist: asBool(json['persist']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// A list of destinations where Agents observability data will be exported to.
+  final List<String>? destinations;
+
+  /// Whether Agents observability is enabled for the Worker.
+  final bool? enabled;
+
+  /// The sampling rate for Agents observability. From 0 to 1 (1 = 100%, 0.1 =
+  /// 10%). Defaults to the root head_sampling_rate.
+  final num? headSamplingRate;
+
+  /// Whether Agents observability data is persisted for the Worker.
+  final bool? persist;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {
+    'destinations',
+    'enabled',
+    'head_sampling_rate',
+    'persist',
+  };
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (destinations != null) 'destinations': destinations!,
+    if (enabled != null) 'enabled': enabled!,
+    if (headSamplingRate != null) 'head_sampling_rate': headSamplingRate!,
+    if (persist != null) 'persist': persist!,
+  };
+
+  Observability2Agents copyWith({
+    List<String>? destinations,
+    bool? enabled,
+    num? headSamplingRate,
+    bool? persist,
+    Map<String, Object?>? extra,
+  }) => Observability2Agents(
+    destinations: destinations ?? this.destinations,
+    enabled: enabled ?? this.enabled,
+    headSamplingRate: headSamplingRate ?? this.headSamplingRate,
+    persist: persist ?? this.persist,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Real-time Issues settings for the Worker.
+class Observability2Issues {
+  const Observability2Issues({
+    this.enabled,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Observability2Issues.fromJson(Map<String, Object?> json) =>
+      Observability2Issues(
+        enabled: asBool(json['enabled']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Whether real-time Issues are enabled for the Worker.
+  final bool? enabled;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'enabled'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (enabled != null) 'enabled': enabled!,
+  };
+
+  Observability2Issues copyWith({bool? enabled, Map<String, Object?>? extra}) =>
+      Observability2Issues(
+        enabled: enabled ?? this.enabled,
+        extra: extra ?? this.extra,
+      );
+}
+
 /// Log settings for the Worker.
-class ObservabilityLogs {
-  const ObservabilityLogs({
+class Observability2Logs {
+  const Observability2Logs({
     this.destinations,
     this.enabled,
     this.headSamplingRate,
@@ -8400,8 +9656,8 @@ class ObservabilityLogs {
     this.extra = const <String, Object?>{},
   });
 
-  factory ObservabilityLogs.fromJson(Map<String, Object?> json) =>
-      ObservabilityLogs(
+  factory Observability2Logs.fromJson(Map<String, Object?> json) =>
+      Observability2Logs(
         destinations: asPrimitiveList<String>(json['destinations'], asString),
         enabled: asBool(json['enabled']),
         headSamplingRate: asNum(json['head_sampling_rate']),
@@ -8449,14 +9705,14 @@ class ObservabilityLogs {
     if (persist != null) 'persist': persist!,
   };
 
-  ObservabilityLogs copyWith({
+  Observability2Logs copyWith({
     List<String>? destinations,
     bool? enabled,
     num? headSamplingRate,
     bool? invocationLogs,
     bool? persist,
     Map<String, Object?>? extra,
-  }) => ObservabilityLogs(
+  }) => Observability2Logs(
     destinations: destinations ?? this.destinations,
     enabled: enabled ?? this.enabled,
     headSamplingRate: headSamplingRate ?? this.headSamplingRate,
@@ -8467,8 +9723,8 @@ class ObservabilityLogs {
 }
 
 /// Trace settings for the Worker.
-class ObservabilityTraces {
-  const ObservabilityTraces({
+class Observability2Traces {
+  const Observability2Traces({
     this.destinations,
     this.enabled,
     this.headSamplingRate,
@@ -8477,8 +9733,8 @@ class ObservabilityTraces {
     this.extra = const <String, Object?>{},
   });
 
-  factory ObservabilityTraces.fromJson(Map<String, Object?> json) =>
-      ObservabilityTraces(
+  factory Observability2Traces.fromJson(Map<String, Object?> json) =>
+      Observability2Traces(
         destinations: asPrimitiveList<String>(json['destinations'], asString),
         enabled: asBool(json['enabled']),
         headSamplingRate: asNum(json['head_sampling_rate']),
@@ -8501,11 +9757,11 @@ class ObservabilityTraces {
   final bool? persist;
 
   /// Controls how inbound trace context (traceparent/tracestate) headers on
-  /// incoming requests are handled. "authenticated" (default) honors inbound
-  /// trace context only when accompanied by a valid trace auth token. "accept"
-  /// unconditionally accepts inbound trace context. Requires the trace
-  /// propagation feature to be enabled. Allowed values: `authenticated`,
-  /// `accept`.
+  /// incoming requests are handled. "authenticated" honors inbound trace context
+  /// only when accompanied by a valid trace auth token. "accept" unconditionally
+  /// accepts inbound trace context. Requires the trace propagation feature to be
+  /// enabled. Returns null when the trace propagation feature is not enabled for
+  /// the account. Allowed values: `authenticated`, `accept`, `null`.
   final String? propagationPolicy;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -8530,14 +9786,14 @@ class ObservabilityTraces {
     if (propagationPolicy != null) 'propagation_policy': propagationPolicy!,
   };
 
-  ObservabilityTraces copyWith({
+  Observability2Traces copyWith({
     List<String>? destinations,
     bool? enabled,
     num? headSamplingRate,
     bool? persist,
     String? propagationPolicy,
     Map<String, Object?>? extra,
-  }) => ObservabilityTraces(
+  }) => Observability2Traces(
     destinations: destinations ?? this.destinations,
     enabled: enabled ?? this.enabled,
     headSamplingRate: headSamplingRate ?? this.headSamplingRate,
@@ -9193,6 +10449,7 @@ class PermissionGroupsListPermissionGroupsItem {
   const PermissionGroupsListPermissionGroupsItem({
     this.category,
     this.id,
+    this.isSelectable,
     this.name,
     this.scopes,
     this.extra = const <String, Object?>{},
@@ -9203,6 +10460,7 @@ class PermissionGroupsListPermissionGroupsItem {
   ) => PermissionGroupsListPermissionGroupsItem(
     category: asString(json['category']),
     id: asString(json['id']),
+    isSelectable: asBool(json['is_selectable']),
     name: asString(json['name']),
     scopes: asPrimitiveList<String>(json['scopes'], asString),
     extra: extraOf(json, _knownKeys),
@@ -9218,6 +10476,9 @@ class PermissionGroupsListPermissionGroupsItem {
   /// Public ID.
   final String? id;
 
+  /// Whether the caller can select this permission group when creating a token.
+  final bool? isSelectable;
+
   /// Permission Group Name
   final String? name;
 
@@ -9229,12 +10490,19 @@ class PermissionGroupsListPermissionGroupsItem {
   /// silently drop them.
   final Map<String, Object?> extra;
 
-  static const Set<String> _knownKeys = {'category', 'id', 'name', 'scopes'};
+  static const Set<String> _knownKeys = {
+    'category',
+    'id',
+    'is_selectable',
+    'name',
+    'scopes',
+  };
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
     if (category != null) 'category': category!,
     if (id != null) 'id': id!,
+    if (isSelectable != null) 'is_selectable': isSelectable!,
     if (name != null) 'name': name!,
     if (scopes != null) 'scopes': scopes!,
   };
@@ -9242,12 +10510,14 @@ class PermissionGroupsListPermissionGroupsItem {
   PermissionGroupsListPermissionGroupsItem copyWith({
     String? category,
     String? id,
+    bool? isSelectable,
     String? name,
     List<String>? scopes,
     Map<String, Object?>? extra,
   }) => PermissionGroupsListPermissionGroupsItem(
     category: category ?? this.category,
     id: id ?? this.id,
+    isSelectable: isSelectable ?? this.isSelectable,
     name: name ?? this.name,
     scopes: scopes ?? this.scopes,
     extra: extra ?? this.extra,
@@ -9440,31 +10710,40 @@ class Policies {
 
   /// Refers to which event will trigger a Notification dispatch. You can use the
   /// endpoint to get available alert types which then will give you a list of
-  /// possible values. Allowed values: `abuse_report_alert`,
-  /// `access_custom_certificate_expiration_type`,
+  /// possible values. This enum lists every alert type, not the ones a given
+  /// account can create, since some types depend on entitlements or account type.
+  /// To get the alert types an account can create, call `GET
+  /// /accounts/{account_id}/alerting/v3/available_alerts`. Allowed values:
+  /// `abuse_report_alert`, `access_custom_certificate_expiration_type`,
   /// `advanced_ddos_attack_l4_alert`, `advanced_ddos_attack_l7_alert`,
-  /// `advanced_http_alert_error`, `bgp_hijack_notification`,
-  /// `billing_usage_alert`, `block_notification_block_removed`,
-  /// `block_notification_new_block`, `block_notification_review_rejected`,
-  /// `bot_traffic_basic_alert`, `brand_protection_alert`,
-  /// `brand_protection_digest`, `clickhouse_alert_fw_anomaly`,
-  /// `clickhouse_alert_fw_ent_anomaly`, `cloudforce_one_request_notification`,
-  /// `cni_maintenance_notification`, `custom_analytics`,
+  /// `advanced_http_alert_error`, `attack_lifecycle`, `bgp_advertisement_change`,
+  /// `bgp_hijack_notification`, `billing_budget_alert`, `billing_usage_alert`,
+  /// `block_notification_block_removed`, `block_notification_new_block`,
+  /// `block_notification_review_rejected`, `bot_traffic_basic_alert`,
+  /// `brand_protection_alert`, `brand_protection_digest`, `casb_weekly_digest`,
+  /// `clickhouse_alert_fw_anomaly`, `clickhouse_alert_fw_ent_anomaly`,
+  /// `closed_port_scan_alert`, `cloudforce_one_request_notification`,
+  /// `cmd_managed_defense_notification`, `cni_maintenance_notification`,
+  /// `containers_security_alert`, `custom_analytics`,
   /// `custom_bot_detection_alert`, `custom_ssl_certificate_event_type`,
   /// `dedicated_ssl_certificate_event_type`, `device_connectivity_anomaly_alert`,
-  /// `dos_attack_l4`, `dos_attack_l7`, `expiring_service_token_alert`,
+  /// `dex_device_connectivity_alert`, `dex_synthetic_test_availability_alert`,
+  /// `dex_synthetic_test_latency_alert`, `dos_attack_l4`, `dos_attack_l7`,
+  /// `executive_communications`, `expiring_service_token_alert`,
   /// `failing_logpush_job_disabled_alert`, `fbm_auto_advertisement`,
   /// `fbm_dosd_attack`, `fbm_volumetric_attack`,
   /// `health_check_status_notification`,
   /// `hostname_aop_custom_certificate_expiration_type`, `http_alert_edge_error`,
   /// `http_alert_origin_error`, `image_notification`,
   /// `image_resizing_notification`, `incident_alert`,
-  /// `load_balancing_health_alert`, `load_balancing_pool_enablement_alert`,
-  /// `logo_match_alert`, `magic_tunnel_health_check_event`,
+  /// `leaked_service_token_alert`, `load_balancing_health_alert`,
+  /// `load_balancing_pool_enablement_alert`, `log_explorer_ingest_rate_limit`,
+  /// `log_explorer_scheduled_query_results_alert`, `logo_match_alert`,
+  /// `magic_endpoint_healthcheck_alert`, `magic_tunnel_health_check_event`,
   /// `magic_wan_tunnel_health`, `maintenance_event_notification`,
-  /// `mtls_certificate_store_certificate_expiration_type`, `pages_event_alert`,
-  /// `radar_notification`, `real_origin_monitoring`,
-  /// `scriptmonitor_alert_new_code_change_detections`,
+  /// `mtls_certificate_store_certificate_expiration_type`,
+  /// `open_port_scan_alert`, `pages_event_alert`, `radar_notification`,
+  /// `real_origin_monitoring`, `scriptmonitor_alert_new_code_change_detections`,
   /// `scriptmonitor_alert_new_hosts`, `scriptmonitor_alert_new_malicious_hosts`,
   /// `scriptmonitor_alert_new_malicious_scripts`,
   /// `scriptmonitor_alert_new_malicious_url`,
@@ -9473,10 +10752,14 @@ class Policies {
   /// `secondary_dns_primaries_failing`, `secondary_dns_warning`,
   /// `secondary_dns_zone_successfully_updated`,
   /// `secondary_dns_zone_validation_warning`, `security_insights_alert`,
-  /// `sentinel_alert`, `stream_live_notifications`,
+  /// `sentinel_alert`, `stakeout_credential_leak_alert`,
+  /// `stakeout_saved_query_daily_digest_alert`,
+  /// `stakeout_saved_query_immediate_alert`, `stream_live_notifications`,
   /// `synthetic_test_latency_alert`, `synthetic_test_low_availability_alert`,
   /// `traffic_anomalies_alert`, `tunnel_health_event`, `tunnel_update_event`,
   /// `universal_ssl_event_type`, `web_analytics_metrics_update`,
+  /// `workers_for_platforms_security_alert`, `workers_observability_alert`,
+  /// `workers_observability_real_time_issue`,
   /// `zone_aop_custom_certificate_expiration_type`.
   final String? alertType;
   final String? created;
@@ -9569,6 +10852,7 @@ class Pool {
     this.description,
     this.disabledAt,
     this.enabled,
+    this.healthSources,
     this.id,
     this.latitude,
     this.loadShedding,
@@ -9592,6 +10876,7 @@ class Pool {
     description: asString(json['description']),
     disabledAt: asString(json['disabled_at']),
     enabled: asBool(json['enabled']),
+    healthSources: asPrimitiveList<String>(json['health_sources'], asString),
     id: asString(json['id']),
     latitude: asNum(json['latitude']),
     loadShedding: asModel(json['load_shedding'], LoadShedding.fromJson),
@@ -9629,6 +10914,16 @@ class Pool {
   /// will cause any load balancers using it to failover to the next pool (if
   /// any).
   final bool? enabled;
+
+  /// A list of health sources, ordered from highest to lowest priority, used to
+  /// evaluate individual origin health and overall pool health. The load balancer
+  /// uses the first source that has data and falls back to the next. Currently
+  /// accepted values are null or the exact array ["regional", "global"]; any
+  /// other combination is rejected. Null (the default) behaves like ["local",
+  /// "global"]. ["regional", "global"] makes each region steer on its own health,
+  /// falling back to the global decision when a region has no fresh data. Setting
+  /// regional requires at least one region in check_regions.
+  final List<String>? healthSources;
   final String? id;
 
   /// The latitude of the data center containing the origins used in this pool in
@@ -9695,6 +10990,7 @@ class Pool {
     'description',
     'disabled_at',
     'enabled',
+    'health_sources',
     'id',
     'latitude',
     'load_shedding',
@@ -9718,6 +11014,7 @@ class Pool {
     if (description != null) 'description': description!,
     if (disabledAt != null) 'disabled_at': disabledAt!,
     if (enabled != null) 'enabled': enabled!,
+    if (healthSources != null) 'health_sources': healthSources!,
     if (id != null) 'id': id!,
     if (latitude != null) 'latitude': latitude!,
     if (loadShedding != null) 'load_shedding': loadShedding!.toJson(),
@@ -9741,6 +11038,7 @@ class Pool {
     String? description,
     String? disabledAt,
     bool? enabled,
+    List<String>? healthSources,
     String? id,
     num? latitude,
     LoadShedding? loadShedding,
@@ -9762,6 +11060,7 @@ class Pool {
     description: description ?? this.description,
     disabledAt: disabledAt ?? this.disabledAt,
     enabled: enabled ?? this.enabled,
+    healthSources: healthSources ?? this.healthSources,
     id: id ?? this.id,
     latitude: latitude ?? this.latitude,
     loadShedding: loadShedding ?? this.loadShedding,
@@ -9969,6 +11268,7 @@ class PoolSetOverrides {
 class Project {
   const Project({
     this.buildConfig,
+    this.buildImageAutoUpgrade,
     this.canonicalDeployment,
     this.createdOn,
     this.deploymentConfigs,
@@ -9989,6 +11289,10 @@ class Project {
 
   factory Project.fromJson(Map<String, Object?> json) => Project(
     buildConfig: asModel(json['build_config'], BuildConfig.fromJson),
+    buildImageAutoUpgrade: asModel(
+      json['build_image_auto_upgrade'],
+      ProjectBuildImageAutoUpgrade.fromJson,
+    ),
     canonicalDeployment: asModel(
       json['canonical_deployment'],
       ProjectCanonicalDeployment.fromJson,
@@ -10018,6 +11322,11 @@ class Project {
 
   /// Configs for the project build process.
   final BuildConfig? buildConfig;
+
+  /// Present when the project is set to a retired build image major version and
+  /// its builds have been moved to a newer one. `build_image_major_version` in
+  /// `deployment_configs` then reports the version the builds run on.
+  final ProjectBuildImageAutoUpgrade? buildImageAutoUpgrade;
   final ProjectCanonicalDeployment? canonicalDeployment;
 
   /// When the project was created.
@@ -10039,7 +11348,8 @@ class Project {
   final String? id;
   final ProjectLatestDeployment? latestDeployment;
 
-  /// Name of the project.
+  /// Name of the Pages project. Must begin with a lowercase letter or digit and
+  /// contain only lowercase letters, digits, and hyphens.
   final String? name;
 
   /// Name of the preview script.
@@ -10067,6 +11377,7 @@ class Project {
 
   static const Set<String> _knownKeys = {
     'build_config',
+    'build_image_auto_upgrade',
     'canonical_deployment',
     'created_on',
     'deployment_configs',
@@ -10087,6 +11398,8 @@ class Project {
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
     if (buildConfig != null) 'build_config': buildConfig!.toJson(),
+    if (buildImageAutoUpgrade != null)
+      'build_image_auto_upgrade': buildImageAutoUpgrade!.toJson(),
     if (canonicalDeployment != null)
       'canonical_deployment': canonicalDeployment!.toJson(),
     if (createdOn != null) 'created_on': createdOn!,
@@ -10110,6 +11423,7 @@ class Project {
 
   Project copyWith({
     BuildConfig? buildConfig,
+    ProjectBuildImageAutoUpgrade? buildImageAutoUpgrade,
     ProjectCanonicalDeployment? canonicalDeployment,
     String? createdOn,
     ProjectDeploymentConfigs? deploymentConfigs,
@@ -10128,6 +11442,7 @@ class Project {
     Map<String, Object?>? extra,
   }) => Project(
     buildConfig: buildConfig ?? this.buildConfig,
+    buildImageAutoUpgrade: buildImageAutoUpgrade ?? this.buildImageAutoUpgrade,
     canonicalDeployment: canonicalDeployment ?? this.canonicalDeployment,
     createdOn: createdOn ?? this.createdOn,
     deploymentConfigs: deploymentConfigs ?? this.deploymentConfigs,
@@ -10143,6 +11458,53 @@ class Project {
     source: source ?? this.source,
     subdomain: subdomain ?? this.subdomain,
     usesFunctions: usesFunctions ?? this.usesFunctions,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Present when the project is set to a retired build image major version and
+/// its builds have been moved to a newer one. `build_image_major_version` in
+/// `deployment_configs` then reports the version the builds run on.
+class ProjectBuildImageAutoUpgrade {
+  const ProjectBuildImageAutoUpgrade({
+    this.fromVersion,
+    this.toVersion,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory ProjectBuildImageAutoUpgrade.fromJson(Map<String, Object?> json) =>
+      ProjectBuildImageAutoUpgrade(
+        fromVersion: asInt(json['from_version']),
+        toVersion: asInt(json['to_version']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The retired build image major version the project is set to.
+  final int? fromVersion;
+
+  /// The build image major version the project's builds run on.
+  final int? toVersion;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'from_version', 'to_version'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (fromVersion != null) 'from_version': fromVersion!,
+    if (toVersion != null) 'to_version': toVersion!,
+  };
+
+  ProjectBuildImageAutoUpgrade copyWith({
+    int? fromVersion,
+    int? toVersion,
+    Map<String, Object?>? extra,
+  }) => ProjectBuildImageAutoUpgrade(
+    fromVersion: fromVersion ?? this.fromVersion,
+    toVersion: toVersion ?? this.toVersion,
     extra: extra ?? this.extra,
   );
 }
@@ -10217,7 +11579,7 @@ class ProjectCanonicalDeployment {
   /// Id of the deployment.
   final String? id;
 
-  /// If the deployment has been skipped.
+  /// Whether the deployment was skipped.
   final bool? isSkipped;
 
   /// The status of the deployment.
@@ -10229,7 +11591,8 @@ class ProjectCanonicalDeployment {
   /// Id of the project.
   final String? projectId;
 
-  /// Name of the project.
+  /// Name of the Pages project. Must begin with a lowercase letter or digit and
+  /// contain only lowercase letters, digits, and hyphens.
   final String? projectName;
 
   /// Short Id (8 character) of the deployment.
@@ -10237,7 +11600,8 @@ class ProjectCanonicalDeployment {
 
   /// Why the deployment was skipped. Allowed values: `commit_message`,
   /// `preview_deployments_disabled`, `production_deployments_disabled`,
-  /// `path_config`, `branch_config`, `pages_to_workers_conversion`.
+  /// `path_config`, `branch_config`, `pages_to_workers_conversion`,
+  /// `superseded_queued_build`.
   final String? skipReason;
 
   /// Configs for the project source control.
@@ -10471,22 +11835,16 @@ class ProjectDeploymentConfigs {
 
   factory ProjectDeploymentConfigs.fromJson(Map<String, Object?> json) =>
       ProjectDeploymentConfigs(
-        preview: asModel(
-          json['preview'],
-          ProjectDeploymentConfigsPreview.fromJson,
-        ),
+        preview: asModel(json['preview'], DeploymentConfigValues.fromJson),
         production: asModel(
           json['production'],
-          ProjectDeploymentConfigsProduction.fromJson,
+          DeploymentConfigValues.fromJson,
         ),
         extra: extraOf(json, _knownKeys),
       );
 
-  /// Configs for preview deploys.
-  final ProjectDeploymentConfigsPreview? preview;
-
-  /// Configs for production deploys.
-  final ProjectDeploymentConfigsProduction? production;
+  final DeploymentConfigValues? preview;
+  final DeploymentConfigValues? production;
 
   /// Keys returned by Cloudflare that this spec snapshot does
   /// not describe. Preserved so an edit round-trip cannot
@@ -10502,663 +11860,12 @@ class ProjectDeploymentConfigs {
   };
 
   ProjectDeploymentConfigs copyWith({
-    ProjectDeploymentConfigsPreview? preview,
-    ProjectDeploymentConfigsProduction? production,
+    DeploymentConfigValues? preview,
+    DeploymentConfigValues? production,
     Map<String, Object?>? extra,
   }) => ProjectDeploymentConfigs(
     preview: preview ?? this.preview,
     production: production ?? this.production,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Configs for preview deploys.
-class ProjectDeploymentConfigsPreview {
-  const ProjectDeploymentConfigsPreview({
-    this.aiBindings,
-    this.alwaysUseLatestCompatibilityDate,
-    this.analyticsEngineDatasets,
-    this.browsers,
-    this.buildImageMajorVersion,
-    this.compatibilityDate,
-    this.compatibilityFlags,
-    this.d1Databases,
-    this.durableObjectNamespaces,
-    this.envVars,
-    this.failOpen,
-    this.hyperdriveBindings,
-    this.kvNamespaces,
-    this.limits,
-    this.mtlsCertificates,
-    this.placement,
-    this.queueProducers,
-    this.r2Buckets,
-    this.services,
-    this.usageModel,
-    this.vectorizeBindings,
-    this.wranglerConfigHash,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ProjectDeploymentConfigsPreview.fromJson(Map<String, Object?> json) =>
-      ProjectDeploymentConfigsPreview(
-        aiBindings: asMap(json['ai_bindings']),
-        alwaysUseLatestCompatibilityDate: asBool(
-          json['always_use_latest_compatibility_date'],
-        ),
-        analyticsEngineDatasets: asMap(json['analytics_engine_datasets']),
-        browsers: asMap(json['browsers']),
-        buildImageMajorVersion: asInt(json['build_image_major_version']),
-        compatibilityDate: asString(json['compatibility_date']),
-        compatibilityFlags: asPrimitiveList<String>(
-          json['compatibility_flags'],
-          asString,
-        ),
-        d1Databases: asMap(json['d1_databases']),
-        durableObjectNamespaces: asMap(json['durable_object_namespaces']),
-        envVars: asMap(json['env_vars']),
-        failOpen: asBool(json['fail_open']),
-        hyperdriveBindings: asMap(json['hyperdrive_bindings']),
-        kvNamespaces: asMap(json['kv_namespaces']),
-        limits: asModel(
-          json['limits'],
-          ProjectDeploymentConfigsPreviewLimits.fromJson,
-        ),
-        mtlsCertificates: asMap(json['mtls_certificates']),
-        placement: asModel(
-          json['placement'],
-          ProjectDeploymentConfigsPreviewPlacement.fromJson,
-        ),
-        queueProducers: asMap(json['queue_producers']),
-        r2Buckets: asMap(json['r2_buckets']),
-        services: asMap(json['services']),
-        usageModel: asString(json['usage_model']),
-        vectorizeBindings: asMap(json['vectorize_bindings']),
-        wranglerConfigHash: asString(json['wrangler_config_hash']),
-        extra: extraOf(json, _knownKeys),
-      );
-
-  /// Constellation bindings used for Pages Functions.
-  final Map<String, Object?>? aiBindings;
-
-  /// Whether to always use the latest compatibility date for Pages Functions.
-  final bool? alwaysUseLatestCompatibilityDate;
-
-  /// Analytics Engine bindings used for Pages Functions.
-  final Map<String, Object?>? analyticsEngineDatasets;
-
-  /// Browser bindings used for Pages Functions.
-  final Map<String, Object?>? browsers;
-
-  /// The major version of the build image to use for Pages Functions.
-  final int? buildImageMajorVersion;
-
-  /// Compatibility date used for Pages Functions.
-  final String? compatibilityDate;
-
-  /// Compatibility flags used for Pages Functions.
-  final List<String>? compatibilityFlags;
-
-  /// D1 databases used for Pages Functions.
-  final Map<String, Object?>? d1Databases;
-
-  /// Durable Object namespaces used for Pages Functions.
-  final Map<String, Object?>? durableObjectNamespaces;
-
-  /// Environment variables used for builds and Pages Functions.
-  final Map<String, Object?>? envVars;
-
-  /// Whether to fail open when the deployment config cannot be applied.
-  final bool? failOpen;
-
-  /// Hyperdrive bindings used for Pages Functions.
-  final Map<String, Object?>? hyperdriveBindings;
-
-  /// KV namespaces used for Pages Functions.
-  final Map<String, Object?>? kvNamespaces;
-
-  /// Limits for Pages Functions.
-  final ProjectDeploymentConfigsPreviewLimits? limits;
-
-  /// mTLS bindings used for Pages Functions.
-  final Map<String, Object?>? mtlsCertificates;
-
-  /// Placement setting used for Pages Functions.
-  final ProjectDeploymentConfigsPreviewPlacement? placement;
-
-  /// Queue Producer bindings used for Pages Functions.
-  final Map<String, Object?>? queueProducers;
-
-  /// R2 buckets used for Pages Functions.
-  final Map<String, Object?>? r2Buckets;
-
-  /// Services used for Pages Functions.
-  final Map<String, Object?>? services;
-
-  /// The usage model for Pages Functions. Allowed values: `standard`, `bundled`,
-  /// `unbound`.
-  final String? usageModel;
-
-  /// Vectorize bindings used for Pages Functions.
-  final Map<String, Object?>? vectorizeBindings;
-
-  /// Hash of the Wrangler configuration used for the deployment.
-  final String? wranglerConfigHash;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {
-    'ai_bindings',
-    'always_use_latest_compatibility_date',
-    'analytics_engine_datasets',
-    'browsers',
-    'build_image_major_version',
-    'compatibility_date',
-    'compatibility_flags',
-    'd1_databases',
-    'durable_object_namespaces',
-    'env_vars',
-    'fail_open',
-    'hyperdrive_bindings',
-    'kv_namespaces',
-    'limits',
-    'mtls_certificates',
-    'placement',
-    'queue_producers',
-    'r2_buckets',
-    'services',
-    'usage_model',
-    'vectorize_bindings',
-    'wrangler_config_hash',
-  };
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (aiBindings != null) 'ai_bindings': aiBindings!,
-    if (alwaysUseLatestCompatibilityDate != null)
-      'always_use_latest_compatibility_date': alwaysUseLatestCompatibilityDate!,
-    if (analyticsEngineDatasets != null)
-      'analytics_engine_datasets': analyticsEngineDatasets!,
-    if (browsers != null) 'browsers': browsers!,
-    if (buildImageMajorVersion != null)
-      'build_image_major_version': buildImageMajorVersion!,
-    if (compatibilityDate != null) 'compatibility_date': compatibilityDate!,
-    if (compatibilityFlags != null) 'compatibility_flags': compatibilityFlags!,
-    if (d1Databases != null) 'd1_databases': d1Databases!,
-    if (durableObjectNamespaces != null)
-      'durable_object_namespaces': durableObjectNamespaces!,
-    if (envVars != null) 'env_vars': envVars!,
-    if (failOpen != null) 'fail_open': failOpen!,
-    if (hyperdriveBindings != null) 'hyperdrive_bindings': hyperdriveBindings!,
-    if (kvNamespaces != null) 'kv_namespaces': kvNamespaces!,
-    if (limits != null) 'limits': limits!.toJson(),
-    if (mtlsCertificates != null) 'mtls_certificates': mtlsCertificates!,
-    if (placement != null) 'placement': placement!.toJson(),
-    if (queueProducers != null) 'queue_producers': queueProducers!,
-    if (r2Buckets != null) 'r2_buckets': r2Buckets!,
-    if (services != null) 'services': services!,
-    if (usageModel != null) 'usage_model': usageModel!,
-    if (vectorizeBindings != null) 'vectorize_bindings': vectorizeBindings!,
-    if (wranglerConfigHash != null) 'wrangler_config_hash': wranglerConfigHash!,
-  };
-
-  ProjectDeploymentConfigsPreview copyWith({
-    Map<String, Object?>? aiBindings,
-    bool? alwaysUseLatestCompatibilityDate,
-    Map<String, Object?>? analyticsEngineDatasets,
-    Map<String, Object?>? browsers,
-    int? buildImageMajorVersion,
-    String? compatibilityDate,
-    List<String>? compatibilityFlags,
-    Map<String, Object?>? d1Databases,
-    Map<String, Object?>? durableObjectNamespaces,
-    Map<String, Object?>? envVars,
-    bool? failOpen,
-    Map<String, Object?>? hyperdriveBindings,
-    Map<String, Object?>? kvNamespaces,
-    ProjectDeploymentConfigsPreviewLimits? limits,
-    Map<String, Object?>? mtlsCertificates,
-    ProjectDeploymentConfigsPreviewPlacement? placement,
-    Map<String, Object?>? queueProducers,
-    Map<String, Object?>? r2Buckets,
-    Map<String, Object?>? services,
-    String? usageModel,
-    Map<String, Object?>? vectorizeBindings,
-    String? wranglerConfigHash,
-    Map<String, Object?>? extra,
-  }) => ProjectDeploymentConfigsPreview(
-    aiBindings: aiBindings ?? this.aiBindings,
-    alwaysUseLatestCompatibilityDate:
-        alwaysUseLatestCompatibilityDate ??
-        this.alwaysUseLatestCompatibilityDate,
-    analyticsEngineDatasets:
-        analyticsEngineDatasets ?? this.analyticsEngineDatasets,
-    browsers: browsers ?? this.browsers,
-    buildImageMajorVersion:
-        buildImageMajorVersion ?? this.buildImageMajorVersion,
-    compatibilityDate: compatibilityDate ?? this.compatibilityDate,
-    compatibilityFlags: compatibilityFlags ?? this.compatibilityFlags,
-    d1Databases: d1Databases ?? this.d1Databases,
-    durableObjectNamespaces:
-        durableObjectNamespaces ?? this.durableObjectNamespaces,
-    envVars: envVars ?? this.envVars,
-    failOpen: failOpen ?? this.failOpen,
-    hyperdriveBindings: hyperdriveBindings ?? this.hyperdriveBindings,
-    kvNamespaces: kvNamespaces ?? this.kvNamespaces,
-    limits: limits ?? this.limits,
-    mtlsCertificates: mtlsCertificates ?? this.mtlsCertificates,
-    placement: placement ?? this.placement,
-    queueProducers: queueProducers ?? this.queueProducers,
-    r2Buckets: r2Buckets ?? this.r2Buckets,
-    services: services ?? this.services,
-    usageModel: usageModel ?? this.usageModel,
-    vectorizeBindings: vectorizeBindings ?? this.vectorizeBindings,
-    wranglerConfigHash: wranglerConfigHash ?? this.wranglerConfigHash,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Limits for Pages Functions.
-class ProjectDeploymentConfigsPreviewLimits {
-  const ProjectDeploymentConfigsPreviewLimits({
-    this.cpuMs,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ProjectDeploymentConfigsPreviewLimits.fromJson(
-    Map<String, Object?> json,
-  ) => ProjectDeploymentConfigsPreviewLimits(
-    cpuMs: asInt(json['cpu_ms']),
-    extra: extraOf(json, _knownKeys),
-  );
-
-  /// CPU time limit in milliseconds.
-  final int? cpuMs;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {'cpu_ms'};
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (cpuMs != null) 'cpu_ms': cpuMs!,
-  };
-
-  ProjectDeploymentConfigsPreviewLimits copyWith({
-    int? cpuMs,
-    Map<String, Object?>? extra,
-  }) => ProjectDeploymentConfigsPreviewLimits(
-    cpuMs: cpuMs ?? this.cpuMs,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Placement setting used for Pages Functions.
-class ProjectDeploymentConfigsPreviewPlacement {
-  const ProjectDeploymentConfigsPreviewPlacement({
-    this.mode,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ProjectDeploymentConfigsPreviewPlacement.fromJson(
-    Map<String, Object?> json,
-  ) => ProjectDeploymentConfigsPreviewPlacement(
-    mode: asString(json['mode']),
-    extra: extraOf(json, _knownKeys),
-  );
-
-  /// Placement mode.
-  final String? mode;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {'mode'};
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (mode != null) 'mode': mode!,
-  };
-
-  ProjectDeploymentConfigsPreviewPlacement copyWith({
-    String? mode,
-    Map<String, Object?>? extra,
-  }) => ProjectDeploymentConfigsPreviewPlacement(
-    mode: mode ?? this.mode,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Configs for production deploys.
-class ProjectDeploymentConfigsProduction {
-  const ProjectDeploymentConfigsProduction({
-    this.aiBindings,
-    this.alwaysUseLatestCompatibilityDate,
-    this.analyticsEngineDatasets,
-    this.browsers,
-    this.buildImageMajorVersion,
-    this.compatibilityDate,
-    this.compatibilityFlags,
-    this.d1Databases,
-    this.durableObjectNamespaces,
-    this.envVars,
-    this.failOpen,
-    this.hyperdriveBindings,
-    this.kvNamespaces,
-    this.limits,
-    this.mtlsCertificates,
-    this.placement,
-    this.queueProducers,
-    this.r2Buckets,
-    this.services,
-    this.usageModel,
-    this.vectorizeBindings,
-    this.wranglerConfigHash,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ProjectDeploymentConfigsProduction.fromJson(
-    Map<String, Object?> json,
-  ) => ProjectDeploymentConfigsProduction(
-    aiBindings: asMap(json['ai_bindings']),
-    alwaysUseLatestCompatibilityDate: asBool(
-      json['always_use_latest_compatibility_date'],
-    ),
-    analyticsEngineDatasets: asMap(json['analytics_engine_datasets']),
-    browsers: asMap(json['browsers']),
-    buildImageMajorVersion: asInt(json['build_image_major_version']),
-    compatibilityDate: asString(json['compatibility_date']),
-    compatibilityFlags: asPrimitiveList<String>(
-      json['compatibility_flags'],
-      asString,
-    ),
-    d1Databases: asMap(json['d1_databases']),
-    durableObjectNamespaces: asMap(json['durable_object_namespaces']),
-    envVars: asMap(json['env_vars']),
-    failOpen: asBool(json['fail_open']),
-    hyperdriveBindings: asMap(json['hyperdrive_bindings']),
-    kvNamespaces: asMap(json['kv_namespaces']),
-    limits: asModel(
-      json['limits'],
-      ProjectDeploymentConfigsProductionLimits.fromJson,
-    ),
-    mtlsCertificates: asMap(json['mtls_certificates']),
-    placement: asModel(
-      json['placement'],
-      ProjectDeploymentConfigsProductionPlacement.fromJson,
-    ),
-    queueProducers: asMap(json['queue_producers']),
-    r2Buckets: asMap(json['r2_buckets']),
-    services: asMap(json['services']),
-    usageModel: asString(json['usage_model']),
-    vectorizeBindings: asMap(json['vectorize_bindings']),
-    wranglerConfigHash: asString(json['wrangler_config_hash']),
-    extra: extraOf(json, _knownKeys),
-  );
-
-  /// Constellation bindings used for Pages Functions.
-  final Map<String, Object?>? aiBindings;
-
-  /// Whether to always use the latest compatibility date for Pages Functions.
-  final bool? alwaysUseLatestCompatibilityDate;
-
-  /// Analytics Engine bindings used for Pages Functions.
-  final Map<String, Object?>? analyticsEngineDatasets;
-
-  /// Browser bindings used for Pages Functions.
-  final Map<String, Object?>? browsers;
-
-  /// The major version of the build image to use for Pages Functions.
-  final int? buildImageMajorVersion;
-
-  /// Compatibility date used for Pages Functions.
-  final String? compatibilityDate;
-
-  /// Compatibility flags used for Pages Functions.
-  final List<String>? compatibilityFlags;
-
-  /// D1 databases used for Pages Functions.
-  final Map<String, Object?>? d1Databases;
-
-  /// Durable Object namespaces used for Pages Functions.
-  final Map<String, Object?>? durableObjectNamespaces;
-
-  /// Environment variables used for builds and Pages Functions.
-  final Map<String, Object?>? envVars;
-
-  /// Whether to fail open when the deployment config cannot be applied.
-  final bool? failOpen;
-
-  /// Hyperdrive bindings used for Pages Functions.
-  final Map<String, Object?>? hyperdriveBindings;
-
-  /// KV namespaces used for Pages Functions.
-  final Map<String, Object?>? kvNamespaces;
-
-  /// Limits for Pages Functions.
-  final ProjectDeploymentConfigsProductionLimits? limits;
-
-  /// mTLS bindings used for Pages Functions.
-  final Map<String, Object?>? mtlsCertificates;
-
-  /// Placement setting used for Pages Functions.
-  final ProjectDeploymentConfigsProductionPlacement? placement;
-
-  /// Queue Producer bindings used for Pages Functions.
-  final Map<String, Object?>? queueProducers;
-
-  /// R2 buckets used for Pages Functions.
-  final Map<String, Object?>? r2Buckets;
-
-  /// Services used for Pages Functions.
-  final Map<String, Object?>? services;
-
-  /// The usage model for Pages Functions. Allowed values: `standard`, `bundled`,
-  /// `unbound`.
-  final String? usageModel;
-
-  /// Vectorize bindings used for Pages Functions.
-  final Map<String, Object?>? vectorizeBindings;
-
-  /// Hash of the Wrangler configuration used for the deployment.
-  final String? wranglerConfigHash;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {
-    'ai_bindings',
-    'always_use_latest_compatibility_date',
-    'analytics_engine_datasets',
-    'browsers',
-    'build_image_major_version',
-    'compatibility_date',
-    'compatibility_flags',
-    'd1_databases',
-    'durable_object_namespaces',
-    'env_vars',
-    'fail_open',
-    'hyperdrive_bindings',
-    'kv_namespaces',
-    'limits',
-    'mtls_certificates',
-    'placement',
-    'queue_producers',
-    'r2_buckets',
-    'services',
-    'usage_model',
-    'vectorize_bindings',
-    'wrangler_config_hash',
-  };
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (aiBindings != null) 'ai_bindings': aiBindings!,
-    if (alwaysUseLatestCompatibilityDate != null)
-      'always_use_latest_compatibility_date': alwaysUseLatestCompatibilityDate!,
-    if (analyticsEngineDatasets != null)
-      'analytics_engine_datasets': analyticsEngineDatasets!,
-    if (browsers != null) 'browsers': browsers!,
-    if (buildImageMajorVersion != null)
-      'build_image_major_version': buildImageMajorVersion!,
-    if (compatibilityDate != null) 'compatibility_date': compatibilityDate!,
-    if (compatibilityFlags != null) 'compatibility_flags': compatibilityFlags!,
-    if (d1Databases != null) 'd1_databases': d1Databases!,
-    if (durableObjectNamespaces != null)
-      'durable_object_namespaces': durableObjectNamespaces!,
-    if (envVars != null) 'env_vars': envVars!,
-    if (failOpen != null) 'fail_open': failOpen!,
-    if (hyperdriveBindings != null) 'hyperdrive_bindings': hyperdriveBindings!,
-    if (kvNamespaces != null) 'kv_namespaces': kvNamespaces!,
-    if (limits != null) 'limits': limits!.toJson(),
-    if (mtlsCertificates != null) 'mtls_certificates': mtlsCertificates!,
-    if (placement != null) 'placement': placement!.toJson(),
-    if (queueProducers != null) 'queue_producers': queueProducers!,
-    if (r2Buckets != null) 'r2_buckets': r2Buckets!,
-    if (services != null) 'services': services!,
-    if (usageModel != null) 'usage_model': usageModel!,
-    if (vectorizeBindings != null) 'vectorize_bindings': vectorizeBindings!,
-    if (wranglerConfigHash != null) 'wrangler_config_hash': wranglerConfigHash!,
-  };
-
-  ProjectDeploymentConfigsProduction copyWith({
-    Map<String, Object?>? aiBindings,
-    bool? alwaysUseLatestCompatibilityDate,
-    Map<String, Object?>? analyticsEngineDatasets,
-    Map<String, Object?>? browsers,
-    int? buildImageMajorVersion,
-    String? compatibilityDate,
-    List<String>? compatibilityFlags,
-    Map<String, Object?>? d1Databases,
-    Map<String, Object?>? durableObjectNamespaces,
-    Map<String, Object?>? envVars,
-    bool? failOpen,
-    Map<String, Object?>? hyperdriveBindings,
-    Map<String, Object?>? kvNamespaces,
-    ProjectDeploymentConfigsProductionLimits? limits,
-    Map<String, Object?>? mtlsCertificates,
-    ProjectDeploymentConfigsProductionPlacement? placement,
-    Map<String, Object?>? queueProducers,
-    Map<String, Object?>? r2Buckets,
-    Map<String, Object?>? services,
-    String? usageModel,
-    Map<String, Object?>? vectorizeBindings,
-    String? wranglerConfigHash,
-    Map<String, Object?>? extra,
-  }) => ProjectDeploymentConfigsProduction(
-    aiBindings: aiBindings ?? this.aiBindings,
-    alwaysUseLatestCompatibilityDate:
-        alwaysUseLatestCompatibilityDate ??
-        this.alwaysUseLatestCompatibilityDate,
-    analyticsEngineDatasets:
-        analyticsEngineDatasets ?? this.analyticsEngineDatasets,
-    browsers: browsers ?? this.browsers,
-    buildImageMajorVersion:
-        buildImageMajorVersion ?? this.buildImageMajorVersion,
-    compatibilityDate: compatibilityDate ?? this.compatibilityDate,
-    compatibilityFlags: compatibilityFlags ?? this.compatibilityFlags,
-    d1Databases: d1Databases ?? this.d1Databases,
-    durableObjectNamespaces:
-        durableObjectNamespaces ?? this.durableObjectNamespaces,
-    envVars: envVars ?? this.envVars,
-    failOpen: failOpen ?? this.failOpen,
-    hyperdriveBindings: hyperdriveBindings ?? this.hyperdriveBindings,
-    kvNamespaces: kvNamespaces ?? this.kvNamespaces,
-    limits: limits ?? this.limits,
-    mtlsCertificates: mtlsCertificates ?? this.mtlsCertificates,
-    placement: placement ?? this.placement,
-    queueProducers: queueProducers ?? this.queueProducers,
-    r2Buckets: r2Buckets ?? this.r2Buckets,
-    services: services ?? this.services,
-    usageModel: usageModel ?? this.usageModel,
-    vectorizeBindings: vectorizeBindings ?? this.vectorizeBindings,
-    wranglerConfigHash: wranglerConfigHash ?? this.wranglerConfigHash,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Limits for Pages Functions.
-class ProjectDeploymentConfigsProductionLimits {
-  const ProjectDeploymentConfigsProductionLimits({
-    this.cpuMs,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ProjectDeploymentConfigsProductionLimits.fromJson(
-    Map<String, Object?> json,
-  ) => ProjectDeploymentConfigsProductionLimits(
-    cpuMs: asInt(json['cpu_ms']),
-    extra: extraOf(json, _knownKeys),
-  );
-
-  /// CPU time limit in milliseconds.
-  final int? cpuMs;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {'cpu_ms'};
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (cpuMs != null) 'cpu_ms': cpuMs!,
-  };
-
-  ProjectDeploymentConfigsProductionLimits copyWith({
-    int? cpuMs,
-    Map<String, Object?>? extra,
-  }) => ProjectDeploymentConfigsProductionLimits(
-    cpuMs: cpuMs ?? this.cpuMs,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Placement setting used for Pages Functions.
-class ProjectDeploymentConfigsProductionPlacement {
-  const ProjectDeploymentConfigsProductionPlacement({
-    this.mode,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ProjectDeploymentConfigsProductionPlacement.fromJson(
-    Map<String, Object?> json,
-  ) => ProjectDeploymentConfigsProductionPlacement(
-    mode: asString(json['mode']),
-    extra: extraOf(json, _knownKeys),
-  );
-
-  /// Placement mode.
-  final String? mode;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {'mode'};
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (mode != null) 'mode': mode!,
-  };
-
-  ProjectDeploymentConfigsProductionPlacement copyWith({
-    String? mode,
-    Map<String, Object?>? extra,
-  }) => ProjectDeploymentConfigsProductionPlacement(
-    mode: mode ?? this.mode,
     extra: extra ?? this.extra,
   );
 }
@@ -11233,7 +11940,7 @@ class ProjectLatestDeployment {
   /// Id of the deployment.
   final String? id;
 
-  /// If the deployment has been skipped.
+  /// Whether the deployment was skipped.
   final bool? isSkipped;
 
   /// The status of the deployment.
@@ -11245,7 +11952,8 @@ class ProjectLatestDeployment {
   /// Id of the project.
   final String? projectId;
 
-  /// Name of the project.
+  /// Name of the Pages project. Must begin with a lowercase letter or digit and
+  /// contain only lowercase letters, digits, and hyphens.
   final String? projectName;
 
   /// Short Id (8 character) of the deployment.
@@ -11253,7 +11961,8 @@ class ProjectLatestDeployment {
 
   /// Why the deployment was skipped. Allowed values: `commit_message`,
   /// `preview_deployments_disabled`, `production_deployments_disabled`,
-  /// `path_config`, `branch_config`, `pages_to_workers_conversion`.
+  /// `path_config`, `branch_config`, `pages_to_workers_conversion`,
+  /// `superseded_queued_build`.
   final String? skipReason;
 
   /// Configs for the project source control.
@@ -11799,13 +12508,13 @@ class RequestRule {
   });
 
   factory RequestRule.fromJson(Map<String, Object?> json) => RequestRule(
-    action: json['action'],
+    action: asString(json['action']),
     actionParameters: asModel(
       json['action_parameters'],
       RequestRuleActionParameters.fromJson,
     ),
     categories: asPrimitiveList<String>(json['categories'], asString),
-    description: json['description'],
+    description: asString(json['description']),
     enabled: json['enabled'],
     exposedCredentialCheck: asModel(
       json['exposed_credential_check'],
@@ -11822,12 +12531,12 @@ class RequestRule {
   );
 
   /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final RequestRuleActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
+  final String? description;
   final Object? enabled;
 
   /// Configuration for exposed credential checking.
@@ -11895,10 +12604,10 @@ class RequestRule {
   };
 
   RequestRule copyWith({
-    Object? action,
+    String? action,
     RequestRuleActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
+    String? description,
     Object? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
@@ -11983,14 +12692,14 @@ class ResponseRule {
   });
 
   factory ResponseRule.fromJson(Map<String, Object?> json) => ResponseRule(
-    action: json['action'],
+    action: asString(json['action']),
     actionParameters: asModel(
       json['action_parameters'],
       ResponseRuleActionParameters.fromJson,
     ),
     categories: asPrimitiveList<String>(json['categories'], asString),
-    description: json['description'],
-    enabled: json['enabled'],
+    description: asString(json['description']),
+    enabled: asBool(json['enabled']),
     exposedCredentialCheck: asModel(
       json['exposed_credential_check'],
       RuleExposedCredentialCheck.fromJson,
@@ -12005,22 +12714,17 @@ class ResponseRule {
     extra: extraOf(json, _knownKeys),
   );
 
-  /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final ResponseRuleActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
-  final Object? enabled;
+  final String? description;
+  final bool? enabled;
 
   /// Configuration for exposed credential checking.
   final RuleExposedCredentialCheck? exposedCredentialCheck;
-
-  /// The expression defining which traffic will match the rule.
   final String? expression;
-
-  /// The unique ID of the rule.
   final String? id;
 
   /// The timestamp of when the rule was last modified.
@@ -12031,8 +12735,6 @@ class ResponseRule {
 
   /// An object configuring the rule's rate limit behavior.
   final RuleRatelimit? ratelimit;
-
-  /// The reference of the rule (the rule's ID by default).
   final String? ref;
 
   /// The version of the rule.
@@ -12079,11 +12781,11 @@ class ResponseRule {
   };
 
   ResponseRule copyWith({
-    Object? action,
+    String? action,
     ResponseRuleActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
-    Object? enabled,
+    String? description,
+    bool? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
     String? id,
@@ -12157,13 +12859,14 @@ class Route {
   });
 
   factory Route.fromJson(Map<String, Object?> json) => Route(
-    id: json['id'],
+    id: asString(json['id']),
     pattern: asString(json['pattern']),
     script: asString(json['script']),
     extra: extraOf(json, _knownKeys),
   );
 
-  final Object? id;
+  /// Identifier.
+  final String? id;
 
   /// Pattern to match incoming requests against. [Learn
   /// more](https://developers.cloudflare.com/workers/configuration/routing/routes/#matching-behavior).
@@ -12187,7 +12890,7 @@ class Route {
   };
 
   Route copyWith({
-    Object? id,
+    String? id,
     String? pattern,
     String? script,
     Map<String, Object?>? extra,
@@ -12317,6 +13020,7 @@ class Rule2 {
     this.saml,
     this.oidc,
     this.serviceToken,
+    this.serviceTokenTag,
     this.linkedAppToken,
     this.userRiskScore,
     this.cloudflareAccountMember,
@@ -12353,6 +13057,10 @@ class Rule2 {
     saml: asModel(json['saml'], Rule2Saml.fromJson),
     oidc: asModel(json['oidc'], Rule2Oidc.fromJson),
     serviceToken: asModel(json['service_token'], Rule2ServiceToken.fromJson),
+    serviceTokenTag: asModel(
+      json['service_token_tag'],
+      Rule2ServiceTokenTag.fromJson,
+    ),
     linkedAppToken: asModel(
       json['linked_app_token'],
       Rule2LinkedAppToken.fromJson,
@@ -12395,6 +13103,7 @@ class Rule2 {
   final Rule2Saml? saml;
   final Rule2Oidc? oidc;
   final Rule2ServiceToken? serviceToken;
+  final Rule2ServiceTokenTag? serviceTokenTag;
   final Rule2LinkedAppToken? linkedAppToken;
   final Rule2UserRiskScore? userRiskScore;
   final Rule2CloudflareAccountMember? cloudflareAccountMember;
@@ -12428,6 +13137,7 @@ class Rule2 {
     'saml',
     'oidc',
     'service_token',
+    'service_token_tag',
     'linked_app_token',
     'user_risk_score',
     'cloudflare_account_member',
@@ -12461,6 +13171,7 @@ class Rule2 {
     if (saml != null) 'saml': saml!.toJson(),
     if (oidc != null) 'oidc': oidc!.toJson(),
     if (serviceToken != null) 'service_token': serviceToken!.toJson(),
+    if (serviceTokenTag != null) 'service_token_tag': serviceTokenTag!.toJson(),
     if (linkedAppToken != null) 'linked_app_token': linkedAppToken!.toJson(),
     if (userRiskScore != null) 'user_risk_score': userRiskScore!.toJson(),
     if (cloudflareAccountMember != null)
@@ -12491,6 +13202,7 @@ class Rule2 {
     Rule2Saml? saml,
     Rule2Oidc? oidc,
     Rule2ServiceToken? serviceToken,
+    Rule2ServiceTokenTag? serviceTokenTag,
     Rule2LinkedAppToken? linkedAppToken,
     Rule2UserRiskScore? userRiskScore,
     Rule2CloudflareAccountMember? cloudflareAccountMember,
@@ -12519,6 +13231,7 @@ class Rule2 {
     saml: saml ?? this.saml,
     oidc: oidc ?? this.oidc,
     serviceToken: serviceToken ?? this.serviceToken,
+    serviceTokenTag: serviceTokenTag ?? this.serviceTokenTag,
     linkedAppToken: linkedAppToken ?? this.linkedAppToken,
     userRiskScore: userRiskScore ?? this.userRiskScore,
     cloudflareAccountMember:
@@ -12729,15 +13442,20 @@ class Rule2CommonName {
 
 class Rule2DevicePosture {
   const Rule2DevicePosture({
+    this.accountId,
     this.integrationUid,
     this.extra = const <String, Object?>{},
   });
 
   factory Rule2DevicePosture.fromJson(Map<String, Object?> json) =>
       Rule2DevicePosture(
+        accountId: asString(json['account_id']),
         integrationUid: asString(json['integration_uid']),
         extra: extraOf(json, _knownKeys),
       );
+
+  /// Identifier.
+  final String? accountId;
 
   /// The ID of a device posture integration.
   final String? integrationUid;
@@ -12747,17 +13465,20 @@ class Rule2DevicePosture {
   /// silently drop them.
   final Map<String, Object?> extra;
 
-  static const Set<String> _knownKeys = {'integration_uid'};
+  static const Set<String> _knownKeys = {'account_id', 'integration_uid'};
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
+    if (accountId != null) 'account_id': accountId!,
     if (integrationUid != null) 'integration_uid': integrationUid!,
   };
 
   Rule2DevicePosture copyWith({
+    String? accountId,
     String? integrationUid,
     Map<String, Object?>? extra,
   }) => Rule2DevicePosture(
+    accountId: accountId ?? this.accountId,
     integrationUid: integrationUid ?? this.integrationUid,
     extra: extra ?? this.extra,
   );
@@ -13346,6 +14067,52 @@ class Rule2ServiceToken {
       );
 }
 
+class Rule2ServiceTokenTag {
+  const Rule2ServiceTokenTag({
+    this.key,
+    this.value,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory Rule2ServiceTokenTag.fromJson(Map<String, Object?> json) =>
+      Rule2ServiceTokenTag(
+        key: asString(json['key']),
+        value: asString(json['value']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The tag key to match. Keys are case-sensitive and may contain Unicode
+  /// letters and digits, underscores, periods, and hyphens.
+  final String? key;
+
+  /// The tag value to match. Values are case-sensitive, preserve whitespace, and
+  /// must not contain NUL characters.
+  final String? value;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'key', 'value'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (key != null) 'key': key!,
+    if (value != null) 'value': value!,
+  };
+
+  Rule2ServiceTokenTag copyWith({
+    String? key,
+    String? value,
+    Map<String, Object?>? extra,
+  }) => Rule2ServiceTokenTag(
+    key: key ?? this.key,
+    value: value ?? this.value,
+    extra: extra ?? this.extra,
+  );
+}
+
 class Rule2UserRiskScore {
   const Rule2UserRiskScore({
     this.userRiskScore,
@@ -13402,6 +14169,8 @@ class RuleAction {
 
   /// Type of supported action. Allowed values: `drop`, `forward`, `worker`.
   final String? type_;
+
+  /// List of values for the action. Currently limited to a single value.
   final List<String>? value;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -13595,7 +14364,10 @@ class RuleOverrides {
     poolWeights: asMap(json['pool_weights']),
     pools: asPrimitiveList<String>(json['pools'], asString),
     popPools: asMap(json['pop_pools']),
-    randomSteering: asModel(json['random_steering'], RandomSteering.fromJson),
+    randomSteering: asModel(
+      json['random_steering'],
+      RuleOverridesRandomSteering.fromJson,
+    ),
     regionPools: asMap(json['region_pools']),
     sessionAffinity: asString(json['session_affinity']),
     sessionAffinityAttributes: asModel(
@@ -13655,12 +14427,13 @@ class RuleOverrides {
   /// country_pool, then region_pool mapping if it exists else to default_pools.
   final Map<String, Object?>? popPools;
 
-  /// Configures pool weights. - `steering_policy="random"`: A random pool is
-  /// selected with probability proportional to pool weights. -
+  /// Configures pool weights for a rule override. An omitted default_weight
+  /// inherits the load balancer's default weight. - `steering_policy="random"`: A
+  /// random pool is selected with probability proportional to pool weights. -
   /// `steering_policy="least_outstanding_requests"`: Use pool weights to scale
   /// each pool's outstanding requests. - `steering_policy="least_connections"`:
   /// Use pool weights to scale each pool's open connections.
-  final RandomSteering? randomSteering;
+  final RuleOverridesRandomSteering? randomSteering;
 
   /// A mapping of region codes to a list of pool IDs (ordered by their failover
   /// priority) for the given region. Any regions not explicitly defined will fall
@@ -13786,7 +14559,7 @@ class RuleOverrides {
     Map<String, Object?>? poolWeights,
     List<String>? pools,
     Map<String, Object?>? popPools,
-    RandomSteering? randomSteering,
+    RuleOverridesRandomSteering? randomSteering,
     Map<String, Object?>? regionPools,
     String? sessionAffinity,
     SessionAffinityAttributes? sessionAffinityAttributes,
@@ -13812,6 +14585,59 @@ class RuleOverrides {
     sessionAffinityTtl: sessionAffinityTtl ?? this.sessionAffinityTtl,
     steeringPolicy: steeringPolicy ?? this.steeringPolicy,
     ttl: ttl ?? this.ttl,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Configures pool weights for a rule override. An omitted default_weight
+/// inherits the load balancer's default weight. - `steering_policy="random"`: A
+/// random pool is selected with probability proportional to pool weights. -
+/// `steering_policy="least_outstanding_requests"`: Use pool weights to scale
+/// each pool's outstanding requests. - `steering_policy="least_connections"`:
+/// Use pool weights to scale each pool's open connections.
+class RuleOverridesRandomSteering {
+  const RuleOverridesRandomSteering({
+    this.defaultWeight,
+    this.poolWeights,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RuleOverridesRandomSteering.fromJson(Map<String, Object?> json) =>
+      RuleOverridesRandomSteering(
+        defaultWeight: asNum(json['default_weight']),
+        poolWeights: asMap(json['pool_weights']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// The default weight for pools in the load balancer that are not specified in
+  /// the pool_weights map. An omitted value inherits the load balancer's default
+  /// weight.
+  final num? defaultWeight;
+
+  /// A mapping of pool IDs to custom weights. The weight is relative to other
+  /// pools in the load balancer.
+  final Map<String, Object?>? poolWeights;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'default_weight', 'pool_weights'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (defaultWeight != null) 'default_weight': defaultWeight!,
+    if (poolWeights != null) 'pool_weights': poolWeights!,
+  };
+
+  RuleOverridesRandomSteering copyWith({
+    num? defaultWeight,
+    Map<String, Object?>? poolWeights,
+    Map<String, Object?>? extra,
+  }) => RuleOverridesRandomSteering(
+    defaultWeight: defaultWeight ?? this.defaultWeight,
+    poolWeights: poolWeights ?? this.poolWeights,
     extra: extra ?? this.extra,
   );
 }
@@ -13933,7 +14759,6 @@ class RuleSettings {
   const RuleSettings({
     this.addHeaders,
     this.allowChildBypass,
-    this.auditSsh,
     this.bisoAdminControls,
     this.blockPage,
     this.blockPageEnabled,
@@ -13944,6 +14769,7 @@ class RuleSettings {
     this.dnsResolvers,
     this.egress,
     this.forensicCopy,
+    this.forward,
     this.ignoreCnameCategoryMatches,
     this.insecureDisableDnssecValidation,
     this.ipCategories,
@@ -13965,7 +14791,6 @@ class RuleSettings {
   factory RuleSettings.fromJson(Map<String, Object?> json) => RuleSettings(
     addHeaders: asMap(json['add_headers']),
     allowChildBypass: asBool(json['allow_child_bypass']),
-    auditSsh: asModel(json['audit_ssh'], RuleSettingsAuditSsh.fromJson),
     bisoAdminControls: asModel(
       json['biso_admin_controls'],
       RuleSettingsBisoAdminControls.fromJson,
@@ -13988,6 +14813,7 @@ class RuleSettings {
       json['forensic_copy'],
       RuleSettingsForensicCopy.fromJson,
     ),
+    forward: asModel(json['forward'], RuleSettingsForward.fromJson),
     ignoreCnameCategoryMatches: asBool(json['ignore_cname_category_matches']),
     insecureDisableDnssecValidation: asBool(
       json['insecure_disable_dnssec_validation'],
@@ -14029,10 +14855,6 @@ class RuleSettings {
   /// Set to enable MSP children to bypass this rule. Only parent MSP accounts can
   /// set this. this rule. Settable for all types of rules.
   final bool? allowChildBypass;
-
-  /// Define the settings for the Audit SSH action. Settable only for `l4` rules
-  /// with `audit_ssh` action.
-  final RuleSettingsAuditSsh? auditSsh;
 
   /// Configure browser isolation behavior. Settable only for `http` rules with
   /// the action set to `isolate`.
@@ -14080,6 +14902,10 @@ class RuleSettings {
   /// Configure whether a copy of the HTTP request will be sent to storage when
   /// the rule matches.
   final RuleSettingsForensicCopy? forensicCopy;
+
+  /// Forward matching HTTP requests to a Worker. Required for `http` rules with
+  /// the action set to `forward`.
+  final RuleSettingsForward? forward;
 
   /// Ignore category matches at CNAME domains in a response. When off, evaluate
   /// categories in this rule against all CNAME domain categories in the response.
@@ -14160,7 +14986,6 @@ class RuleSettings {
   static const Set<String> _knownKeys = {
     'add_headers',
     'allow_child_bypass',
-    'audit_ssh',
     'biso_admin_controls',
     'block_page',
     'block_page_enabled',
@@ -14171,6 +14996,7 @@ class RuleSettings {
     'dns_resolvers',
     'egress',
     'forensic_copy',
+    'forward',
     'ignore_cname_category_matches',
     'insecure_disable_dnssec_validation',
     'ip_categories',
@@ -14192,7 +15018,6 @@ class RuleSettings {
     ...extra,
     if (addHeaders != null) 'add_headers': addHeaders!,
     if (allowChildBypass != null) 'allow_child_bypass': allowChildBypass!,
-    if (auditSsh != null) 'audit_ssh': auditSsh!.toJson(),
     if (bisoAdminControls != null)
       'biso_admin_controls': bisoAdminControls!.toJson(),
     if (blockPage != null) 'block_page': blockPage!.toJson(),
@@ -14204,6 +15029,7 @@ class RuleSettings {
     if (dnsResolvers != null) 'dns_resolvers': dnsResolvers!.toJson(),
     if (egress != null) 'egress': egress!.toJson(),
     if (forensicCopy != null) 'forensic_copy': forensicCopy!.toJson(),
+    if (forward != null) 'forward': forward!.toJson(),
     if (ignoreCnameCategoryMatches != null)
       'ignore_cname_category_matches': ignoreCnameCategoryMatches!,
     if (insecureDisableDnssecValidation != null)
@@ -14229,7 +15055,6 @@ class RuleSettings {
   RuleSettings copyWith({
     Map<String, Object?>? addHeaders,
     bool? allowChildBypass,
-    RuleSettingsAuditSsh? auditSsh,
     RuleSettingsBisoAdminControls? bisoAdminControls,
     RuleSettingsBlockPage? blockPage,
     bool? blockPageEnabled,
@@ -14240,6 +15065,7 @@ class RuleSettings {
     RuleSettingsDnsResolvers? dnsResolvers,
     RuleSettingsEgress? egress,
     RuleSettingsForensicCopy? forensicCopy,
+    RuleSettingsForward? forward,
     bool? ignoreCnameCategoryMatches,
     bool? insecureDisableDnssecValidation,
     bool? ipCategories,
@@ -14259,7 +15085,6 @@ class RuleSettings {
   }) => RuleSettings(
     addHeaders: addHeaders ?? this.addHeaders,
     allowChildBypass: allowChildBypass ?? this.allowChildBypass,
-    auditSsh: auditSsh ?? this.auditSsh,
     bisoAdminControls: bisoAdminControls ?? this.bisoAdminControls,
     blockPage: blockPage ?? this.blockPage,
     blockPageEnabled: blockPageEnabled ?? this.blockPageEnabled,
@@ -14270,6 +15095,7 @@ class RuleSettings {
     dnsResolvers: dnsResolvers ?? this.dnsResolvers,
     egress: egress ?? this.egress,
     forensicCopy: forensicCopy ?? this.forensicCopy,
+    forward: forward ?? this.forward,
     ignoreCnameCategoryMatches:
         ignoreCnameCategoryMatches ?? this.ignoreCnameCategoryMatches,
     insecureDisableDnssecValidation:
@@ -14288,44 +15114,6 @@ class RuleSettings {
         resolveDnsThroughCloudflare ?? this.resolveDnsThroughCloudflare,
     setHeaders: setHeaders ?? this.setHeaders,
     untrustedCert: untrustedCert ?? this.untrustedCert,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Define the settings for the Audit SSH action. Settable only for `l4` rules
-/// with `audit_ssh` action.
-class RuleSettingsAuditSsh {
-  const RuleSettingsAuditSsh({
-    this.commandLogging,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory RuleSettingsAuditSsh.fromJson(Map<String, Object?> json) =>
-      RuleSettingsAuditSsh(
-        commandLogging: asBool(json['command_logging']),
-        extra: extraOf(json, _knownKeys),
-      );
-
-  /// Enable SSH command logging.
-  final bool? commandLogging;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {'command_logging'};
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (commandLogging != null) 'command_logging': commandLogging!,
-  };
-
-  RuleSettingsAuditSsh copyWith({
-    bool? commandLogging,
-    Map<String, Object?>? extra,
-  }) => RuleSettingsAuditSsh(
-    commandLogging: commandLogging ?? this.commandLogging,
     extra: extra ?? this.extra,
   );
 }
@@ -14395,9 +15183,13 @@ class RuleSettingsBisoAdminControls {
   /// Set to false to enable uploading. Only applies when `version == "v1"`.
   final bool? du;
 
-  /// Configure keyboard usage behavior. If this field is absent, keyboard usage
-  /// remains enabled. Applies only when version == "v2". Allowed values:
-  /// `enabled`, `disabled`.
+  /// Configure keyboard usage behavior. When set to enable_read_only_actions,
+  /// only approved browser commands (find, copy, print, zoom, and select-all) may
+  /// execute; other keyboard input is blocked from reaching the page. Copy and
+  /// print remain subject to their independent controls. If this field is absent,
+  /// keyboard usage remains enabled. Applies only when version == "v2". The
+  /// enable_read_only_actions value requires an explicit version of "v2". Allowed
+  /// values: `enabled`, `disabled`, `enable_read_only_actions`.
   final String? keyboard;
 
   /// Configure paste behavior. If set to remote_only, users cannot paste content
@@ -14723,6 +15515,44 @@ class RuleSettingsForensicCopy {
     Map<String, Object?>? extra,
   }) => RuleSettingsForensicCopy(
     enabled: enabled ?? this.enabled,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Forward matching HTTP requests to a Worker. Required for `http` rules with
+/// the action set to `forward`.
+class RuleSettingsForward {
+  const RuleSettingsForward({
+    this.workerId,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory RuleSettingsForward.fromJson(Map<String, Object?> json) =>
+      RuleSettingsForward(
+        workerId: asString(json['worker_id']),
+        extra: extraOf(json, _knownKeys),
+      );
+
+  /// Specify the public Worker ID of the target Worker.
+  final String? workerId;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'worker_id'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (workerId != null) 'worker_id': workerId!,
+  };
+
+  RuleSettingsForward copyWith({
+    String? workerId,
+    Map<String, Object?>? extra,
+  }) => RuleSettingsForward(
+    workerId: workerId ?? this.workerId,
     extra: extra ?? this.extra,
   );
 }
@@ -15124,7 +15954,7 @@ class Rules {
   /// device posture expressions either absent or evaluate to `true`. Allowed
   /// values: `on`, `off`, `allow`, `block`, `scan`, `noscan`, `safesearch`,
   /// `ytrestricted`, `isolate`, `noisolate`, `override`, `l4_override`, `egress`,
-  /// `resolve`, `quarantine`, `redirect`.
+  /// `resolve`, `quarantine`, `redirect`, `forward`.
   final String? action;
   final String? createdAt;
 
@@ -15604,7 +16434,7 @@ class SchemasConnection {
         id: asString(json['id']),
         isPendingReconnect: asBool(json['is_pending_reconnect']),
         openedAt: asString(json['opened_at']),
-        originIp: json['origin_ip'],
+        originIp: asString(json['origin_ip']),
         uuid: asString(json['uuid']),
         extra: extraOf(json, _knownKeys),
       );
@@ -15629,9 +16459,7 @@ class SchemasConnection {
 
   /// Timestamp of when the connection was established.
   final String? openedAt;
-
-  /// The public IP address of the host running cloudflared.
-  final Object? originIp;
+  final String? originIp;
 
   /// UUID of the Cloudflare Tunnel connection.
   final String? uuid;
@@ -15671,7 +16499,7 @@ class SchemasConnection {
     String? id,
     bool? isPendingReconnect,
     String? openedAt,
-    Object? originIp,
+    String? originIp,
     String? uuid,
     Map<String, Object?>? extra,
   }) => SchemasConnection(
@@ -16102,7 +16930,7 @@ class ScriptAndVersionSettingsItem {
         exports: asMap(json['exports']),
         exportsReconciliation: asModel(
           json['exports_reconciliation'],
-          ScriptAndVersionSettingsItemExportsReconciliation.fromJson,
+          ExportsReconciliationResult.fromJson,
         ),
         limits: asModel(json['limits'], Limits.fromJson),
         logpush: asBool(json['logpush']),
@@ -16110,7 +16938,7 @@ class ScriptAndVersionSettingsItem {
           json['migrations'],
           ScriptAndVersionSettingsItemMigrations.fromJson,
         ),
-        observability: asModel(json['observability'], Observability.fromJson),
+        observability: asModel(json['observability'], Observability2.fromJson),
         placement: asModel(
           json['placement'],
           ScriptAndVersionSettingsItemPlacement.fromJson,
@@ -16134,16 +16962,21 @@ class ScriptAndVersionSettingsItem {
   final Object? compatibilityDate;
   final Object? compatibilityFlags;
 
-  /// Declarative exports for the Worker. Worker entrypoint entries (`type:
-  /// worker`) carry cache configuration for that entrypoint.
+  /// Declarative exports for the Worker, keyed by export name. Worker entrypoint
+  /// entries (`type: worker`) carry cache configuration for that entrypoint.
+  /// Durable Object entries (`type: durable-object`) are also configured here and
+  /// drive namespace reconciliation. At most 100 entries; class names are at most
+  /// 128 characters.
   final Map<String, Object?>? exports;
 
-  /// Summary of the declarative exports reconciliation that ran on this upload.
-  /// Populated only when the uploaded metadata included an `exports` block.
-  /// Durable Object entries drive reconciliation; `type: worker` entries do not
-  /// contribute to this summary.
-  final ScriptAndVersionSettingsItemExportsReconciliation?
-  exportsReconciliation;
+  /// Summary of what the declarative exports reconciliation did on this upload.
+  /// Present only on uploads that included an `exports` block. Reconciliation
+  /// acts on Durable Object entries; `type: worker` entries in the same map do
+  /// not participate. Every array is always present (possibly empty) so clients
+  /// can iterate unconditionally. Clients should surface `warnings` prominently,
+  /// render `info` at lower visibility, and use `removable_entries` as the "safe
+  /// to delete from your config" hint.
+  final ExportsReconciliationResult? exportsReconciliation;
 
   /// Limits to apply for this Worker.
   final Limits? limits;
@@ -16155,7 +16988,7 @@ class ScriptAndVersionSettingsItem {
   final ScriptAndVersionSettingsItemMigrations? migrations;
 
   /// Observability settings for the Worker.
-  final Observability? observability;
+  final Observability2? observability;
   final ScriptAndVersionSettingsItemPlacement? placement;
   final Object? tags;
   final Object? tailConsumers;
@@ -16214,11 +17047,11 @@ class ScriptAndVersionSettingsItem {
     Object? compatibilityDate,
     Object? compatibilityFlags,
     Map<String, Object?>? exports,
-    ScriptAndVersionSettingsItemExportsReconciliation? exportsReconciliation,
+    ExportsReconciliationResult? exportsReconciliation,
     Limits? limits,
     bool? logpush,
     ScriptAndVersionSettingsItemMigrations? migrations,
-    Observability? observability,
+    Observability2? observability,
     ScriptAndVersionSettingsItemPlacement? placement,
     Object? tags,
     Object? tailConsumers,
@@ -16301,137 +17134,6 @@ class ScriptAndVersionSettingsItemAnnotations {
     workersMessage: workersMessage ?? this.workersMessage,
     workersTag: workersTag ?? this.workersTag,
     workersTriggeredBy: workersTriggeredBy ?? this.workersTriggeredBy,
-    extra: extra ?? this.extra,
-  );
-}
-
-/// Summary of the declarative exports reconciliation that ran on this upload.
-/// Populated only when the uploaded metadata included an `exports` block.
-/// Durable Object entries drive reconciliation; `type: worker` entries do not
-/// contribute to this summary.
-class ScriptAndVersionSettingsItemExportsReconciliation {
-  const ScriptAndVersionSettingsItemExportsReconciliation({
-    this.created,
-    this.deleted,
-    this.info,
-    this.removableEntries,
-    this.renamed,
-    this.transferPending,
-    this.transferred,
-    this.updated,
-    this.warnings,
-    this.extra = const <String, Object?>{},
-  });
-
-  factory ScriptAndVersionSettingsItemExportsReconciliation.fromJson(
-    Map<String, Object?> json,
-  ) => ScriptAndVersionSettingsItemExportsReconciliation(
-    created: asPrimitiveList<String>(json['created'], asString),
-    deleted: asPrimitiveList<String>(json['deleted'], asString),
-    info: asModelList(json['info'], ExportsReconciliationInfo.fromJson),
-    removableEntries: asPrimitiveList<String>(
-      json['removable_entries'],
-      asString,
-    ),
-    renamed: asModelList(json['renamed'], ExportsReconciliationRename.fromJson),
-    transferPending: asModelList(
-      json['transfer_pending'],
-      ExportsReconciliationTransferPending.fromJson,
-    ),
-    transferred: asModelList(
-      json['transferred'],
-      ExportsReconciliationTransfer.fromJson,
-    ),
-    updated: asPrimitiveList<String>(json['updated'], asString),
-    warnings: asModelList(
-      json['warnings'],
-      ExportsReconciliationWarning.fromJson,
-    ),
-    extra: extraOf(json, _knownKeys),
-  );
-
-  /// Class names for which a new namespace was provisioned.
-  final List<String>? created;
-
-  /// Class names whose namespace was deleted by a `deleted` tombstone.
-  final List<String>? deleted;
-
-  /// Non-blocking info entries (stale tombstones, tombstone applied with class
-  /// still in code). See `exports_reconciliation_info`.
-  final List<ExportsReconciliationInfo>? info;
-
-  /// Source class names whose tombstone entry is now stale and safe to delete
-  /// from `exports` (no remaining referencing scripts).
-  final List<String>? removableEntries;
-
-  /// Applied `renamed` tombstones.
-  final List<ExportsReconciliationRename>? renamed;
-
-  /// Phase-1 transfer hints recorded on the target side.
-  final List<ExportsReconciliationTransferPending>? transferPending;
-
-  /// Committed `transferred` tombstones (phase-2).
-  final List<ExportsReconciliationTransfer>? transferred;
-
-  /// Class names whose provisioned namespace was mutated in place.
-  final List<String>? updated;
-
-  /// Non-blocking warnings. See `exports_reconciliation_warning`.
-  final List<ExportsReconciliationWarning>? warnings;
-
-  /// Keys returned by Cloudflare that this spec snapshot does
-  /// not describe. Preserved so an edit round-trip cannot
-  /// silently drop them.
-  final Map<String, Object?> extra;
-
-  static const Set<String> _knownKeys = {
-    'created',
-    'deleted',
-    'info',
-    'removable_entries',
-    'renamed',
-    'transfer_pending',
-    'transferred',
-    'updated',
-    'warnings',
-  };
-
-  Map<String, Object?> toJson() => <String, Object?>{
-    ...extra,
-    if (created != null) 'created': created!,
-    if (deleted != null) 'deleted': deleted!,
-    if (info != null) 'info': info!.map((e) => e.toJson()).toList(),
-    if (removableEntries != null) 'removable_entries': removableEntries!,
-    if (renamed != null) 'renamed': renamed!.map((e) => e.toJson()).toList(),
-    if (transferPending != null)
-      'transfer_pending': transferPending!.map((e) => e.toJson()).toList(),
-    if (transferred != null)
-      'transferred': transferred!.map((e) => e.toJson()).toList(),
-    if (updated != null) 'updated': updated!,
-    if (warnings != null) 'warnings': warnings!.map((e) => e.toJson()).toList(),
-  };
-
-  ScriptAndVersionSettingsItemExportsReconciliation copyWith({
-    List<String>? created,
-    List<String>? deleted,
-    List<ExportsReconciliationInfo>? info,
-    List<String>? removableEntries,
-    List<ExportsReconciliationRename>? renamed,
-    List<ExportsReconciliationTransferPending>? transferPending,
-    List<ExportsReconciliationTransfer>? transferred,
-    List<String>? updated,
-    List<ExportsReconciliationWarning>? warnings,
-    Map<String, Object?>? extra,
-  }) => ScriptAndVersionSettingsItemExportsReconciliation(
-    created: created ?? this.created,
-    deleted: deleted ?? this.deleted,
-    info: info ?? this.info,
-    removableEntries: removableEntries ?? this.removableEntries,
-    renamed: renamed ?? this.renamed,
-    transferPending: transferPending ?? this.transferPending,
-    transferred: transferred ?? this.transferred,
-    updated: updated ?? this.updated,
-    warnings: warnings ?? this.warnings,
     extra: extra ?? this.extra,
   );
 }
@@ -16852,7 +17554,7 @@ class Setting {
 
   factory Setting.fromJson(Map<String, Object?> json) => Setting(
     editable: asBool(json['editable']),
-    id: json['id'],
+    id: asString(json['id']),
     modifiedOn: asString(json['modified_on']),
     value: asString(json['value']),
     timeRemaining: asNum(json['time_remaining']),
@@ -16865,7 +17567,7 @@ class Setting {
   final bool? editable;
 
   /// ID of the zone setting. Allowed values: `websockets`.
-  final Object? id;
+  final String? id;
 
   /// last time this setting was modified.
   final String? modifiedOn;
@@ -16908,7 +17610,7 @@ class Setting {
 
   Setting copyWith({
     bool? editable,
-    Object? id,
+    String? id,
     String? modifiedOn,
     String? value,
     num? timeRemaining,
@@ -17537,9 +18239,7 @@ class Ssl {
   const Ssl({
     this.bundleMethod,
     this.certificateAuthority,
-    this.customCertificate,
     this.customCsrId,
-    this.customKey,
     this.dcvDelegationRecords,
     this.expiresOn,
     this.hosts,
@@ -17561,9 +18261,7 @@ class Ssl {
   factory Ssl.fromJson(Map<String, Object?> json) => Ssl(
     bundleMethod: asString(json['bundle_method']),
     certificateAuthority: asString(json['certificate_authority']),
-    customCertificate: asString(json['custom_certificate']),
     customCsrId: asString(json['custom_csr_id']),
-    customKey: asString(json['custom_key']),
     dcvDelegationRecords: asModelList(
       json['dcv_delegation_records'],
       ValidationRecord.fromJson,
@@ -17602,14 +18300,8 @@ class Ssl {
   /// `digicert`, `google`, `lets_encrypt`, `ssl_com`.
   final String? certificateAuthority;
 
-  /// If a custom uploaded certificate is used.
-  final String? customCertificate;
-
   /// The identifier for the Custom CSR that was used.
   final String? customCsrId;
-
-  /// The key for a custom uploaded certificate.
-  final String? customKey;
 
   /// DCV Delegation records for domain validation.
   final List<ValidationRecord>? dcvDelegationRecords;
@@ -17671,9 +18363,7 @@ class Ssl {
   static const Set<String> _knownKeys = {
     'bundle_method',
     'certificate_authority',
-    'custom_certificate',
     'custom_csr_id',
-    'custom_key',
     'dcv_delegation_records',
     'expires_on',
     'hosts',
@@ -17696,9 +18386,7 @@ class Ssl {
     if (bundleMethod != null) 'bundle_method': bundleMethod!,
     if (certificateAuthority != null)
       'certificate_authority': certificateAuthority!,
-    if (customCertificate != null) 'custom_certificate': customCertificate!,
     if (customCsrId != null) 'custom_csr_id': customCsrId!,
-    if (customKey != null) 'custom_key': customKey!,
     if (dcvDelegationRecords != null)
       'dcv_delegation_records': dcvDelegationRecords!
           .map((e) => e.toJson())
@@ -17724,9 +18412,7 @@ class Ssl {
   Ssl copyWith({
     String? bundleMethod,
     String? certificateAuthority,
-    String? customCertificate,
     String? customCsrId,
-    String? customKey,
     List<ValidationRecord>? dcvDelegationRecords,
     String? expiresOn,
     List<String>? hosts,
@@ -17746,9 +18432,7 @@ class Ssl {
   }) => Ssl(
     bundleMethod: bundleMethod ?? this.bundleMethod,
     certificateAuthority: certificateAuthority ?? this.certificateAuthority,
-    customCertificate: customCertificate ?? this.customCertificate,
     customCsrId: customCsrId ?? this.customCsrId,
-    customKey: customKey ?? this.customKey,
     dcvDelegationRecords: dcvDelegationRecords ?? this.dcvDelegationRecords,
     expiresOn: expiresOn ?? this.expiresOn,
     hosts: hosts ?? this.hosts,
@@ -17909,7 +18593,7 @@ class Stage {
   final String? startedOn;
 
   /// State of the current stage. Allowed values: `success`, `idle`, `active`,
-  /// `failure`, `canceled`.
+  /// `failure`, `canceled`, `skipped`.
   final String? status;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -18010,7 +18694,7 @@ class Target {
 
   factory Target.fromJson(Map<String, Object?> json) => Target(
     constraint: asModel(json['constraint'], TargetConstraint.fromJson),
-    target: json['target'],
+    target: asString(json['target']),
     extra: extraOf(json, _knownKeys),
   );
 
@@ -18018,7 +18702,7 @@ class Target {
   final TargetConstraint? constraint;
 
   /// A target based on the URL of the request. Allowed values: `url`.
-  final Object? target;
+  final String? target;
 
   /// Keys returned by Cloudflare that this spec snapshot does
   /// not describe. Preserved so an edit round-trip cannot
@@ -18035,7 +18719,7 @@ class Target {
 
   Target copyWith({
     TargetConstraint? constraint,
-    Object? target,
+    String? target,
     Map<String, Object?>? extra,
   }) => Target(
     constraint: constraint ?? this.constraint,
@@ -18054,7 +18738,7 @@ class TargetConstraint {
 
   factory TargetConstraint.fromJson(Map<String, Object?> json) =>
       TargetConstraint(
-        operator_: json['operator'],
+        operator_: asString(json['operator']),
         value: asString(json['value']),
         extra: extraOf(json, _knownKeys),
       );
@@ -18062,7 +18746,7 @@ class TargetConstraint {
   /// The matches operator can use asterisks and pipes as wildcard and 'or'
   /// operators. Allowed values: `matches`, `contains`, `equals`, `not_equal`,
   /// `not_contain`.
-  final Object? operator_;
+  final String? operator_;
 
   /// The URL pattern to match against the current request. The pattern may
   /// contain up to four asterisks ('*') as placeholders.
@@ -18082,7 +18766,7 @@ class TargetConstraint {
   };
 
   TargetConstraint copyWith({
-    Object? operator_,
+    String? operator_,
     String? value,
     Map<String, Object?>? extra,
   }) => TargetConstraint(
@@ -18094,7 +18778,10 @@ class TargetConstraint {
 
 class TargetCriteriaSelfHostedApp {
   const TargetCriteriaSelfHostedApp({
+    this.exclude,
+    this.include,
     this.port,
+    this.require,
     this.targetAttributes,
     this.protocol,
     this.extra = const <String, Object?>{},
@@ -18102,20 +18789,34 @@ class TargetCriteriaSelfHostedApp {
 
   factory TargetCriteriaSelfHostedApp.fromJson(Map<String, Object?> json) =>
       TargetCriteriaSelfHostedApp(
+        exclude: asModel(
+          json['exclude'],
+          TargetCriteriaSelfHostedAppExclude.fromJson,
+        ),
+        include: asModel(
+          json['include'],
+          TargetCriteriaSelfHostedAppInclude.fromJson,
+        ),
         port: asInt(json['port']),
+        require: asModel(
+          json['require'],
+          TargetCriteriaSelfHostedAppRequire.fromJson,
+        ),
         targetAttributes: asMap(json['target_attributes']),
         protocol: asString(json['protocol']),
         extra: extraOf(json, _knownKeys),
       );
 
-  /// The port that the targets use for the chosen communication protocol. A port
-  /// cannot be assigned to multiple protocols.
+  /// Target is excluded when any selector in this rule matches.
+  final TargetCriteriaSelfHostedAppExclude? exclude;
+
+  /// Target matches when any selector in this rule matches.
+  final TargetCriteriaSelfHostedAppInclude? include;
   final int? port;
 
-  /// Contains a map of target attribute keys to target attribute values.
+  /// Target matches only when every selector in this rule matches.
+  final TargetCriteriaSelfHostedAppRequire? require;
   final Map<String, Object?>? targetAttributes;
-
-  /// The communication protocol your application secures. Allowed values: `RDP`.
   final String? protocol;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -18124,27 +18825,291 @@ class TargetCriteriaSelfHostedApp {
   final Map<String, Object?> extra;
 
   static const Set<String> _knownKeys = {
+    'exclude',
+    'include',
     'port',
+    'require',
     'target_attributes',
     'protocol',
   };
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
+    if (exclude != null) 'exclude': exclude!.toJson(),
+    if (include != null) 'include': include!.toJson(),
     if (port != null) 'port': port!,
+    if (require != null) 'require': require!.toJson(),
     if (targetAttributes != null) 'target_attributes': targetAttributes!,
     if (protocol != null) 'protocol': protocol!,
   };
 
   TargetCriteriaSelfHostedApp copyWith({
+    TargetCriteriaSelfHostedAppExclude? exclude,
+    TargetCriteriaSelfHostedAppInclude? include,
     int? port,
+    TargetCriteriaSelfHostedAppRequire? require,
     Map<String, Object?>? targetAttributes,
     String? protocol,
     Map<String, Object?>? extra,
   }) => TargetCriteriaSelfHostedApp(
+    exclude: exclude ?? this.exclude,
+    include: include ?? this.include,
     port: port ?? this.port,
+    require: require ?? this.require,
     targetAttributes: targetAttributes ?? this.targetAttributes,
     protocol: protocol ?? this.protocol,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Target is excluded when any selector in this rule matches.
+class TargetCriteriaSelfHostedAppExclude {
+  const TargetCriteriaSelfHostedAppExclude({
+    this.tags,
+    this.targetAttributes,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetCriteriaSelfHostedAppExclude.fromJson(
+    Map<String, Object?> json,
+  ) => TargetCriteriaSelfHostedAppExclude(
+    tags: asMap(json['tags']),
+    targetAttributes: asModel(
+      json['target_attributes'],
+      TargetCriteriaSelfHostedAppExcludeTargetAttributes.fromJson,
+    ),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Map of target tag keys to values. Values within a key are OR'd.
+  final Map<String, Object?>? tags;
+  final TargetCriteriaSelfHostedAppExcludeTargetAttributes? targetAttributes;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'tags', 'target_attributes'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (tags != null) 'tags': tags!,
+    if (targetAttributes != null)
+      'target_attributes': targetAttributes!.toJson(),
+  };
+
+  TargetCriteriaSelfHostedAppExclude copyWith({
+    Map<String, Object?>? tags,
+    TargetCriteriaSelfHostedAppExcludeTargetAttributes? targetAttributes,
+    Map<String, Object?>? extra,
+  }) => TargetCriteriaSelfHostedAppExclude(
+    tags: tags ?? this.tags,
+    targetAttributes: targetAttributes ?? this.targetAttributes,
+    extra: extra ?? this.extra,
+  );
+}
+
+class TargetCriteriaSelfHostedAppExcludeTargetAttributes {
+  const TargetCriteriaSelfHostedAppExcludeTargetAttributes({
+    this.hostname,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetCriteriaSelfHostedAppExcludeTargetAttributes.fromJson(
+    Map<String, Object?> json,
+  ) => TargetCriteriaSelfHostedAppExcludeTargetAttributes(
+    hostname: asPrimitiveList<String>(json['hostname'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  final List<String>? hostname;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'hostname'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (hostname != null) 'hostname': hostname!,
+  };
+
+  TargetCriteriaSelfHostedAppExcludeTargetAttributes copyWith({
+    List<String>? hostname,
+    Map<String, Object?>? extra,
+  }) => TargetCriteriaSelfHostedAppExcludeTargetAttributes(
+    hostname: hostname ?? this.hostname,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Target matches when any selector in this rule matches.
+class TargetCriteriaSelfHostedAppInclude {
+  const TargetCriteriaSelfHostedAppInclude({
+    this.tags,
+    this.targetAttributes,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetCriteriaSelfHostedAppInclude.fromJson(
+    Map<String, Object?> json,
+  ) => TargetCriteriaSelfHostedAppInclude(
+    tags: asMap(json['tags']),
+    targetAttributes: asModel(
+      json['target_attributes'],
+      TargetCriteriaSelfHostedAppIncludeTargetAttributes.fromJson,
+    ),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Map of target tag keys to values. Values within a key are OR'd.
+  final Map<String, Object?>? tags;
+  final TargetCriteriaSelfHostedAppIncludeTargetAttributes? targetAttributes;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'tags', 'target_attributes'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (tags != null) 'tags': tags!,
+    if (targetAttributes != null)
+      'target_attributes': targetAttributes!.toJson(),
+  };
+
+  TargetCriteriaSelfHostedAppInclude copyWith({
+    Map<String, Object?>? tags,
+    TargetCriteriaSelfHostedAppIncludeTargetAttributes? targetAttributes,
+    Map<String, Object?>? extra,
+  }) => TargetCriteriaSelfHostedAppInclude(
+    tags: tags ?? this.tags,
+    targetAttributes: targetAttributes ?? this.targetAttributes,
+    extra: extra ?? this.extra,
+  );
+}
+
+class TargetCriteriaSelfHostedAppIncludeTargetAttributes {
+  const TargetCriteriaSelfHostedAppIncludeTargetAttributes({
+    this.hostname,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetCriteriaSelfHostedAppIncludeTargetAttributes.fromJson(
+    Map<String, Object?> json,
+  ) => TargetCriteriaSelfHostedAppIncludeTargetAttributes(
+    hostname: asPrimitiveList<String>(json['hostname'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  final List<String>? hostname;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'hostname'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (hostname != null) 'hostname': hostname!,
+  };
+
+  TargetCriteriaSelfHostedAppIncludeTargetAttributes copyWith({
+    List<String>? hostname,
+    Map<String, Object?>? extra,
+  }) => TargetCriteriaSelfHostedAppIncludeTargetAttributes(
+    hostname: hostname ?? this.hostname,
+    extra: extra ?? this.extra,
+  );
+}
+
+/// Target matches only when every selector in this rule matches.
+class TargetCriteriaSelfHostedAppRequire {
+  const TargetCriteriaSelfHostedAppRequire({
+    this.tags,
+    this.targetAttributes,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetCriteriaSelfHostedAppRequire.fromJson(
+    Map<String, Object?> json,
+  ) => TargetCriteriaSelfHostedAppRequire(
+    tags: asMap(json['tags']),
+    targetAttributes: asModel(
+      json['target_attributes'],
+      TargetCriteriaSelfHostedAppRequireTargetAttributes.fromJson,
+    ),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  /// Map of target tag keys to values. Values within a key are OR'd.
+  final Map<String, Object?>? tags;
+  final TargetCriteriaSelfHostedAppRequireTargetAttributes? targetAttributes;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'tags', 'target_attributes'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (tags != null) 'tags': tags!,
+    if (targetAttributes != null)
+      'target_attributes': targetAttributes!.toJson(),
+  };
+
+  TargetCriteriaSelfHostedAppRequire copyWith({
+    Map<String, Object?>? tags,
+    TargetCriteriaSelfHostedAppRequireTargetAttributes? targetAttributes,
+    Map<String, Object?>? extra,
+  }) => TargetCriteriaSelfHostedAppRequire(
+    tags: tags ?? this.tags,
+    targetAttributes: targetAttributes ?? this.targetAttributes,
+    extra: extra ?? this.extra,
+  );
+}
+
+class TargetCriteriaSelfHostedAppRequireTargetAttributes {
+  const TargetCriteriaSelfHostedAppRequireTargetAttributes({
+    this.hostname,
+    this.extra = const <String, Object?>{},
+  });
+
+  factory TargetCriteriaSelfHostedAppRequireTargetAttributes.fromJson(
+    Map<String, Object?> json,
+  ) => TargetCriteriaSelfHostedAppRequireTargetAttributes(
+    hostname: asPrimitiveList<String>(json['hostname'], asString),
+    extra: extraOf(json, _knownKeys),
+  );
+
+  final List<String>? hostname;
+
+  /// Keys returned by Cloudflare that this spec snapshot does
+  /// not describe. Preserved so an edit round-trip cannot
+  /// silently drop them.
+  final Map<String, Object?> extra;
+
+  static const Set<String> _knownKeys = {'hostname'};
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    ...extra,
+    if (hostname != null) 'hostname': hostname!,
+  };
+
+  TargetCriteriaSelfHostedAppRequireTargetAttributes copyWith({
+    List<String>? hostname,
+    Map<String, Object?>? extra,
+  }) => TargetCriteriaSelfHostedAppRequireTargetAttributes(
+    hostname: hostname ?? this.hostname,
     extra: extra ?? this.extra,
   );
 }
@@ -18455,8 +19420,6 @@ class UpdateZoneEntrypointRulesetResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -18472,8 +19435,9 @@ class UpdateZoneEntrypointRulesetResult {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -18552,13 +19516,13 @@ class UpdateZoneRulesetRuleBody {
 
   factory UpdateZoneRulesetRuleBody.fromJson(Map<String, Object?> json) =>
       UpdateZoneRulesetRuleBody(
-        action: json['action'],
+        action: asString(json['action']),
         actionParameters: asModel(
           json['action_parameters'],
           UpdateZoneRulesetRuleBodyActionParameters.fromJson,
         ),
         categories: asPrimitiveList<String>(json['categories'], asString),
-        description: json['description'],
+        description: asString(json['description']),
         enabled: json['enabled'],
         exposedCredentialCheck: asModel(
           json['exposed_credential_check'],
@@ -18579,12 +19543,12 @@ class UpdateZoneRulesetRuleBody {
       );
 
   /// Allowed values: `transform_response_html`.
-  final Object? action;
+  final String? action;
   final UpdateZoneRulesetRuleBodyActionParameters? actionParameters;
 
   /// The categories of the rule.
   final List<String>? categories;
-  final Object? description;
+  final String? description;
   final Object? enabled;
 
   /// Configuration for exposed credential checking.
@@ -18655,10 +19619,10 @@ class UpdateZoneRulesetRuleBody {
   };
 
   UpdateZoneRulesetRuleBody copyWith({
-    Object? action,
+    String? action,
     UpdateZoneRulesetRuleBodyActionParameters? actionParameters,
     List<String>? categories,
-    Object? description,
+    String? description,
     Object? enabled,
     RuleExposedCredentialCheck? exposedCredentialCheck,
     String? expression,
@@ -18814,8 +19778,6 @@ class UpdateZoneRulesetRuleResult {
 
   /// The timestamp of when the ruleset was last modified.
   final String? lastUpdated;
-
-  /// The human-readable name of the ruleset.
   final String? name;
   final Object? version;
 
@@ -18831,8 +19793,9 @@ class UpdateZoneRulesetRuleResult {
   /// `http_request_origin`, `http_request_redirect`, `http_request_sanitize`,
   /// `http_request_sbfm`, `http_request_transform`,
   /// `http_response_cache_settings`, `http_response_compression`,
-  /// `http_response_firewall_managed`, `http_response_headers_transform`,
-  /// `magic_transit`, `magic_transit_ids_managed`, `magic_transit_managed`,
+  /// `http_response_firewall_custom`, `http_response_firewall_managed`,
+  /// `http_response_headers_transform`, `magic_transit`,
+  /// `magic_transit_ids_managed`, `magic_transit_managed`,
   /// `magic_transit_ratelimit`.
   final String? phase;
 
@@ -19349,9 +20312,9 @@ class Waitingroom {
   /// is provided, then `en-US` (English) will be used. Allowed values: `en-US`,
   /// `es-ES`, `de-DE`, `fr-FR`, `it-IT`, `ja-JP`, `ko-KR`, `pt-BR`, `zh-CN`,
   /// `zh-TW`, `nl-NL`, `pl-PL`, `id-ID`, `tr-TR`, `ar-EG`, `ru-RU`, `fa-IR`,
-  /// `bg-BG`, `hr-HR`, `cs-CZ`, `da-DK`, `fi-FI`, `lt-LT`, `ms-MY`, `nb-NO`,
-  /// `ro-RO`, `el-GR`, `he-IL`, `hi-IN`, `hu-HU`, `sr-BA`, `sk-SK`, `sl-SI`,
-  /// `sv-SE`, `tl-PH`, `th-TH`, `uk-UA`, `vi-VN`.
+  /// `bg-BG`, `hr-HR`, `cs-CZ`, `da-DK`, `fi-FI`, `lt-LT`, `lv-LV`, `ms-MY`,
+  /// `nb-NO`, `ro-RO`, `el-GR`, `he-IL`, `hi-IN`, `hu-HU`, `sr-BA`, `sk-SK`,
+  /// `sl-SI`, `sv-SE`, `tl-PH`, `th-TH`, `uk-UA`, `vi-VN`.
   final String? defaultTemplateLanguage;
 
   /// A note that you can use to add more details about the waiting room.
@@ -19834,7 +20797,7 @@ class WidgetList {
   /// Allowed values: `world`, `china`.
   final String? region;
 
-  /// Widget item identifier tag.
+  /// Unique identifier for a Turnstile widget.
   final String? sitekey;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -20034,7 +20997,7 @@ class WorkerScriptListWorkersItem {
           json['named_handlers'],
           WorkerScriptListWorkersItemNamedHandlersItem.fromJson,
         ),
-        observability: asModel(json['observability'], Observability.fromJson),
+        observability: asModel(json['observability'], Observability2.fromJson),
         placement: asModel(json['placement'], PlacementInfo.fromJson),
         placementMode: json['placement_mode'],
         placementStatus: json['placement_status'],
@@ -20070,10 +21033,11 @@ class WorkerScriptListWorkersItem {
   /// Hashed script content, can be used in a If-None-Match header when updating.
   final String? etag;
 
-  /// Declarative exports for the Worker's most recent version, including Durable
-  /// Object classes (with their `storage` backend) and named Worker entrypoints.
-  /// Tombstoned lifecycle entries are omitted, so only live exports (`created`
-  /// and `expecting-transfer`) are returned.
+  /// Declarative exports for the Worker, keyed by export name. Worker entrypoint
+  /// entries (`type: worker`) carry cache configuration for that entrypoint.
+  /// Durable Object entries (`type: durable-object`) are also configured here and
+  /// drive namespace reconciliation. At most 100 entries; class names are at most
+  /// 128 characters.
   final Map<String, Object?>? exports;
 
   /// The names of handlers exported as part of the default export.
@@ -20106,7 +21070,7 @@ class WorkerScriptListWorkersItem {
   final List<WorkerScriptListWorkersItemNamedHandlersItem>? namedHandlers;
 
   /// Observability settings for the Worker.
-  final Observability? observability;
+  final Observability2? observability;
 
   /// Configuration for [Smart
   /// Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
@@ -20209,7 +21173,7 @@ class WorkerScriptListWorkersItem {
     String? migrationTag,
     String? modifiedOn,
     List<WorkerScriptListWorkersItemNamedHandlersItem>? namedHandlers,
-    Observability? observability,
+    Observability2? observability,
     PlacementInfo? placement,
     Object? placementMode,
     Object? placementStatus,
@@ -20873,28 +21837,36 @@ class ZonePurgeBody {
     extra: extraOf(json, _knownKeys),
   );
 
-  /// For more information on cache tags and purging by tags, please refer to
-  /// [purge by cache-tags documentation
-  /// page](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-tags/).
+  /// Cache tags. Targets all content whose `Cache-Tag` response header contains
+  /// at least one of these tags. See [Purge cache by
+  /// cache-tags](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-tags/).
   final List<String>? tags;
 
-  /// For more information purging by hostnames, please refer to [purge by
-  /// hostname documentation
-  /// page](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-hostname/).
+  /// Hostnames, such as `www.example.com`. Targets all content cached for these
+  /// hostnames. See [Purge cache by
+  /// hostname](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-hostname/).
   final List<String>? hosts;
 
-  /// For more information on purging by prefixes, please refer to [purge by
-  /// prefix documentation
-  /// page](https://developers.cloudflare.com/cache/how-to/purge-cache/purge_by_prefix/).
+  /// URL prefixes, each a hostname followed by a path, such as
+  /// `www.example.com/blog/`. Targets all content whose URL starts with one of
+  /// these prefixes. Do not include a scheme, query string, or fragment. See
+  /// [Purge cache by
+  /// prefix](https://developers.cloudflare.com/cache/how-to/purge-cache/purge_by_prefix/).
   final List<String>? prefixes;
 
-  /// For more information, please refer to [purge everything documentation
-  /// page](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-everything/).
+  /// Set to `true` to target all cached content in the zone, or in the
+  /// environment for the environment endpoints. Must be the only field in the
+  /// request. See [Purge
+  /// everything](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-everything/).
   final bool? purgeEverything;
 
-  /// For more information on purging files with URL and headers, please refer to
-  /// [purge by single-file documentation
-  /// page](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-single-file/).
+  /// URLs with the request headers your cache key uses. Use this form when your
+  /// cache key includes request headers, or the visitor's device type, country,
+  /// or language: send the header values each URL was cached with, such as
+  /// `CF-Device-Type`, `CF-IPCountry`, or `Accept-Language`. When you send the
+  /// `Origin` header, include the scheme and hostname. Include the port unless it
+  /// is the default for the scheme: 80 for `http`, 443 for `https`. See [Purge by
+  /// single-file](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-by-single-file/).
   final List<ZonePurgeBodyFilesItem>? files;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -20950,7 +21922,10 @@ class ZonePurgeBodyFilesItem {
         extra: extraOf(json, _knownKeys),
       );
 
+  /// Request headers and the values the content was cached with.
   final Map<String, Object?>? headers;
+
+  /// Full URL of the content.
   final String? url;
 
   /// Keys returned by Cloudflare that this spec snapshot does
@@ -21019,7 +21994,7 @@ class ZoneSettingsGetAllZoneSettingsItem {
     Map<String, Object?> json,
   ) => ZoneSettingsGetAllZoneSettingsItem(
     editable: asBool(json['editable']),
-    id: json['id'],
+    id: asString(json['id']),
     modifiedOn: asString(json['modified_on']),
     value: asString(json['value']),
     timeRemaining: asNum(json['time_remaining']),
@@ -21032,7 +22007,7 @@ class ZoneSettingsGetAllZoneSettingsItem {
   final bool? editable;
 
   /// ID of the zone setting. Allowed values: `websockets`.
-  final Object? id;
+  final String? id;
 
   /// last time this setting was modified.
   final String? modifiedOn;
@@ -21075,7 +22050,7 @@ class ZoneSettingsGetAllZoneSettingsItem {
 
   ZoneSettingsGetAllZoneSettingsItem copyWith({
     bool? editable,
-    Object? id,
+    String? id,
     String? modifiedOn,
     String? value,
     num? timeRemaining,
