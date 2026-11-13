@@ -1,0 +1,3 @@
+Live DNS log under Zero Trust → Gateway: the queries Gateway resolves,
+updating while you watch, with Blocked / Allowed filters and domain search.
+Italian translation.
