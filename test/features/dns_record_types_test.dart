@@ -68,6 +68,24 @@ void main() {
       expect(ttlLabel(300), '5 min');
       expect(ttlLabel(7200), '2 h');
     });
+
+    test('a ttl label never rounds to a unit it does not fill', () {
+      expect(ttlLabel(90), '90 s');
+      expect(ttlLabel(5400), '90 min');
+      expect(ttlLabel(14400), '4 h');
+    });
+
+    test('the dashboard\'s 15 min and 5 h choices are offered', () {
+      expect(kTtlChoices, containsAll(<int>[900, 18000]));
+    });
+
+    test('a ttl outside the choices is kept, in order', () {
+      expect(ttlChoicesFor(300), same(kTtlChoices));
+      final choices = ttlChoicesFor(14400);
+      expect(choices, contains(14400));
+      expect(choices, orderedEquals([...choices]..sort()));
+      expect(kTtlChoices, isNot(contains(14400)));
+    });
   });
 
   group('record serialization', () {

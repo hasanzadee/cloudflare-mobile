@@ -515,24 +515,35 @@ DnsRecordType dnsTypeByName(String? name) {
   return kDnsRecordTypes.first;
 }
 
-/// TTL choices. 1 is Cloudflare's sentinel for "automatic".
+/// TTL choices: the same set the Cloudflare dashboard offers. 1 is Cloudflare's
+/// sentinel for "automatic".
 const List<int> kTtlChoices = [
   1,
   60,
   120,
   300,
   600,
+  900,
   1800,
   3600,
   7200,
+  18000,
   43200,
   86400,
 ];
 
+/// [kTtlChoices] plus [current] when the record already carries a TTL the
+/// list does not have, so an edit form shows the value that is really set
+/// instead of passing it off as "Auto".
+List<int> ttlChoicesFor(int current) => kTtlChoices.contains(current)
+    ? kTtlChoices
+    : ([...kTtlChoices, current]..sort());
+
+/// Only rounds to a unit the TTL fills exactly: 90 is "90 s", not "1 min".
 String ttlLabel(int ttl) => ttl == 1
     ? 'Auto'
-    : ttl >= 3600
+    : ttl >= 3600 && ttl % 3600 == 0
     ? '${ttl ~/ 3600} h'
-    : ttl >= 60
+    : ttl >= 60 && ttl % 60 == 0
     ? '${ttl ~/ 60} min'
     : '$ttl s';
