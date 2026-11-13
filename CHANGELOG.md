@@ -6,6 +6,10 @@ Notable changes per release. Dates are ISO-8601.
 
 ### Fixed
 
+- The DNS editor showed "Auto" for any TTL outside its short list, so a record
+  set to 15 min, 4 h or 5 h in the dashboard looked automatic while it was
+  not. It now shows the record's real TTL and offers the dashboard's 15 min
+  and 5 h choices. TTL labels no longer round down: 90 s was shown as "1 min".
 - Number fields in the DNS editor are now checked before saving. Text, a
   fraction where a whole number is needed, or a value outside the field's
   range (an SRV port above 65535, CAA flags above 255, an MX priority above
