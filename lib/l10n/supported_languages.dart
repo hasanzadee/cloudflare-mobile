@@ -17,6 +17,7 @@ const Map<String, String> kSupportedLanguages = {
   'de': 'Deutsch',
   'es': 'Español',
   'fr': 'Français',
+  'it': 'Italiano',
   'tr': 'Türkçe',
   'ru': 'Русский',
   'zh': '中文',
