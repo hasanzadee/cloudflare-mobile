@@ -953,4 +953,70 @@ class LAz extends L {
 
   @override
   String get commonRecommended => 'Tövsiyə olunur';
+
+  @override
+  String get ztLogTitle => 'Canlı DNS jurnalı';
+
+  @override
+  String get ztLogSubtitle => 'Gateway-in həll etdiyi sorğular, gəldikcə';
+
+  @override
+  String get ztLogBlocked => 'Bloklanıb';
+
+  @override
+  String get ztLogAllowed => 'İcazə verilib';
+
+  @override
+  String get ztLogOverridden => 'Dəyişdirilib';
+
+  @override
+  String get ztLogUnknown => 'Naməlum';
+
+  @override
+  String get ztLogSearch => 'Domenə görə süz';
+
+  @override
+  String get ztLogEmptyTitle => 'Son 30 dəqiqədə DNS sorğusu yoxdur';
+
+  @override
+  String get ztLogEmptyBody =>
+      'Cihazlar DNS-i Gateway vasitəsilə — WARP və ya DNS lokasiyası ilə — həll etməyə başlayanda sorğular burada görünəcək.';
+
+  @override
+  String get ztLogLagNote =>
+      'Cloudflare sorğuları təxminən bir dəqiqə sonra dərc edir, saylar isə seçmə əsasında təxmindir.';
+
+  @override
+  String get ztLogPause => 'Fasilə';
+
+  @override
+  String get ztLogResume => 'Davam et';
+
+  @override
+  String get ztLogLive => 'Canlı';
+
+  @override
+  String get ztLogPaused => 'Fasilədə';
+
+  @override
+  String get ztLogPolicy => 'Siyasət';
+
+  @override
+  String get ztLogNoPolicy => 'Heç bir siyasət uyğun gəlmədi';
+
+  @override
+  String get ztLogLocation => 'Lokasiya';
+
+  @override
+  String get ztLogCategories => 'Kateqoriyalar';
+
+  @override
+  String get ztLogResolvedTo => 'Həll olunan ünvan';
+
+  @override
+  String get ztLogSourceCountry => 'Mənbə ölkəsi';
+
+  @override
+  String get ztLogPollFailed =>
+      'Son yeniləmə alınmadı. Artıq yüklənənlər göstərilir.';
 }

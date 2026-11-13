@@ -4,6 +4,15 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+### Added
+
+- Live DNS log under Zero Trust → Gateway: queries Gateway resolves, refreshed
+  every ten seconds while the screen is open, with Blocked / Allowed /
+  Overridden filters and a domain search applied on the server. Tapping a row
+  shows the policy, location, categories and resolved IPs. Needs the
+  **Account Analytics: Read** permission.
+- Italian translation, contributed by @gabry1988.
+
 ## [2.0.2] — 2026-10-27
 
 ### Fixed

@@ -966,4 +966,71 @@ class LIt extends L {
 
   @override
   String get commonRecommended => 'Consigliato';
+
+  @override
+  String get ztLogTitle => 'Log DNS in tempo reale';
+
+  @override
+  String get ztLogSubtitle =>
+      'Le query risolte da Gateway, man mano che arrivano';
+
+  @override
+  String get ztLogBlocked => 'Bloccate';
+
+  @override
+  String get ztLogAllowed => 'Consentite';
+
+  @override
+  String get ztLogOverridden => 'Sostituite';
+
+  @override
+  String get ztLogUnknown => 'Sconosciuto';
+
+  @override
+  String get ztLogSearch => 'Filtra per dominio';
+
+  @override
+  String get ztLogEmptyTitle => 'Nessuna query DNS negli ultimi 30 minuti';
+
+  @override
+  String get ztLogEmptyBody =>
+      'Le query compaiono qui quando i dispositivi risolvono il DNS tramite Gateway, con WARP o una posizione DNS.';
+
+  @override
+  String get ztLogLagNote =>
+      'Cloudflare pubblica le query circa un minuto dopo, e i conteggi sono stime a campione.';
+
+  @override
+  String get ztLogPause => 'Metti in pausa';
+
+  @override
+  String get ztLogResume => 'Riprendi';
+
+  @override
+  String get ztLogLive => 'In diretta';
+
+  @override
+  String get ztLogPaused => 'In pausa';
+
+  @override
+  String get ztLogPolicy => 'Criterio';
+
+  @override
+  String get ztLogNoPolicy => 'Nessun criterio applicato';
+
+  @override
+  String get ztLogLocation => 'Posizione';
+
+  @override
+  String get ztLogCategories => 'Categorie';
+
+  @override
+  String get ztLogResolvedTo => 'Risolto in';
+
+  @override
+  String get ztLogSourceCountry => 'Paese di origine';
+
+  @override
+  String get ztLogPollFailed =>
+      'L’ultimo aggiornamento non è riuscito. Viene mostrato ciò che era già caricato.';
 }

@@ -1850,6 +1850,132 @@ abstract class L {
   /// In en, this message translates to:
   /// **'Recommended'**
   String get commonRecommended;
+
+  /// No description provided for @ztLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live DNS log'**
+  String get ztLogTitle;
+
+  /// No description provided for @ztLogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Queries Gateway resolves, as they arrive'**
+  String get ztLogSubtitle;
+
+  /// No description provided for @ztLogBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get ztLogBlocked;
+
+  /// No description provided for @ztLogAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get ztLogAllowed;
+
+  /// No description provided for @ztLogOverridden.
+  ///
+  /// In en, this message translates to:
+  /// **'Overridden'**
+  String get ztLogOverridden;
+
+  /// No description provided for @ztLogUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get ztLogUnknown;
+
+  /// No description provided for @ztLogSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by domain'**
+  String get ztLogSearch;
+
+  /// No description provided for @ztLogEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No DNS queries in the last 30 minutes'**
+  String get ztLogEmptyTitle;
+
+  /// No description provided for @ztLogEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Queries show up here once devices resolve DNS through Gateway, with WARP or a DNS location.'**
+  String get ztLogEmptyBody;
+
+  /// No description provided for @ztLogLagNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloudflare publishes queries about a minute after they happen, and counts are sampled estimates.'**
+  String get ztLogLagNote;
+
+  /// No description provided for @ztLogPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get ztLogPause;
+
+  /// No description provided for @ztLogResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get ztLogResume;
+
+  /// No description provided for @ztLogLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get ztLogLive;
+
+  /// No description provided for @ztLogPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get ztLogPaused;
+
+  /// No description provided for @ztLogPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy'**
+  String get ztLogPolicy;
+
+  /// No description provided for @ztLogNoPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'No policy matched'**
+  String get ztLogNoPolicy;
+
+  /// No description provided for @ztLogLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get ztLogLocation;
+
+  /// No description provided for @ztLogCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get ztLogCategories;
+
+  /// No description provided for @ztLogResolvedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved to'**
+  String get ztLogResolvedTo;
+
+  /// No description provided for @ztLogSourceCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Source country'**
+  String get ztLogSourceCountry;
+
+  /// No description provided for @ztLogPollFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The last update failed. Showing what was already loaded.'**
+  String get ztLogPollFailed;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {
