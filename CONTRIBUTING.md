@@ -68,7 +68,7 @@ neither needs an issue first.
 To add a language, copy `lib/l10n/app_en.arb` to `app_<code>.arb`, set
 `@@locale`, translate the values, drop the `@key` metadata blocks (only the
 template needs them), and add the code with its endonym to
-`kSupportedLanguages` in `lib/app/app_settings.dart`. Then:
+`kSupportedLanguages` in `lib/l10n/supported_languages.dart`. Then:
 
 ```bash
 flutter gen-l10n && flutter test test/features/localization_test.dart
