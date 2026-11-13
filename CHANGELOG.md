@@ -4,6 +4,8 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [2.0.3] — 2026-11-13
+
 ### Added
 
 - Live DNS log under Zero Trust → Gateway: queries Gateway resolves, refreshed
@@ -12,6 +14,12 @@ Notable changes per release. Dates are ISO-8601.
   shows the policy, location, categories and resolved IPs. Needs the
   **Account Analytics: Read** permission.
 - Italian translation, contributed by @gabry1988.
+
+### Fixed
+
+- The weekly Cloudflare spec update had failed since mid-October without
+  opening a PR. It now builds against the current spec, and a spec that breaks
+  the app opens a draft PR that lists the errors instead of failing silently.
 
 ## [2.0.2] — 2026-10-27
 
@@ -212,7 +220,8 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.3...HEAD
+[2.0.3]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/hasanzadee/cloudflare-mobile/compare/v1.0.0...v2.0.0
