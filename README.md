@@ -57,7 +57,7 @@ handling written down rather than hand-waved.
 | Workers — scripts, routes, cron triggers | ✅ read-only |
 | Pages — projects and deployments | ✅ read-only |
 | KV namespaces, D1 databases, R2 buckets | ✅ read-only |
-| Zero Trust — tunnels with live connector status, Access apps and policies, Gateway rules | ✅ read-only |
+| Zero Trust — tunnels with live connector status, Access apps and policies, Gateway rules, live Gateway DNS log | ✅ read-only |
 | Cache purge — by URL, host, prefix, tag, or everything | ✅ |
 | Zone settings — SSL/TLS mode, HSTS, min TLS, cache level, security level, and 15 more | ✅ |
 | Analytics — traffic charts, cache ratio, threats, status codes, countries, firewall events | ✅ |

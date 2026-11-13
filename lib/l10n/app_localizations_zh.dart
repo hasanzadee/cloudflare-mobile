@@ -929,4 +929,67 @@ class LZh extends L {
 
   @override
   String get commonRecommended => '推荐';
+
+  @override
+  String get ztLogTitle => '实时 DNS 日志';
+
+  @override
+  String get ztLogSubtitle => 'Gateway 解析的查询，实时到达';
+
+  @override
+  String get ztLogBlocked => '已拦截';
+
+  @override
+  String get ztLogAllowed => '已允许';
+
+  @override
+  String get ztLogOverridden => '已覆盖';
+
+  @override
+  String get ztLogUnknown => '未知';
+
+  @override
+  String get ztLogSearch => '按域名筛选';
+
+  @override
+  String get ztLogEmptyTitle => '最近 30 分钟没有 DNS 查询';
+
+  @override
+  String get ztLogEmptyBody => '设备通过 Gateway（WARP 或 DNS 位置）解析 DNS 后，查询会显示在这里。';
+
+  @override
+  String get ztLogLagNote => 'Cloudflare 大约在查询发生一分钟后才发布数据，计数是抽样估算值。';
+
+  @override
+  String get ztLogPause => '暂停';
+
+  @override
+  String get ztLogResume => '继续';
+
+  @override
+  String get ztLogLive => '实时';
+
+  @override
+  String get ztLogPaused => '已暂停';
+
+  @override
+  String get ztLogPolicy => '策略';
+
+  @override
+  String get ztLogNoPolicy => '未匹配任何策略';
+
+  @override
+  String get ztLogLocation => '位置';
+
+  @override
+  String get ztLogCategories => '类别';
+
+  @override
+  String get ztLogResolvedTo => '解析结果';
+
+  @override
+  String get ztLogSourceCountry => '来源国家/地区';
+
+  @override
+  String get ztLogPollFailed => '上次更新失败，显示的是已加载的内容。';
 }

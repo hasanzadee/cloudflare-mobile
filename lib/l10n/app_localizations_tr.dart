@@ -954,4 +954,70 @@ class LTr extends L {
 
   @override
   String get commonRecommended => 'Önerilen';
+
+  @override
+  String get ztLogTitle => 'Canlı DNS günlüğü';
+
+  @override
+  String get ztLogSubtitle => 'Gateway’in çözdüğü sorgular, geldikçe';
+
+  @override
+  String get ztLogBlocked => 'Engellendi';
+
+  @override
+  String get ztLogAllowed => 'İzin verildi';
+
+  @override
+  String get ztLogOverridden => 'Geçersiz kılındı';
+
+  @override
+  String get ztLogUnknown => 'Bilinmiyor';
+
+  @override
+  String get ztLogSearch => 'Alan adına göre filtrele';
+
+  @override
+  String get ztLogEmptyTitle => 'Son 30 dakikada DNS sorgusu yok';
+
+  @override
+  String get ztLogEmptyBody =>
+      'Cihazlar DNS’i Gateway üzerinden, WARP veya bir DNS konumuyla çözmeye başladığında sorgular burada görünür.';
+
+  @override
+  String get ztLogLagNote =>
+      'Cloudflare sorguları yaklaşık bir dakika sonra yayımlar ve sayılar örneklemeye dayalı tahminlerdir.';
+
+  @override
+  String get ztLogPause => 'Duraklat';
+
+  @override
+  String get ztLogResume => 'Devam et';
+
+  @override
+  String get ztLogLive => 'Canlı';
+
+  @override
+  String get ztLogPaused => 'Duraklatıldı';
+
+  @override
+  String get ztLogPolicy => 'İlke';
+
+  @override
+  String get ztLogNoPolicy => 'Hiçbir ilke eşleşmedi';
+
+  @override
+  String get ztLogLocation => 'Konum';
+
+  @override
+  String get ztLogCategories => 'Kategoriler';
+
+  @override
+  String get ztLogResolvedTo => 'Çözülen adres';
+
+  @override
+  String get ztLogSourceCountry => 'Kaynak ülke';
+
+  @override
+  String get ztLogPollFailed =>
+      'Son güncelleme başarısız oldu. Zaten yüklenmiş olanlar gösteriliyor.';
 }

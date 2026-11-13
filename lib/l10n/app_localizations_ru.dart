@@ -964,4 +964,71 @@ class LRu extends L {
 
   @override
   String get commonRecommended => 'Рекомендуется';
+
+  @override
+  String get ztLogTitle => 'DNS-лог в реальном времени';
+
+  @override
+  String get ztLogSubtitle =>
+      'Запросы, которые разрешает Gateway, по мере поступления';
+
+  @override
+  String get ztLogBlocked => 'Заблокировано';
+
+  @override
+  String get ztLogAllowed => 'Разрешено';
+
+  @override
+  String get ztLogOverridden => 'Переопределено';
+
+  @override
+  String get ztLogUnknown => 'Неизвестно';
+
+  @override
+  String get ztLogSearch => 'Фильтр по домену';
+
+  @override
+  String get ztLogEmptyTitle => 'За последние 30 минут DNS-запросов нет';
+
+  @override
+  String get ztLogEmptyBody =>
+      'Запросы появятся здесь, когда устройства начнут резолвить DNS через Gateway — с WARP или через DNS-локацию.';
+
+  @override
+  String get ztLogLagNote =>
+      'Cloudflare публикует запросы примерно через минуту, а счётчики — оценка по выборке.';
+
+  @override
+  String get ztLogPause => 'Пауза';
+
+  @override
+  String get ztLogResume => 'Продолжить';
+
+  @override
+  String get ztLogLive => 'В эфире';
+
+  @override
+  String get ztLogPaused => 'На паузе';
+
+  @override
+  String get ztLogPolicy => 'Политика';
+
+  @override
+  String get ztLogNoPolicy => 'Ни одна политика не сработала';
+
+  @override
+  String get ztLogLocation => 'Локация';
+
+  @override
+  String get ztLogCategories => 'Категории';
+
+  @override
+  String get ztLogResolvedTo => 'Разрешено в';
+
+  @override
+  String get ztLogSourceCountry => 'Страна источника';
+
+  @override
+  String get ztLogPollFailed =>
+      'Последнее обновление не удалось. Показано то, что уже загружено.';
 }
