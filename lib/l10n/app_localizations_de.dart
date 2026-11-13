@@ -451,6 +451,26 @@ class LDe extends L {
   String get dnsTags => 'Tags';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field ist erforderlich';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field muss eine Zahl sein';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field muss eine ganze Zahl sein';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field muss zwischen $min und $max liegen';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return '$name löschen?';
   }

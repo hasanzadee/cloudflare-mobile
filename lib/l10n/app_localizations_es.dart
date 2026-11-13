@@ -451,6 +451,26 @@ class LEs extends L {
   String get dnsTags => 'Etiquetas';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field es obligatorio';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field debe ser un número';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field debe ser un número entero';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field debe estar entre $min y $max';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return '¿Eliminar $name?';
   }

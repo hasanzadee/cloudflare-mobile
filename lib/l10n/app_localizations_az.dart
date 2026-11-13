@@ -450,6 +450,26 @@ class LAz extends L {
   String get dnsTags => 'Etiketlər';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field tələb olunur';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field rəqəm olmalıdır';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field tam ədəd olmalıdır';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field $min ilə $max arasında olmalıdır';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return '$name silinsin?';
   }

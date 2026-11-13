@@ -452,6 +452,26 @@ class LRu extends L {
   String get dnsTags => 'Метки';
 
   @override
+  String dnsFieldRequired(String field) {
+    return 'Поле «$field» обязательно';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return 'Поле «$field» должно быть числом';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return 'Поле «$field» должно быть целым числом';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return 'Значение поля «$field» должно быть от $min до $max';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return 'Удалить $name?';
   }

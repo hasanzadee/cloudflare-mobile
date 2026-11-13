@@ -4,6 +4,16 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+### Fixed
+
+- Number fields in the DNS editor are now checked before saving. Text, a
+  fraction where a whole number is needed, or a value outside the field's
+  range (an SRV port above 65535, CAA flags above 255, an MX priority above
+  65535) used to go to Cloudflare as typed and come back as a server error;
+  the editor now names the field and the allowed range. LOC seconds accept a
+  fraction (up to 59.999), as Cloudflare does, and the editor's validation
+  messages are translated.
+
 ## [2.0.3] — 2026-11-13
 
 ### Added

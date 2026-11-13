@@ -454,6 +454,26 @@ class LIt extends L {
   String get dnsTags => 'Tag';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field è obbligatorio';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field deve essere un numero';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field deve essere un numero intero';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field deve essere compreso tra $min e $max';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return 'Eliminare $name?';
   }
