@@ -18,6 +18,20 @@ void main() {
       final again = Account.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('AccountLegacyFlags', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = AccountLegacyFlags.fromJson(json);
+      final encoded = model.toJson();
+      final again = AccountLegacyFlags.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('AccountLegacyFlagsEnterpriseZoneQuota', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = AccountLegacyFlagsEnterpriseZoneQuota.fromJson(json);
+      final encoded = model.toJson();
+      final again = AccountLegacyFlagsEnterpriseZoneQuota.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('AccountManagedBy', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = AccountManagedBy.fromJson(json);
@@ -53,6 +67,13 @@ void main() {
       final again = AppPolicyResponse.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('AppPolicyResult', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = AppPolicyResult.fromJson(json);
+      final encoded = model.toJson();
+      final again = AppPolicyResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('AppResponse', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = AppResponse.fromJson(json);
@@ -65,6 +86,13 @@ void main() {
       final model = AppResponseDestinationsItem.fromJson(json);
       final encoded = model.toJson();
       final again = AppResponseDestinationsItem.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('AppResponseDestinationsItemOverridesItem', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = AppResponseDestinationsItemOverridesItem.fromJson(json);
+      final encoded = model.toJson();
+      final again = AppResponseDestinationsItemOverridesItem.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('AppResponseFooterLinksItem', () {
@@ -224,11 +252,25 @@ void main() {
       final again = ConnectionRules.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('ConnectionRulesInfra', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ConnectionRulesInfra.fromJson(json);
+      final encoded = model.toJson();
+      final again = ConnectionRulesInfra.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('ConnectionRulesRdp', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = ConnectionRulesRdp.fromJson(json);
       final encoded = model.toJson();
       final again = ConnectionRulesRdp.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('ConnectionRulesSsh', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ConnectionRulesSsh.fromJson(json);
+      final encoded = model.toJson();
+      final again = ConnectionRulesSsh.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('CookieAttributes', () {
@@ -299,6 +341,27 @@ void main() {
       final model = Deployment.fromJson(json);
       final encoded = model.toJson();
       final again = Deployment.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('DeploymentConfigValues', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = DeploymentConfigValues.fromJson(json);
+      final encoded = model.toJson();
+      final again = DeploymentConfigValues.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('DeploymentConfigValuesLimits', () {
+      final json = jsonDecode(r'''{"cpu_ms":100}''') as Map<String, Object?>;
+      final model = DeploymentConfigValuesLimits.fromJson(json);
+      final encoded = model.toJson();
+      final again = DeploymentConfigValuesLimits.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('DeploymentConfigValuesPlacement', () {
+      final json = jsonDecode(r'''{"mode":"smart"}''') as Map<String, Object?>;
+      final model = DeploymentConfigValuesPlacement.fromJson(json);
+      final encoded = model.toJson();
+      final again = DeploymentConfigValuesPlacement.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('DeploymentDeploymentTrigger', () {
@@ -420,6 +483,13 @@ void main() {
       final again = ExportsReconciliationRename.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('ExportsReconciliationResult', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ExportsReconciliationResult.fromJson(json);
+      final encoded = model.toJson();
+      final again = ExportsReconciliationResult.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('ExportsReconciliationTransfer', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = ExportsReconciliationTransfer.fromJson(json);
@@ -481,6 +551,13 @@ void main() {
       final model = History.fromJson(json);
       final encoded = model.toJson();
       final again = History.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('InfraMfaConfig', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = InfraMfaConfig.fromJson(json);
+      final encoded = model.toJson();
+      final again = InfraMfaConfig.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('IpAccessRulesForAZoneCreateAnIpAccessRuleBody', () {
@@ -687,25 +764,39 @@ void main() {
       final again = OauthConfigurationGrant.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
-    test('Observability', () {
+    test('Observability2', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = Observability.fromJson(json);
+      final model = Observability2.fromJson(json);
       final encoded = model.toJson();
-      final again = Observability.fromJson(encoded);
+      final again = Observability2.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
-    test('ObservabilityLogs', () {
+    test('Observability2Agents', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = ObservabilityLogs.fromJson(json);
+      final model = Observability2Agents.fromJson(json);
       final encoded = model.toJson();
-      final again = ObservabilityLogs.fromJson(encoded);
+      final again = Observability2Agents.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
-    test('ObservabilityTraces', () {
+    test('Observability2Issues', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = ObservabilityTraces.fromJson(json);
+      final model = Observability2Issues.fromJson(json);
       final encoded = model.toJson();
-      final again = ObservabilityTraces.fromJson(encoded);
+      final again = Observability2Issues.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Observability2Logs', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Observability2Logs.fromJson(json);
+      final encoded = model.toJson();
+      final again = Observability2Logs.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('Observability2Traces', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Observability2Traces.fromJson(json);
+      final encoded = model.toJson();
+      final again = Observability2Traces.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('Organization', () {
@@ -838,6 +929,13 @@ void main() {
       final again = Project.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('ProjectBuildImageAutoUpgrade', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = ProjectBuildImageAutoUpgrade.fromJson(json);
+      final encoded = model.toJson();
+      final again = ProjectBuildImageAutoUpgrade.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('ProjectCanonicalDeployment', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = ProjectCanonicalDeployment.fromJson(json);
@@ -868,50 +966,6 @@ void main() {
       final model = ProjectDeploymentConfigs.fromJson(json);
       final encoded = model.toJson();
       final again = ProjectDeploymentConfigs.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ProjectDeploymentConfigsPreview', () {
-      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = ProjectDeploymentConfigsPreview.fromJson(json);
-      final encoded = model.toJson();
-      final again = ProjectDeploymentConfigsPreview.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ProjectDeploymentConfigsPreviewLimits', () {
-      final json = jsonDecode(r'''{"cpu_ms":100}''') as Map<String, Object?>;
-      final model = ProjectDeploymentConfigsPreviewLimits.fromJson(json);
-      final encoded = model.toJson();
-      final again = ProjectDeploymentConfigsPreviewLimits.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ProjectDeploymentConfigsPreviewPlacement', () {
-      final json = jsonDecode(r'''{"mode":"smart"}''') as Map<String, Object?>;
-      final model = ProjectDeploymentConfigsPreviewPlacement.fromJson(json);
-      final encoded = model.toJson();
-      final again = ProjectDeploymentConfigsPreviewPlacement.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ProjectDeploymentConfigsProduction', () {
-      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = ProjectDeploymentConfigsProduction.fromJson(json);
-      final encoded = model.toJson();
-      final again = ProjectDeploymentConfigsProduction.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ProjectDeploymentConfigsProductionLimits', () {
-      final json = jsonDecode(r'''{"cpu_ms":100}''') as Map<String, Object?>;
-      final model = ProjectDeploymentConfigsProductionLimits.fromJson(json);
-      final encoded = model.toJson();
-      final again = ProjectDeploymentConfigsProductionLimits.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ProjectDeploymentConfigsProductionPlacement', () {
-      final json = jsonDecode(r'''{"mode":"smart"}''') as Map<String, Object?>;
-      final model = ProjectDeploymentConfigsProductionPlacement.fromJson(json);
-      final encoded = model.toJson();
-      final again = ProjectDeploymentConfigsProductionPlacement.fromJson(
-        encoded,
-      );
       expect(again.toJson(), encoded);
     });
     test('ProjectLatestDeployment', () {
@@ -1177,6 +1231,13 @@ void main() {
       final again = Rule2ServiceToken.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('Rule2ServiceTokenTag', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = Rule2ServiceTokenTag.fromJson(json);
+      final encoded = model.toJson();
+      final again = Rule2ServiceTokenTag.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('Rule2UserRiskScore', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = Rule2UserRiskScore.fromJson(json);
@@ -1219,6 +1280,13 @@ void main() {
       final again = RuleOverrides.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
+    test('RuleOverridesRandomSteering', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RuleOverridesRandomSteering.fromJson(json);
+      final encoded = model.toJson();
+      final again = RuleOverridesRandomSteering.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
     test('RuleRatelimit', () {
       final json = jsonDecode(r'''{}''') as Map<String, Object?>;
       final model = RuleRatelimit.fromJson(json);
@@ -1231,13 +1299,6 @@ void main() {
       final model = RuleSettings.fromJson(json);
       final encoded = model.toJson();
       final again = RuleSettings.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('RuleSettingsAuditSsh', () {
-      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = RuleSettingsAuditSsh.fromJson(json);
-      final encoded = model.toJson();
-      final again = RuleSettingsAuditSsh.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('RuleSettingsBisoAdminControls', () {
@@ -1280,6 +1341,13 @@ void main() {
       final model = RuleSettingsForensicCopy.fromJson(json);
       final encoded = model.toJson();
       final again = RuleSettingsForensicCopy.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('RuleSettingsForward', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = RuleSettingsForward.fromJson(json);
+      final encoded = model.toJson();
+      final again = RuleSettingsForward.fromJson(encoded);
       expect(again.toJson(), encoded);
     });
     test('RuleSettingsL4override', () {
@@ -1413,17 +1481,6 @@ void main() {
       final model = ScriptAndVersionSettingsItemAnnotations.fromJson(json);
       final encoded = model.toJson();
       final again = ScriptAndVersionSettingsItemAnnotations.fromJson(encoded);
-      expect(again.toJson(), encoded);
-    });
-    test('ScriptAndVersionSettingsItemExportsReconciliation', () {
-      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
-      final model = ScriptAndVersionSettingsItemExportsReconciliation.fromJson(
-        json,
-      );
-      final encoded = model.toJson();
-      final again = ScriptAndVersionSettingsItemExportsReconciliation.fromJson(
-        encoded,
-      );
       expect(again.toJson(), encoded);
     });
     test('ScriptAndVersionSettingsItemMigrations', () {
@@ -1583,6 +1640,60 @@ void main() {
       final model = TargetCriteriaSelfHostedApp.fromJson(json);
       final encoded = model.toJson();
       final again = TargetCriteriaSelfHostedApp.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('TargetCriteriaSelfHostedAppExclude', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetCriteriaSelfHostedAppExclude.fromJson(json);
+      final encoded = model.toJson();
+      final again = TargetCriteriaSelfHostedAppExclude.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('TargetCriteriaSelfHostedAppExcludeTargetAttributes', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetCriteriaSelfHostedAppExcludeTargetAttributes.fromJson(
+        json,
+      );
+      final encoded = model.toJson();
+      final again = TargetCriteriaSelfHostedAppExcludeTargetAttributes.fromJson(
+        encoded,
+      );
+      expect(again.toJson(), encoded);
+    });
+    test('TargetCriteriaSelfHostedAppInclude', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetCriteriaSelfHostedAppInclude.fromJson(json);
+      final encoded = model.toJson();
+      final again = TargetCriteriaSelfHostedAppInclude.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('TargetCriteriaSelfHostedAppIncludeTargetAttributes', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetCriteriaSelfHostedAppIncludeTargetAttributes.fromJson(
+        json,
+      );
+      final encoded = model.toJson();
+      final again = TargetCriteriaSelfHostedAppIncludeTargetAttributes.fromJson(
+        encoded,
+      );
+      expect(again.toJson(), encoded);
+    });
+    test('TargetCriteriaSelfHostedAppRequire', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetCriteriaSelfHostedAppRequire.fromJson(json);
+      final encoded = model.toJson();
+      final again = TargetCriteriaSelfHostedAppRequire.fromJson(encoded);
+      expect(again.toJson(), encoded);
+    });
+    test('TargetCriteriaSelfHostedAppRequireTargetAttributes', () {
+      final json = jsonDecode(r'''{}''') as Map<String, Object?>;
+      final model = TargetCriteriaSelfHostedAppRequireTargetAttributes.fromJson(
+        json,
+      );
+      final encoded = model.toJson();
+      final again = TargetCriteriaSelfHostedAppRequireTargetAttributes.fromJson(
+        encoded,
+      );
       expect(again.toJson(), encoded);
     });
     test('TopologyMatch', () {
