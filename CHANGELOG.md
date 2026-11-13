@@ -4,6 +4,13 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+### Fixed
+
+- The DNS editor showed "Auto" for any TTL outside its short list, so a record
+  set to 15 min, 4 h or 5 h in the dashboard looked automatic while it was
+  not. It now shows the record's real TTL and offers the dashboard's 15 min
+  and 5 h choices. TTL labels no longer round down: 90 s was shown as "1 min".
+
 ## [2.0.3] — 2026-11-13
 
 ### Added

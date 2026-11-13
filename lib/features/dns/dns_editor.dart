@@ -45,6 +45,7 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
   final Map<String, TextEditingController> _data = {};
 
   int _ttl = 1;
+  late final List<int> _ttlChoices;
   bool _proxied = false;
   bool _busy = false;
   String? _error;
@@ -61,6 +62,7 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
     );
     _comment = TextEditingController(text: existing?.comment ?? '');
     _ttl = existing?.ttl?.toInt() ?? 1;
+    _ttlChoices = ttlChoicesFor(_ttl);
     _proxied = existing?.proxied ?? false;
 
     final existingData = existing?.data?.toJson() ?? const <String, Object?>{};
@@ -207,10 +209,10 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
 
               const SizedBox(height: 16),
               DropdownButtonFormField<int>(
-                initialValue: kTtlChoices.contains(_ttl) ? _ttl : 1,
+                initialValue: _ttl,
                 decoration: InputDecoration(labelText: l.dnsTtl),
                 items: [
-                  for (final t in kTtlChoices)
+                  for (final t in _ttlChoices)
                     DropdownMenuItem(value: t, child: Text(ttlLabel(t))),
                 ],
                 onChanged: (v) => setState(() => _ttl = v ?? 1),
