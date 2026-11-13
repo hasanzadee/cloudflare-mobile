@@ -444,6 +444,26 @@ class LZh extends L {
   String get dnsTags => '标签';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field为必填项';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field必须是数字';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field必须是整数';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field必须介于 $min 和 $max 之间';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return '删除 $name？';
   }

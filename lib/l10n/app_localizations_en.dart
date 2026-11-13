@@ -450,6 +450,26 @@ class LEn extends L {
   String get dnsTags => 'Tags';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field is required';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field must be a number';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field must be a whole number';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field must be between $min and $max';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return 'Delete $name?';
   }

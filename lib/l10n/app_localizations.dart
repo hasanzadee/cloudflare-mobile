@@ -951,6 +951,30 @@ abstract class L {
   /// **'Tags'**
   String get dnsTags;
 
+  /// No description provided for @dnsFieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'{field} is required'**
+  String dnsFieldRequired(String field);
+
+  /// No description provided for @dnsFieldNotNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'{field} must be a number'**
+  String dnsFieldNotNumber(String field);
+
+  /// No description provided for @dnsFieldNotWholeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'{field} must be a whole number'**
+  String dnsFieldNotWholeNumber(String field);
+
+  /// No description provided for @dnsFieldOutOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{field} must be between {min} and {max}'**
+  String dnsFieldOutOfRange(String field, String min, String max);
+
   /// No description provided for @dnsDeleteConfirm.
   ///
   /// In en, this message translates to:

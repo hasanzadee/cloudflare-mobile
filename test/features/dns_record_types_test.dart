@@ -88,6 +88,47 @@ void main() {
     });
   });
 
+  group('number fields', () {
+    test('every number field declares the range Cloudflare enforces', () {
+      for (final type in kDnsRecordTypes) {
+        for (final field in type.dataFields) {
+          if (field.kind != DnsFieldKind.number) continue;
+          final where = '${type.name}.${field.key}';
+          expect(field.min, isNotNull, reason: '$where has no min');
+          expect(field.max, isNotNull, reason: '$where has no max');
+          expect(field.min! <= field.max!, isTrue, reason: where);
+        }
+      }
+    });
+
+    test('LOC seconds allow a fraction up to 59.999', () {
+      final loc = dnsTypeByName('LOC').dataFields;
+      for (final key in ['lat_seconds', 'long_seconds']) {
+        final field = loc.firstWhere((f) => f.key == key);
+        expect(field.decimal, isTrue, reason: key);
+        expect(field.max, 59.999, reason: key);
+      }
+    });
+
+    test('whole numbers parse, anything else does not', () {
+      expect(parseDnsNumber('5060'), 5060);
+      expect(parseDnsNumber(' 7 '), 7);
+      expect(parseDnsNumber('-3'), -3);
+      for (final raw in ['', 'abc', '1.5', '0x1F', '1e3', 'NaN', 'Infinity']) {
+        expect(parseDnsNumber(raw), isNull, reason: raw);
+      }
+    });
+
+    test('decimal fields take a point or a comma', () {
+      expect(parseDnsNumber('59.999', decimal: true), 59.999);
+      expect(parseDnsNumber('12,5', decimal: true), 12.5);
+      expect(parseDnsNumber('-100000', decimal: true), -100000);
+      for (final raw in ['.5', '1.', '1.2.3', 'NaN', '1e3']) {
+        expect(parseDnsNumber(raw, decimal: true), isNull, reason: raw);
+      }
+    });
+  });
+
   group('record serialization', () {
     test('per-type data fields survive toJson via extra', () {
       // The generated DnsRecordPostData only declares the two members the

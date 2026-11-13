@@ -22,6 +22,7 @@ class DnsField {
     this.hint,
     this.min,
     this.max,
+    this.decimal = false,
   });
 
   /// Key inside `data`, or `content` / `priority` at the top level.
@@ -32,6 +33,9 @@ class DnsField {
   final String? hint;
   final num? min;
   final num? max;
+
+  /// Whether a fraction is allowed; otherwise only whole numbers are.
+  final bool decimal;
 }
 
 class DnsRecordType {
@@ -442,7 +446,8 @@ const List<DnsRecordType> kDnsRecordTypes = [
         label: 'Latitude seconds',
         kind: DnsFieldKind.number,
         min: 0,
-        max: 59,
+        max: 59.999,
+        decimal: true,
       ),
       DnsField(
         key: 'lat_direction',
@@ -468,7 +473,8 @@ const List<DnsRecordType> kDnsRecordTypes = [
         label: 'Longitude seconds',
         kind: DnsFieldKind.number,
         min: 0,
-        max: 59,
+        max: 59.999,
+        decimal: true,
       ),
       DnsField(
         key: 'long_direction',
@@ -480,24 +486,36 @@ const List<DnsRecordType> kDnsRecordTypes = [
         label: 'Altitude (m)',
         kind: DnsFieldKind.number,
         required: false,
+        min: -100000,
+        max: 42849672.95,
+        decimal: true,
       ),
       DnsField(
         key: 'size',
         label: 'Size (m)',
         kind: DnsFieldKind.number,
         required: false,
+        min: 0,
+        max: 90000000,
+        decimal: true,
       ),
       DnsField(
         key: 'precision_horz',
         label: 'Horizontal precision',
         kind: DnsFieldKind.number,
         required: false,
+        min: 0,
+        max: 90000000,
+        decimal: true,
       ),
       DnsField(
         key: 'precision_vert',
         label: 'Vertical precision',
         kind: DnsFieldKind.number,
         required: false,
+        min: 0,
+        max: 90000000,
+        decimal: true,
       ),
     ],
   ),
@@ -507,6 +525,17 @@ const List<DnsRecordType> kDnsRecordTypes = [
     contentHint: 'base64 key material',
   ),
 ];
+
+/// Reads what was typed into a number field, or null if it is not a number.
+///
+/// Stricter than [num.tryParse], which also takes `0x1F`, `1e3` and `NaN`;
+/// Cloudflare rejects those, and NaN would pass any range check. A comma counts
+/// as the decimal point, since that is what the keypad shows in most locales.
+num? parseDnsNumber(String raw, {bool decimal = false}) {
+  final text = raw.trim().replaceFirst(',', '.');
+  final pattern = decimal ? RegExp(r'^-?\d+(\.\d+)?$') : RegExp(r'^-?\d+$');
+  return pattern.hasMatch(text) ? num.parse(text) : null;
+}
 
 DnsRecordType dnsTypeByName(String? name) {
   for (final t in kDnsRecordTypes) {

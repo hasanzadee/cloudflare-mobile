@@ -454,6 +454,26 @@ class LFr extends L {
   String get dnsTags => 'Étiquettes';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field est obligatoire';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field doit être un nombre';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field doit être un nombre entier';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field doit être compris entre $min et $max';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return 'Supprimer $name ?';
   }

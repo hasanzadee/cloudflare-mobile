@@ -200,7 +200,10 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
                     hintText: field.hint,
                   ),
                   keyboardType: field.kind == DnsFieldKind.number
-                      ? TextInputType.number
+                      ? TextInputType.numberWithOptions(
+                          decimal: field.decimal,
+                          signed: (field.min ?? 0) < 0,
+                        )
                       : TextInputType.text,
                   maxLines: field.kind == DnsFieldKind.multiline ? 3 : 1,
                   autocorrect: false,
@@ -266,7 +269,7 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
       final raw = _data[field.key]?.text.trim() ?? '';
       if (raw.isEmpty) continue;
       data[field.key] = field.kind == DnsFieldKind.number
-          ? num.tryParse(raw) ?? raw
+          ? parseDnsNumber(raw, decimal: field.decimal) ?? raw
           : raw;
     }
 
@@ -277,23 +280,64 @@ class _DnsEditorSheetState extends ConsumerState<DnsEditorSheet> {
       proxied: _type.proxyable ? _proxied : null,
       comment: _comment.text.trim().isEmpty ? null : _comment.text.trim(),
       content: _type.usesContent ? _content.text.trim() : null,
-      priority: _type.hasPriority ? num.tryParse(_priority.text.trim()) : null,
+      priority: _type.hasPriority ? parseDnsNumber(_priority.text) : null,
       // Unknown-key preservation is what lets per-type members through.
       data: data.isEmpty ? null : DnsRecordPostData(extra: data),
     );
   }
 
   String? _validate() {
+    final l = L.of(context);
     if (_type.usesContent && _content.text.trim().isEmpty) {
-      return '${L.of(context).dnsContent} is required';
+      return l.dnsFieldRequired(l.dnsContent);
     }
-    if (_type.hasPriority && num.tryParse(_priority.text.trim()) == null) {
-      return '${L.of(context).dnsPriority} is required';
+    if (_type.hasPriority) {
+      final problem = _numberProblem(
+        l,
+        l.dnsPriority,
+        _priority.text,
+        min: 0,
+        max: 65535,
+      );
+      if (problem != null) return problem;
     }
-    for (final field in _type.dataFields.where((f) => f.required)) {
-      if ((_data[field.key]?.text.trim() ?? '').isEmpty) {
-        return '${field.label} is required';
+    for (final field in _type.dataFields) {
+      final raw = _data[field.key]?.text.trim() ?? '';
+      if (raw.isEmpty) {
+        if (field.required) return l.dnsFieldRequired(field.label);
+        continue;
       }
+      if (field.kind != DnsFieldKind.number) continue;
+      final problem = _numberProblem(
+        l,
+        field.label,
+        raw,
+        min: field.min,
+        max: field.max,
+        decimal: field.decimal,
+      );
+      if (problem != null) return problem;
+    }
+    return null;
+  }
+
+  String? _numberProblem(
+    L l,
+    String label,
+    String raw, {
+    num? min,
+    num? max,
+    bool decimal = false,
+  }) {
+    if (raw.trim().isEmpty) return l.dnsFieldRequired(label);
+    final value = parseDnsNumber(raw, decimal: decimal);
+    if (value == null) {
+      return decimal
+          ? l.dnsFieldNotNumber(label)
+          : l.dnsFieldNotWholeNumber(label);
+    }
+    if (min != null && max != null && (value < min || value > max)) {
+      return l.dnsFieldOutOfRange(label, '$min', '$max');
     }
     return null;
   }

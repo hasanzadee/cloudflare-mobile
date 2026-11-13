@@ -449,6 +449,26 @@ class LTr extends L {
   String get dnsTags => 'Etiketler';
 
   @override
+  String dnsFieldRequired(String field) {
+    return '$field zorunludur';
+  }
+
+  @override
+  String dnsFieldNotNumber(String field) {
+    return '$field bir sayı olmalıdır';
+  }
+
+  @override
+  String dnsFieldNotWholeNumber(String field) {
+    return '$field bir tam sayı olmalıdır';
+  }
+
+  @override
+  String dnsFieldOutOfRange(String field, String min, String max) {
+    return '$field $min ile $max arasında olmalıdır';
+  }
+
+  @override
   String dnsDeleteConfirm(String name) {
     return '$name silinsin mi?';
   }
