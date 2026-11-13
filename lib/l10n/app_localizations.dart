@@ -1830,7 +1830,7 @@ abstract class L {
   /// No description provided for @onboardTokenBody.
   ///
   /// In en, this message translates to:
-  /// **'Cloudflare opens with the right permissions already ticked. Create the token, then paste it here.'**
+  /// **'Cloudflare opens with most permissions already ticked. Add the ones listed below by hand, create the token, then paste it here.'**
   String get onboardTokenBody;
 
   /// No description provided for @onboardPresetFull.

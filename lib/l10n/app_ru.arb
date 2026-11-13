@@ -310,7 +310,7 @@
   "ztNoApps": "Приложений Access нет",
   "ztNoGatewayRules": "Правил Gateway нет",
   "ztConnectors": "{count, plural, one{{count} коннектор} few{{count} коннектора} other{{count} коннекторов}}",
-  "onboardTokenBody": "Cloudflare откроется с уже отмеченными нужными правами. Создайте токен и вставьте его сюда.",
+  "onboardTokenBody": "Cloudflare откроется, и большинство прав уже будут отмечены. Добавьте вручную те, что перечислены ниже, создайте токен и вставьте его сюда.",
   "onboardPresetFull": "Чтение и запись",
   "onboardPresetDns": "Только DNS",
   "onboardPresetRead": "Только чтение",

@@ -963,7 +963,7 @@ class LIt extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare si apre con le autorizzazioni giuste già selezionate. Crea il token, poi incollalo qui.';
+      'Cloudflare si apre con la maggior parte delle autorizzazioni già selezionate. Aggiungi a mano quelle elencate qui sotto, crea il token e incollalo qui.';
 
   @override
   String get onboardPresetFull => 'Lettura + scrittura';

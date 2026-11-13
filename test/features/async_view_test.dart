@@ -123,4 +123,44 @@ void main() {
     expect(find.text('Zone · Zone WAF — Edit'), findsOneWidget);
     expect(find.text('Create a token with this permission'), findsOneWidget);
   });
+
+  testWidgets('the fix offer lists every by-hand permission, not just one', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      host(
+        AsyncView<List<String>>(
+          value: AsyncValue.error(
+            const PermissionFailure(missingPermissions: {'Zone WAF Read'}),
+            StackTrace.empty,
+          ),
+          builder: (d) => const SizedBox.shrink(),
+        ),
+        scrolling: false,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The fresh token the button leads to would otherwise fix this screen and
+    // fail on the next one that needs a keyless permission.
+    expect(find.text('Add these by hand'), findsOneWidget);
+    expect(
+      find.textContaining('Turnstile', findRichText: true),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('a caller with its own fix gets no checklist', (tester) async {
+    await tester.pumpWidget(
+      host(
+        FailureView(
+          error: const PermissionFailure(missingPermissions: {'Zone WAF Read'}),
+          onFixPermissions: () {},
+        ),
+        scrolling: false,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Add these by hand'), findsNothing);
+  });
 }

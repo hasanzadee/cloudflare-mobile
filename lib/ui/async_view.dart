@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/data/token_template.dart';
+import '../auth/presentation/manual_permissions.dart';
 import '../core/net/failure.dart';
 import '../l10n/app_localizations.dart';
 import 'failure_text.dart';
@@ -226,6 +227,16 @@ class FailureView extends StatelessWidget {
                 ),
               ],
             ),
+            // The fix link opens a fresh token form, and that form cannot
+            // pre-tick these. Listing only the group that failed produced a
+            // token that fixed this screen and broke the next one.
+            if (isPermission && onFixPermissions == null) ...[
+              const SizedBox(height: 16),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: ManualPermissions(permissions: TokenTemplate.full),
+              ),
+            ],
           ],
         ),
       ),
