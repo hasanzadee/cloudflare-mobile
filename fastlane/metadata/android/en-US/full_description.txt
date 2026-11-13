@@ -9,7 +9,7 @@ Cloudflare does not publish an Android app. This is one — a native client for 
 • Analytics — traffic, cache hit ratio, threats, status codes, top countries, content types, firewall events
 • Security — WAF custom rules and rate limiting: create, enable, disable, delete. IP access rules
 • Developer platform — Workers scripts, routes and cron triggers; Pages projects and deployments; KV namespaces with key browsing and editing; D1 with a SQL console; R2 buckets
-• Zero Trust — tunnels with live connector status, Access applications and policies, Gateway rules
+• Zero Trust — tunnels with live connector status, Access applications and policies, Gateway rules, and a live DNS log of what Gateway blocks and allows
 • Traffic and TLS — page rules, load balancers, waiting rooms, certificate packs, custom hostnames, DNSSEC
 • Email routing, Turnstile widgets, notification policies
 

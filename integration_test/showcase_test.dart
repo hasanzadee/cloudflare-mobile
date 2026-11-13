@@ -92,6 +92,147 @@ Map<String, Object?> _series(
   };
 }
 
+/// Fixed once per run: the log polls every ten seconds, and timestamps taken
+/// afresh on each poll would read as new rows and pile up on screen.
+final DateTime _logNow = DateTime.now().toUtc();
+
+/// A minute of an office's DNS, as the Gateway dataset groups it.
+Map<String, Object?> _dnsLog() {
+  Map<String, Object?> q(
+    int secondsAgo,
+    String name,
+    int code, {
+    int count = 1,
+    String policy = '',
+    List<String> categories = const [],
+    List<String> ips = const [],
+  }) => {
+    'count': count,
+    'dimensions': {
+      'datetime': _logNow
+          .subtract(Duration(seconds: 70 + secondsAgo))
+          .toIso8601String(),
+      'queryName': name,
+      'resolverDecision': code,
+      'policyName': policy,
+      'locationName': 'Baku office',
+      'srcIpCountry': 'AZ',
+      'categoryNames': categories,
+      'resolvedIps': ips,
+    },
+  };
+
+  return {
+    'data': {
+      'viewer': {
+        'accounts': [
+          {
+            'gatewayResolverQueriesAdaptiveGroups': [
+              q(
+                2,
+                'api.github.com',
+                5,
+                count: 6,
+                categories: ['Technology'],
+                ips: ['140.82.121.6'],
+              ),
+              q(
+                4,
+                'securepubads.g.doubleclick.net',
+                3,
+                count: 3,
+                policy: 'Block ads',
+                categories: ['Advertisements'],
+                ips: ['0.0.0.0'],
+              ),
+              q(
+                7,
+                'emilll.dev',
+                10,
+                count: 2,
+                policy: 'Allow own zones',
+                ips: ['185.12.4.7'],
+              ),
+              q(
+                9,
+                'login.microsoftonline.com',
+                5,
+                count: 4,
+                categories: ['Business'],
+                ips: ['20.190.160.4'],
+              ),
+              q(
+                13,
+                'x7k2-update.malware.example',
+                9,
+                policy: 'Block security threats',
+                categories: ['Malware'],
+                ips: ['0.0.0.0'],
+              ),
+              q(
+                16,
+                'www.youtube.com',
+                7,
+                count: 2,
+                policy: 'Safe search',
+                categories: ['Video Streaming'],
+                ips: ['216.239.38.120'],
+              ),
+              q(
+                21,
+                'telemetry.tracker.example',
+                3,
+                count: 5,
+                policy: 'Block ads',
+                categories: ['Advertisements'],
+                ips: ['0.0.0.0'],
+              ),
+              q(
+                24,
+                'example.com',
+                10,
+                policy: 'Allow own zones',
+                ips: ['104.21.48.9'],
+              ),
+              q(
+                28,
+                'slack.com',
+                5,
+                count: 3,
+                categories: ['Business'],
+                ips: ['3.65.102.105'],
+              ),
+              q(
+                33,
+                'bonus-win.casino.example',
+                3,
+                policy: 'Block gambling',
+                categories: ['Gambling'],
+                ips: ['0.0.0.0'],
+              ),
+              q(
+                37,
+                'fonts.gstatic.com',
+                5,
+                count: 8,
+                categories: ['Technology'],
+                ips: ['142.250.185.67'],
+              ),
+              q(
+                44,
+                'example.org',
+                10,
+                policy: 'Allow own zones',
+                ips: ['185.12.4.9'],
+              ),
+            ],
+          },
+        ],
+      },
+    },
+  };
+}
+
 Map<String, Object?> _envelope(Object? result, {Map<String, Object?>? info}) =>
     {
       'success': true,
@@ -284,8 +425,27 @@ Object? _answer(RequestOptions o) {
       {'id': 't2', 'name': 'home-lab', 'status': 'healthy'},
     ]);
   }
+  if (path == 'accounts/acct1/gateway/rules') {
+    return _envelope([
+      {
+        'id': 'g1',
+        'name': 'Block security threats',
+        'action': 'block',
+        'enabled': true,
+        'precedence': 1,
+      },
+      {
+        'id': 'g2',
+        'name': 'Block ads',
+        'action': 'block',
+        'enabled': true,
+        'precedence': 2,
+      },
+    ]);
+  }
   if (path == 'graphql') {
     final body = o.data is Map ? (o.data as Map)['query'].toString() : '';
+    if (body.contains('GatewayDnsLog')) return _dnsLog();
     if (body.contains('zoneTag_in')) {
       return {
         'data': {
@@ -477,5 +637,21 @@ void main() {
     await tester.tap(find.text(l.navMore).last);
     await tester.pumpAndSettle(const Duration(seconds: 2));
     await hold(tester, '$mode-10-more');
+
+    await tester.tap(find.text(l.navZeroTrust).last);
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    // Zero Trust lives at account level, and nothing so far picked one.
+    await tester.tap(find.text(l.scopePickAccount));
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await tester.tap(find.text('Emil').last);
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    await tester.tap(find.text(l.ztGateway).last);
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    // The log polls on a timer, so it never settles: plain pumps from here.
+    await tester.tap(find.text(l.ztLogTitle));
+    await hold(tester, '$mode-11-dns-log');
+
+    await tester.tap(find.text('x7k2-update.malware.example'));
+    await hold(tester, '$mode-12-dns-log-detail');
   });
 }

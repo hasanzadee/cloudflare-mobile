@@ -1023,7 +1023,7 @@ class LRu extends L {
   String get ztLogCategories => 'Категории';
 
   @override
-  String get ztLogResolvedTo => 'Разрешено в';
+  String get ztLogResolvedTo => 'IP в ответе';
 
   @override
   String get ztLogSourceCountry => 'Страна источника';

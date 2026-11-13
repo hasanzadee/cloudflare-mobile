@@ -332,7 +332,7 @@
   "ztLogNoPolicy": "Ни одна политика не сработала",
   "ztLogLocation": "Локация",
   "ztLogCategories": "Категории",
-  "ztLogResolvedTo": "Разрешено в",
+  "ztLogResolvedTo": "IP в ответе",
   "ztLogSourceCountry": "Страна источника",
   "ztLogPollFailed": "Последнее обновление не удалось. Показано то, что уже загружено."
 }

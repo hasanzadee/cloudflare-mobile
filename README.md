@@ -31,6 +31,11 @@ Cloudflare API, not just the ones with a hand-built screen.
 | <img src="docs/screenshots/03-dns.jpg" width="270"> | <img src="docs/screenshots/04-proxy-dark.jpg" width="270"> |
 | Records grouped with the type colour-coded and the zone suffix trimmed; the orange cloud toggles in one tap. | Proxying, SSL mode, security level, deletes — the old and new value side by side before anything is written. |
 
+| Live DNS log | Why it was blocked |
+|---|---|
+| <img src="docs/screenshots/05-dns-log.jpg" width="270"> | <img src="docs/screenshots/06-dns-log-detail.jpg" width="270"> |
+| Zero Trust Gateway's DNS queries as they arrive, filtered to blocked or allowed, or by domain. | The policy, category and location behind each answer, and what it resolved to. |
+
 Screenshots come from `integration_test/showcase_test.dart`, which drives the
 real app against a fake account — no real zones in them.
 
