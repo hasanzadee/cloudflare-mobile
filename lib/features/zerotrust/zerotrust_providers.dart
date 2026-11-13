@@ -48,7 +48,7 @@ final accessAppsProvider = FutureProvider.autoDispose
     });
 
 final accessPoliciesProvider = FutureProvider.autoDispose
-    .family<CfPage<AppPolicyResponse>, ({String accountId, String appId})>((
+    .family<CfPage<AppPolicyResult>, ({String accountId, String appId})>((
       ref,
       key,
     ) {

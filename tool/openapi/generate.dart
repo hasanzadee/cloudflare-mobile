@@ -271,6 +271,24 @@ class Generator {
     return current;
   }
 
+  /// `{allOf: [{$ref: X}]}` with nothing else of substance is how the spec
+  /// hangs a vendor extension or a description on a reference: it means X.
+  /// Without this the wrapper has no `type`, and a plain string enum came out
+  /// as `Object` — the November 2026 spec did that to IP Access rule `mode`.
+  Map<String, Object?> unwrapSingleAllOf(Map<String, Object?> schema) {
+    var current = schema;
+    var guard = 0;
+    while (guard++ < 8) {
+      final branches = current['allOf'];
+      if (branches is! List || branches.length != 1) break;
+      if (current['properties'] != null || current['type'] != null) break;
+      final only = branches.single;
+      if (only is! Map) break;
+      current = only.map((k, v) => MapEntry(k.toString(), v));
+    }
+    return current;
+  }
+
   /// Folds allOf/anyOf/oneOf and inherited `$ref`s into one object shape.
   ///
   /// `allOf` is a straight merge. `anyOf`/`oneOf` are merged too, with every
@@ -381,7 +399,7 @@ class Generator {
   }
 
   String? _fieldDoc(Map<String, Object?> schema) {
-    final node = deref(schema);
+    final node = deref(unwrapSingleAllOf(schema));
     final description = node['description'] as String?;
     final values = node['enum'];
     if (values is List && values.isNotEmpty) {
@@ -400,6 +418,7 @@ class Generator {
       return TypeInfo(dart: 'Object', read: (src) => src);
     }
 
+    schema = unwrapSingleAllOf(schema);
     final isRef = schema[r'$ref'] is String;
     final node = deref(schema);
     final type = node['type'];
