@@ -4,19 +4,22 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [2.0.4] — 2026-11-13
+
 ### Fixed
 
 - The DNS editor showed "Auto" for any TTL outside its short list, so a record
   set to 15 min, 4 h or 5 h in the dashboard looked automatic while it was
   not. It now shows the record's real TTL and offers the dashboard's 15 min
   and 5 h choices. TTL labels no longer round down: 90 s was shown as "1 min".
+  Contributed by @AliverdiSultanli.
 - Number fields in the DNS editor are now checked before saving. Text, a
   fraction where a whole number is needed, or a value outside the field's
   range (an SRV port above 65535, CAA flags above 255, an MX priority above
   65535) used to go to Cloudflare as typed and come back as a server error;
   the editor now names the field and the allowed range. LOC seconds accept a
   fraction (up to 59.999), as Cloudflare does, and the editor's validation
-  messages are translated.
+  messages are translated. Contributed by @AliverdiSultanli.
 
 ## [2.0.3] — 2026-11-13
 
@@ -234,7 +237,8 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.3...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.4...HEAD
+[2.0.4]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.0...v2.0.1

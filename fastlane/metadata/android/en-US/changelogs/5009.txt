@@ -1,0 +1,2 @@
+DNS editor: a record's real TTL is shown instead of "Auto", and number
+fields (ports, priorities, CAA flags, LOC) are checked before saving.
