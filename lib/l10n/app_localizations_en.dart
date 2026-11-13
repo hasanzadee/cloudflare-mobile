@@ -961,4 +961,70 @@ class LEn extends L {
 
   @override
   String get commonRecommended => 'Recommended';
+
+  @override
+  String get ztLogTitle => 'Live DNS log';
+
+  @override
+  String get ztLogSubtitle => 'Queries Gateway resolves, as they arrive';
+
+  @override
+  String get ztLogBlocked => 'Blocked';
+
+  @override
+  String get ztLogAllowed => 'Allowed';
+
+  @override
+  String get ztLogOverridden => 'Overridden';
+
+  @override
+  String get ztLogUnknown => 'Unknown';
+
+  @override
+  String get ztLogSearch => 'Filter by domain';
+
+  @override
+  String get ztLogEmptyTitle => 'No DNS queries in the last 30 minutes';
+
+  @override
+  String get ztLogEmptyBody =>
+      'Queries show up here once devices resolve DNS through Gateway, with WARP or a DNS location.';
+
+  @override
+  String get ztLogLagNote =>
+      'Cloudflare publishes queries about a minute after they happen, and counts are sampled estimates.';
+
+  @override
+  String get ztLogPause => 'Pause';
+
+  @override
+  String get ztLogResume => 'Resume';
+
+  @override
+  String get ztLogLive => 'Live';
+
+  @override
+  String get ztLogPaused => 'Paused';
+
+  @override
+  String get ztLogPolicy => 'Policy';
+
+  @override
+  String get ztLogNoPolicy => 'No policy matched';
+
+  @override
+  String get ztLogLocation => 'Location';
+
+  @override
+  String get ztLogCategories => 'Categories';
+
+  @override
+  String get ztLogResolvedTo => 'Resolved to';
+
+  @override
+  String get ztLogSourceCountry => 'Source country';
+
+  @override
+  String get ztLogPollFailed =>
+      'The last update failed. Showing what was already loaded.';
 }

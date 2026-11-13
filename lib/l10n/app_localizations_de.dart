@@ -968,4 +968,71 @@ class LDe extends L {
 
   @override
   String get commonRecommended => 'Empfohlen';
+
+  @override
+  String get ztLogTitle => 'DNS-Live-Protokoll';
+
+  @override
+  String get ztLogSubtitle =>
+      'Von Gateway aufgelöste Abfragen, sobald sie eintreffen';
+
+  @override
+  String get ztLogBlocked => 'Blockiert';
+
+  @override
+  String get ztLogAllowed => 'Erlaubt';
+
+  @override
+  String get ztLogOverridden => 'Überschrieben';
+
+  @override
+  String get ztLogUnknown => 'Unbekannt';
+
+  @override
+  String get ztLogSearch => 'Nach Domain filtern';
+
+  @override
+  String get ztLogEmptyTitle => 'Keine DNS-Abfragen in den letzten 30 Minuten';
+
+  @override
+  String get ztLogEmptyBody =>
+      'Abfragen erscheinen hier, sobald Geräte DNS über Gateway auflösen – mit WARP oder über einen DNS-Standort.';
+
+  @override
+  String get ztLogLagNote =>
+      'Cloudflare veröffentlicht Abfragen etwa eine Minute später, und die Zahlen sind Stichprobenschätzungen.';
+
+  @override
+  String get ztLogPause => 'Pausieren';
+
+  @override
+  String get ztLogResume => 'Fortsetzen';
+
+  @override
+  String get ztLogLive => 'Live-Ansicht';
+
+  @override
+  String get ztLogPaused => 'Pausiert';
+
+  @override
+  String get ztLogPolicy => 'Richtlinie';
+
+  @override
+  String get ztLogNoPolicy => 'Keine Richtlinie hat gegriffen';
+
+  @override
+  String get ztLogLocation => 'Standort';
+
+  @override
+  String get ztLogCategories => 'Kategorien';
+
+  @override
+  String get ztLogResolvedTo => 'Aufgelöst zu';
+
+  @override
+  String get ztLogSourceCountry => 'Herkunftsland';
+
+  @override
+  String get ztLogPollFailed =>
+      'Die letzte Aktualisierung ist fehlgeschlagen. Angezeigt wird, was schon geladen war.';
 }

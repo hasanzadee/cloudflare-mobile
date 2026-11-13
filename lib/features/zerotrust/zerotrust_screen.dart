@@ -10,6 +10,7 @@ import '../../ui/ds/ds.dart';
 import '../../ui/scope_bar.dart';
 import '../scope/scope_providers.dart';
 import '../security/security_screen.dart' show actionTone;
+import 'gateway_log_screen.dart';
 import 'zerotrust_providers.dart';
 
 class ZeroTrustScreen extends ConsumerStatefulWidget {
@@ -393,6 +394,40 @@ class _GatewayRules extends ConsumerWidget {
     final l = L.of(context);
     final rules = ref.watch(gatewayRulesProvider(accountId));
 
+    // Above the rules rather than among them: an account with no rules yet
+    // still resolves through Gateway, and the log is how you find out what
+    // a first rule should block.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, 0),
+          child: Panel(
+            padding: EdgeInsets.zero,
+            child: NavRow(
+              icon: Icons.manage_search_rounded,
+              tone: Tone.brand,
+              title: l.ztLogTitle,
+              subtitle: l.ztLogSubtitle,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => GatewayLogScreen(accountId: accountId),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(child: _rulesList(context, ref, l, rules)),
+      ],
+    );
+  }
+
+  Widget _rulesList(
+    BuildContext context,
+    WidgetRef ref,
+    L l,
+    AsyncValue<CfPage<Rules>> rules,
+  ) {
     return AsyncView<CfPage<Rules>>(
       value: rules,
       onRetry: () => ref.invalidate(gatewayRulesProvider(accountId)),
