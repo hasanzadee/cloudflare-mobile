@@ -1,0 +1,2 @@
+Token setup: the by-hand checklist now says which menu each permission is
+under, and load balancer and Email Routing screens ask for the right ones.

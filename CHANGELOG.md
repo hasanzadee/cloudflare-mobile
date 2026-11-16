@@ -4,6 +4,24 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [2.0.5] — 2026-11-16
+
+### Fixed
+
+- Load balancer pools and monitors and Email Routing asked for permission
+  groups that do not cover them, so a token made by the app's own checklist
+  still got 403 there. They now ask for "Load Balancing: Monitors and Pools",
+  "Email Routing Rules" and "Email Routing Addresses", and a test checks that
+  every permission an endpoint names is in the checklist.
+- The by-hand permission checklist and the 403 screen name the menu each
+  group lives under (Account, Zone or User). The checklist follows the
+  preset you opened, and the 403 screen lists every group the token form
+  cannot pre-tick, so a new token does not fix one screen and fail the next.
+- The token step no longer says every permission arrives pre-ticked.
+- Italian is listed among the README's languages.
+
+Contributed by @gabry1988.
+
 ## [2.0.4] — 2026-11-13
 
 ### Fixed
@@ -237,7 +255,8 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.4...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.5...HEAD
+[2.0.5]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.1...v2.0.2
