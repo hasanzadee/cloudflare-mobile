@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloudflare_mobile/auth/data/token_template.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaml/yaml.dart';
 
 /// Two ways this has already shipped broken, both silent.
 ///
@@ -205,6 +207,84 @@ void main() {
 
       expect(encoded, contains('dns:edit'));
       expect(encoded, contains('workers_scripts:edit'));
+    });
+
+    test('punctuation in the group name does not defeat the match', () {
+      final missing = TokenTemplate.resolveMissing({
+        'Access Apps and Policies Read',
+      });
+
+      expect(missing.single.group, 'Access: Apps and Policies');
+    });
+
+    test('every permission an endpoint names leads to a real checkbox', () {
+      // The 403 text comes from the allowlist, the checklist from [full]. When
+      // the two drifted, pools and monitors asked for "Load Balancers" — a
+      // Zone permission that does not cover them — and email asked for an
+      // "Email Routing" group the dashboard does not have.
+      final allowlist =
+          loadYaml(File('tool/openapi/allowlist.yaml').readAsStringSync())
+              as Map;
+      final labels = <String>{
+        for (final op in allowlist['operations'] as List)
+          for (final perm in (op as Map)['perms'] as List? ?? const [])
+            perm as String,
+      };
+      expect(labels, isNotEmpty);
+
+      for (final label in labels) {
+        final match = TokenTemplate.resolveMissing({label}).single;
+        expect(
+          match.scope,
+          isNotNull,
+          reason: '"$label" matches nothing in TokenTemplate.full',
+        );
+      }
+    });
+  });
+
+  group('scope', () {
+    test('every permission says which menu it is under', () {
+      for (final p in TokenTemplate.full) {
+        expect(p.scope, isNotNull, reason: '${p.group} has no scope');
+      }
+    });
+
+    test('presets derived from full keep the scope', () {
+      for (final p in TokenTemplate.readOnly) {
+        expect(p.scope, byGroup(TokenTemplate.full, p.group).scope);
+      }
+    });
+
+    test('a product split across menus is listed under both', () {
+      expect(byGroup(TokenTemplate.full, 'Load Balancers').scope, CfScope.zone);
+      expect(
+        byGroup(TokenTemplate.full, 'Load Balancing: Monitors and Pools').scope,
+        CfScope.account,
+      );
+      expect(
+        byGroup(TokenTemplate.full, 'Email Routing Rules').scope,
+        CfScope.zone,
+      );
+      expect(
+        byGroup(TokenTemplate.full, 'Email Routing Addresses').scope,
+        CfScope.account,
+      );
+    });
+
+    test('the checklist leads with the scope, as the form does', () {
+      final text = TokenTemplate.manualChecklist(TokenTemplate.full);
+
+      expect(text, contains('Zone · Zone WAF — Edit'));
+      expect(text, contains('Account · Turnstile — Read'));
+      expect(text, contains('User · User Details — Read'));
+    });
+
+    test('an unmatched 403 label is shown without a guessed scope', () {
+      final missing = TokenTemplate.resolveMissing({'Some Future Product'});
+
+      expect(missing.single.scope, isNull);
+      expect(missing.single.line, 'Some Future Product — Edit');
     });
   });
 }

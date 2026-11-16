@@ -112,7 +112,7 @@ class TrafficApi {
       path: '/accounts/$accountId/load_balancers/pools',
       query: <String, Object?>{'monitor': monitor, ...?extraQuery},
       cancelToken: cancelToken,
-      missingPermissions: const {'Load Balancers Read'},
+      missingPermissions: const {'Load Balancing: Monitors and Pools Read'},
     );
     return CfPage.from(_env, Pool.fromJson);
   }
@@ -129,7 +129,7 @@ class TrafficApi {
       path: '/accounts/$accountId/load_balancers/monitors',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
-      missingPermissions: const {'Load Balancers Read'},
+      missingPermissions: const {'Load Balancing: Monitors and Pools Read'},
     );
     return CfPage.from(_env, Monitor.fromJson);
   }

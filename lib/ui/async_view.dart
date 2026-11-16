@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/data/token_template.dart';
+import '../auth/presentation/manual_permissions.dart';
 import '../core/net/failure.dart';
 import '../l10n/app_localizations.dart';
 import 'failure_text.dart';
@@ -176,11 +177,11 @@ class FailureView extends StatelessWidget {
             ),
             if (missing.isNotEmpty) ...[
               const SizedBox(height: 12),
-              // The dashboard's own wording plus the access level, because a
-              // user hunting a checkbox in a list of ~150 needs the exact
-              // label, not our paraphrase of it.
+              // The dashboard's own wording plus scope and access level,
+              // because a user hunting a checkbox in a list of ~150 needs the
+              // exact label and the menu it lives under, not our paraphrase.
               Text(
-                missing.map((p) => '${p.group} — ${p.level}').join('\n'),
+                missing.map((p) => p.line).join('\n'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
@@ -226,6 +227,16 @@ class FailureView extends StatelessWidget {
                 ),
               ],
             ),
+            // The fix link opens a fresh token form, and that form cannot
+            // pre-tick these. Listing only the group that failed produced a
+            // token that fixed this screen and broke the next one.
+            if (isPermission && onFixPermissions == null) ...[
+              const SizedBox(height: 16),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: ManualPermissions(permissions: TokenTemplate.full),
+              ),
+            ],
           ],
         ),
       ),

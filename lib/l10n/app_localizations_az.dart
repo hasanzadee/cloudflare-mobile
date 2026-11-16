@@ -950,7 +950,7 @@ class LAz extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare lazımi icazələr seçilmiş halda açılacaq. Tokeni yaradın və bura yapışdırın.';
+      'Cloudflare icazələrin əksəriyyəti artıq işarələnmiş halda açılır. Aşağıda göstərilənləri əl ilə əlavə edin, tokeni yaradın və sonra buraya yapışdırın.';
 
   @override
   String get onboardPresetFull => 'Oxuma + yazma';

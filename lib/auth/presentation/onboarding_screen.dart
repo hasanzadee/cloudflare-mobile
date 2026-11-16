@@ -35,6 +35,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   CfCredential? _pending;
   bool _busy = false;
+
+  /// The preset whose link was opened last, so the checklist below asks for
+  /// the same access level — or for nothing, when DNS-only needs no extras.
+  List<CfPermission> _preset = TokenTemplate.full;
   String? _error;
 
   @override
@@ -107,6 +111,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ],
   );
 
+  void _choose(List<CfPermission> preset) {
+    setState(() => _preset = preset);
+    _open(TokenTemplate.userToken(preset));
+  }
+
   Widget _tokenForm(L l) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -122,26 +131,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           FilledButton.icon(
-            onPressed: () => _open(TokenTemplate.userToken(TokenTemplate.full)),
+            onPressed: () => _choose(TokenTemplate.full),
             icon: const Icon(Icons.all_inclusive),
             label: Text(l.onboardPresetFull),
           ),
           OutlinedButton.icon(
-            onPressed: () =>
-                _open(TokenTemplate.userToken(TokenTemplate.dnsAdmin)),
+            onPressed: () => _choose(TokenTemplate.dnsAdmin),
             icon: const Icon(Icons.dns_outlined),
             label: Text(l.onboardPresetDns),
           ),
           OutlinedButton.icon(
-            onPressed: () =>
-                _open(TokenTemplate.userToken(TokenTemplate.readOnly)),
+            onPressed: () => _choose(TokenTemplate.readOnly),
             icon: const Icon(Icons.visibility_outlined),
             label: Text(l.onboardPresetRead),
           ),
         ],
       ),
       const SizedBox(height: 12),
-      ManualPermissions(permissions: TokenTemplate.full),
+      ManualPermissions(permissions: _preset),
       const SizedBox(height: 20),
       TextField(
         controller: _token,

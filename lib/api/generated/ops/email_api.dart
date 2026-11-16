@@ -29,7 +29,7 @@ class EmailApi {
       path: '/zones/$zoneId/email/routing',
       query: <String, Object?>{...?extraQuery},
       cancelToken: cancelToken,
-      missingPermissions: const {'Email Routing Read'},
+      missingPermissions: const {'Email Routing Rules Read'},
     );
     return Settings2.fromJson(_env.resultAsMap);
   }
@@ -54,7 +54,7 @@ class EmailApi {
         ...?extraQuery,
       },
       cancelToken: cancelToken,
-      missingPermissions: const {'Email Routing Read'},
+      missingPermissions: const {'Email Routing Rules Read'},
     );
     return CfPage.from(_env, Rules2.fromJson);
   }
@@ -81,7 +81,7 @@ class EmailApi {
         ...?extraQuery,
       },
       cancelToken: cancelToken,
-      missingPermissions: const {'Email Routing Read'},
+      missingPermissions: const {'Email Routing Addresses Read'},
     );
     return CfPage.from(_env, Addresses.fromJson);
   }

@@ -305,7 +305,7 @@
   "ztNoApps": "Aucune application Access",
   "ztNoGatewayRules": "Aucune règle Gateway",
   "ztConnectors": "{count, plural, =1{1 connecteur} other{{count} connecteurs}}",
-  "onboardTokenBody": "Cloudflare s'ouvre avec les bonnes autorisations déjà cochées. Créez le jeton, puis collez-le ici.",
+  "onboardTokenBody": "Cloudflare s'ouvre avec la plupart des autorisations déjà cochées. Ajoutez à la main celles listées ci-dessous, créez le jeton, puis collez-le ici.",
   "onboardPresetFull": "Lecture + écriture",
   "onboardPresetDns": "DNS uniquement",
   "onboardPresetRead": "Lecture seule",

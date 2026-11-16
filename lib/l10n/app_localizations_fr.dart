@@ -964,7 +964,7 @@ class LFr extends L {
 
   @override
   String get onboardTokenBody =>
-      'Cloudflare s\'ouvre avec les bonnes autorisations déjà cochées. Créez le jeton, puis collez-le ici.';
+      'Cloudflare s\'ouvre avec la plupart des autorisations déjà cochées. Ajoutez à la main celles listées ci-dessous, créez le jeton, puis collez-le ici.';
 
   @override
   String get onboardPresetFull => 'Lecture + écriture';

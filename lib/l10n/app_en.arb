@@ -327,7 +327,7 @@
   "ztNoGatewayRules": "No Gateway rules",
   "ztConnectors": "{count, plural, =1{1 connector} other{{count} connectors}}",
   "@ztConnectors": { "placeholders": { "count": { "type": "int" } } },
-  "onboardTokenBody": "Cloudflare opens with the right permissions already ticked. Create the token, then paste it here.",
+  "onboardTokenBody": "Cloudflare opens with most permissions already ticked. Add the ones listed below by hand, create the token, then paste it here.",
   "onboardPresetFull": "Read + write",
   "onboardPresetDns": "DNS only",
   "onboardPresetRead": "Read only",

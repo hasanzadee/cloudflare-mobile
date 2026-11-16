@@ -6,7 +6,7 @@ import '../data/token_template.dart';
 
 /// The permissions the dashboard's token form cannot pre-select.
 ///
-/// Cloudflare's template-URL format accepts 27 keys; the app needs 29 permission
+/// Cloudflare's template-URL format accepts 27 keys; the app needs 31 permission
 /// groups. Zone WAF is one of the ones with no key, which is why a token made
 /// from the "read + write" link still refused the Security tab.
 ///
@@ -80,6 +80,15 @@ class ManualPermissions extends StatelessWidget {
                       child: Text.rich(
                         TextSpan(
                           children: [
+                            // The form's first dropdown: without it the group
+                            // is easy to look for under the wrong menu.
+                            if (p.scope != null)
+                              TextSpan(
+                                text: '${p.scope!.label} · ',
+                                style: TextStyle(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
                             TextSpan(
                               text: p.group,
                               style: const TextStyle(
