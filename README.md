@@ -111,10 +111,11 @@ fingerprint and this README has not changed to match, do not install it.
 
 ## Languages
 
-English (default), Azerbaijani, German, Spanish, French, Turkish, Russian and
-Chinese, switchable in Settings independently of the phone's language — the
-Cloudflare dashboard is English, so reading the app in English is often the
-lesser confusion. Everything but English was translated by a non-native speaker;
+English (default), Azerbaijani, German, Spanish, French, Italian, Turkish,
+Russian and Chinese, switchable in Settings independently of the phone's
+language — the Cloudflare dashboard is English, so reading the app in English is
+often the lesser confusion. Everything but English was translated by a
+non-native speaker;
 [corrections and new languages](CONTRIBUTING.md#translations) are genuinely
 welcome and are the easiest useful PR in this repo.
 
