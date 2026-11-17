@@ -4,8 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-  # spec-update.yml dispatches this on chore/spec-update: its PR is opened with
-  # GITHUB_TOKEN, and GitHub fires no pull_request event for that.
+  # Manual runs, and spec-update.yml's fallback when its PR gets no CI run.
   workflow_dispatch:
 
 # The previous workflow ran `./gradlew` from a non-existent `android` directory

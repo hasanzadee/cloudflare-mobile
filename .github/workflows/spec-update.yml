@@ -107,13 +107,35 @@ jobs:
           draft: ${{ steps.describe.outputs.draft }}
           body: ${{ steps.describe.outputs.body }}
 
-      # A PR opened with GITHUB_TOKEN triggers no pull_request workflows, but a
-      # workflow_dispatch from it does. The run's checks land on the branch head,
-      # which is the PR's head, so they show up on the PR like any other CI.
+      # GitHub does create the PR's pull_request CI run, but parks it as
+      # "action required" because the PR came from GITHUB_TOKEN, and the PR shows
+      # no checks until someone approves it. Approve it here. A dispatched run
+      # would not do: its checks run, but the PR does not list them.
       - if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref chore/spec-update
+          SHA: ${{ steps.pr.outputs.pull-request-head-sha }}
+        run: |
+          runs() {
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs?event=pull_request&head_sha=$SHA" --jq '.workflow_runs[] | select(.path == ".github/workflows/ci.yml") | "\(.id) \(.conclusion)"'
+          }
+          for _ in $(seq 24); do
+            found=$(runs)
+            if [ -n "$found" ]; then
+              echo "$found" | while read -r id conclusion; do
+                if [ "$conclusion" = action_required ]; then
+                  gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/approve"
+                  echo "approved CI run $id"
+                else
+                  echo "CI run $id needs no approval"
+                fi
+              done
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::warning::No pull_request CI run appeared for $SHA; dispatching CI instead (its checks will not show on the PR)."
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref chore/spec-update
 
       # Still red when the spec broke something, so the run list says so too.
       - if: env.unchanged == 'false' && steps.describe.outputs.draft == 'true'
