@@ -1,7 +1,7 @@
 {
-  "sha256": "4d6ac005cfc1ee8bd534ec388d2b0632d6f9b0e1575938ecdd7675940120d5d4",
+  "sha256": "4ebabbdb0e44965f6fac6311742a8bab0e0e334fa150494fc8a42ba0fe91b061",
   "api_version": "4.0.0",
-  "operations": 3778,
-  "schemas": 7154,
+  "operations": 3773,
+  "schemas": 7144,
   "generator": "1"
 }
