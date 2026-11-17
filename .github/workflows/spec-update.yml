@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write # to dispatch CI on the PR branch
 
 # Tracking 2884 endpoints by hand is not a plan. This fetches the published
 # OpenAPI description weekly, regenerates the client, and opens a PR whose diff
@@ -50,8 +51,6 @@ jobs:
       # A spec change that breaks the app still opens the PR, as a draft that
       # says what broke. Failing before the PR meant every run from mid-October
       # on died here, red in a tab nobody watches, until someone went looking.
-      # The PR is also the only check it gets: a PR opened with GITHUB_TOKEN
-      # does not trigger the CI workflow.
       - if: env.unchanged == 'false'
         id: analyze
         continue-on-error: true
@@ -99,6 +98,7 @@ jobs:
           fi
 
       - if: env.unchanged == 'false'
+        id: pr
         uses: peter-evans/create-pull-request@v6
         with:
           branch: chore/spec-update
@@ -106,6 +106,14 @@ jobs:
           commit-message: 'chore(spec): refresh the Cloudflare API description'
           draft: ${{ steps.describe.outputs.draft }}
           body: ${{ steps.describe.outputs.body }}
+
+      # A PR opened with GITHUB_TOKEN triggers no pull_request workflows, but a
+      # workflow_dispatch from it does. The run's checks land on the branch head,
+      # which is the PR's head, so they show up on the PR like any other CI.
+      - if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref chore/spec-update
 
       # Still red when the spec broke something, so the run list says so too.
       - if: env.unchanged == 'false' && steps.describe.outputs.draft == 'true'
