@@ -26127,7 +26127,7 @@
             }
           },
           "402": {
-            "description": "Payment required — the payment method was declined.",
+            "description": "Payment required — the payment method was declined, or it can't be used for top-ups and no payment was attempted. The error's `reason` and `action` tell the two apart.",
             "content": {
               "application/json": {
                 "schema": {
@@ -26481,7 +26481,7 @@
             }
           },
           "400": {
-            "description": "Bad request.",
+            "description": "Bad request, or the payment method can't be used for auto top-up. A refused payment method carries the error's `reason` and `action`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -30031,6 +30031,12 @@
                             "type": "string",
                             "format": "date-time"
                           },
+                          "multiprovider_enabled": {
+                            "description": "Lets requests to a model use every provider that serves it. When off, a model uses only the providers it launched with, so a provider added later receives none of its traffic. A request that names providers (the cf-aig-allowed-providers header or routing.allowedProviders) can still use any of them. Model aliases (custom/) are not restricted.",
+                            "type": "boolean",
+                            "x-auditable": true,
+                            "x-stainless-terraform-configurability": "computed_optional"
+                          },
                           "otel": {
                             "type": "array",
                             "items": {
@@ -31546,6 +31552,12 @@
                         "modified_at": {
                           "type": "string",
                           "format": "date-time"
+                        },
+                        "multiprovider_enabled": {
+                          "description": "Lets requests to a model use every provider that serves it. When off, a model uses only the providers it launched with, so a provider added later receives none of its traffic. A request that names providers (the cf-aig-allowed-providers header or routing.allowedProviders) can still use any of them. Model aliases (custom/) are not restricted.",
+                          "type": "boolean",
+                          "x-auditable": true,
+                          "x-stainless-terraform-configurability": "computed_optional"
                         },
                         "otel": {
                           "type": "array",
@@ -38396,7 +38408,9 @@
             "schema": {
               "description": "Page number",
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1,
+              "minimum": 1
             }
           },
           {
@@ -38406,7 +38420,10 @@
             "schema": {
               "description": "Number of routes per page",
               "type": "integer",
-              "example": 20
+              "example": 20,
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
             }
           }
         ],
@@ -41725,7 +41742,9 @@
             "schema": {
               "description": "Page number",
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1,
+              "minimum": 1
             }
           },
           {
@@ -41735,7 +41754,10 @@
             "schema": {
               "description": "Number of deployments per page",
               "type": "integer",
-              "example": 20
+              "example": 20,
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
             }
           }
         ],
@@ -42409,7 +42431,9 @@
             "schema": {
               "description": "Page number",
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1,
+              "minimum": 1
             }
           },
           {
@@ -42419,7 +42443,10 @@
             "schema": {
               "description": "Number of versions per page",
               "type": "integer",
-              "example": 20
+              "example": 20,
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
             }
           }
         ],
@@ -44482,6 +44509,12 @@
                           "type": "string",
                           "format": "date-time"
                         },
+                        "multiprovider_enabled": {
+                          "description": "Lets requests to a model use every provider that serves it. When off, a model uses only the providers it launched with, so a provider added later receives none of its traffic. A request that names providers (the cf-aig-allowed-providers header or routing.allowedProviders) can still use any of them. Model aliases (custom/) are not restricted.",
+                          "type": "boolean",
+                          "x-auditable": true,
+                          "x-stainless-terraform-configurability": "computed_optional"
+                        },
                         "otel": {
                           "type": "array",
                           "items": {
@@ -45363,6 +45396,12 @@
                         "modified_at": {
                           "type": "string",
                           "format": "date-time"
+                        },
+                        "multiprovider_enabled": {
+                          "description": "Lets requests to a model use every provider that serves it. When off, a model uses only the providers it launched with, so a provider added later receives none of its traffic. A request that names providers (the cf-aig-allowed-providers header or routing.allowedProviders) can still use any of them. Model aliases (custom/) are not restricted.",
+                          "type": "boolean",
+                          "x-auditable": true,
+                          "x-stainless-terraform-configurability": "computed_optional"
                         },
                         "otel": {
                           "type": "array",
@@ -46920,6 +46959,12 @@
                         "modified_at": {
                           "type": "string",
                           "format": "date-time"
+                        },
+                        "multiprovider_enabled": {
+                          "description": "Lets requests to a model use every provider that serves it. When off, a model uses only the providers it launched with, so a provider added later receives none of its traffic. A request that names providers (the cf-aig-allowed-providers header or routing.allowedProviders) can still use any of them. Model aliases (custom/) are not restricted.",
+                          "type": "boolean",
+                          "x-auditable": true,
+                          "x-stainless-terraform-configurability": "computed_optional"
                         },
                         "otel": {
                           "type": "array",
@@ -124087,7 +124132,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.repos.connections",
-        "x-fern-sdk-method-name": "upsert"
+        "x-fern-sdk-method-name": "replace"
       }
     },
     "/accounts/{account_id}/builds/repos/connections/{repo_connection_uuid}": {
@@ -124607,7 +124652,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers",
-        "x-fern-sdk-method-name": "update"
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/accounts/{account_id}/builds/triggers/{trigger_uuid}/builds": {
@@ -124818,7 +124863,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.triggers.environment-variables",
-        "x-fern-sdk-method-name": "upsert"
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/accounts/{account_id}/builds/triggers/{trigger_uuid}/environment_variables/{environment_variable_key}": {
@@ -125851,7 +125896,7 @@
         ],
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "builds.workers",
-        "x-fern-sdk-method-name": "update"
+        "x-fern-sdk-method-name": "edit"
       }
     },
     "/accounts/{account_id}/builds/workers/{script_tag}/builds/{build_uuid}/retry": {
@@ -162233,7 +162278,7 @@
                     "type": "boolean"
                   },
                   "search_lookback": {
-                    "description": "On create, also search domains observed in the last 7 days for matches. Defaults to `true`. Ignored on update.",
+                    "description": "Search domains observed in the last 7 days for matches. On create, applies when `true`. On update, when edit-triggered lookback is enabled for the account, applies only when the patterns change and only to the lookback itself; the match list still refreshes independently. Edit-triggered lookback is being rolled out gradually. Defaults to `true`.",
                     "type": "boolean",
                     "default": true
                   },
@@ -162391,7 +162436,7 @@
       "patch": {
         "operationId": "patch_UpdateDomainQuery",
         "summary": "Update domain query",
-        "description": "Replaces a saved domain query's tag and patterns. `tag` and `string_matches` are required, and the patterns you send replace the existing ones, so include every pattern you want to keep. Changing the patterns starts a new set of matches for the query: matches listed before the change are no longer returned, and only newly observed domains that match the new patterns are listed. Sending the same patterns in any order (for example, to change only `tag`) keeps the existing matches. If the new patterns are identical to a set already used in this account, such as the query's earlier patterns, matches already found for that set are listed as well. Omitting both `scan_matches` and its alias `scan` resets scanning to `false`. If both are supplied, `scan_matches` takes precedence. `search_lookback`, `min_time`, and `max_time` are ignored on update, so changing patterns does not search previously observed domains. If the query does not exist in this account, the request fails with error code 404.",
+        "description": "Replaces a saved domain query's tag and patterns. `tag` and `string_matches` are required, and the patterns you send replace the existing ones, so include every pattern you want to keep. Changing the patterns starts a new set of matches for the query: matches listed before the change are no longer returned, and newly observed domains that match the new patterns are listed. Sending the same patterns in any order (for example, to change only `tag`) keeps the existing matches. If the new patterns are identical to a set already used in this account, such as the query's earlier patterns, matches already found for that set are listed as well. Omitting both `scan_matches` and its alias `scan` resets scanning to `false`. If both are supplied, `scan_matches` takes precedence. When edit-triggered lookback is enabled for the account and the patterns change, the match list usually refreshes within seconds (if that refresh fails, the scheduled query sync updates it later) and, unless `search_lookback` is `false`, domains observed in the last 7 days are also searched for the new patterns. New matches from that search can take several minutes or longer to appear. Edit-triggered lookback is being rolled out gradually. `min_time` and `max_time` are ignored on update. If the query does not exist in this account, the request fails with error code 404.",
         "parameters": [
           {
             "name": "account_id",
@@ -162436,7 +162481,7 @@
                     "type": "boolean"
                   },
                   "search_lookback": {
-                    "description": "On create, also search domains observed in the last 7 days for matches. Defaults to `true`. Ignored on update.",
+                    "description": "Search domains observed in the last 7 days for matches. On create, applies when `true`. On update, when edit-triggered lookback is enabled for the account, applies only when the patterns change and only to the lookback itself; the match list still refreshes independently. Edit-triggered lookback is being rolled out gradually. Defaults to `true`.",
                     "type": "boolean",
                     "default": true
                   },
@@ -172010,7 +172055,7 @@
       "post": {
         "operationId": "post_PirResolve",
         "summary": "Resolve structured PIR answers without saving",
-        "description": "Returns the requirement and event query that saving `definition` would generate, using the account's current organization profile and topic. `resolved.issues` lists problems that would block saving, and `resolved.notices` inputs that would be ignored. Search events with `resolved.event_plan.branches`. Send `resolved.based_on` with the save so it fails with 409 if the profile or topic changes in between. Nothing is saved, and no model is called.",
+        "description": "Returns the requirement and event query that saving `definition` would generate, using the account's current organization profile and topic. `resolved.issues` lists problems that would block saving, and `resolved.notices` inputs that would be ignored. Search events with `resolved.event_plan.branches`: a beta value for running searches, not a stable contract, which changes whenever a topic's event rules change. Show `resolved.event_plan.rules[].explanation` to explain matches. Send `resolved.based_on` with the save so it fails with 409 if the profile or topic changes in between. Nothing is saved, and no model is called.",
         "parameters": [
           {
             "name": "account_id",
@@ -172069,7 +172114,7 @@
       "get": {
         "operationId": "get_PirTopicList",
         "summary": "List managed PIR topics",
-        "description": "Returns the managed topics a structured PIR can follow, with their default question, relevance criteria, suggested actors and event rules. Suggested actors the account cannot see are left out. Topics change centrally; PIRs follow a topic's defaults wherever the customer has not changed them.",
+        "description": "Returns the managed topics a structured PIR can follow, with their default question, relevance criteria, suggested actors and event rules. Suggested actors the account cannot see are left out. Topics change centrally; PIRs follow a topic's defaults wherever the customer has not changed them. Also returns `organization_types` for the organization profile form.",
         "parameters": [
           {
             "name": "account_id",
@@ -172083,7 +172128,78 @@
         ],
         "responses": {
           "200": {
-            "description": "Managed topics"
+            "description": "Managed topics and organization types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "message"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "organization_types": {
+                          "description": "Shortcuts for the organization profile form, each suggesting `sectors` and `suggested_protected_targets` for the customer to confirm. A type is never saved; topics are recommended by the profile's confirmed sectors, matched against each topic's `recommended_sectors`.",
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/cloudforce-one-events_PirOrganizationType"
+                          }
+                        },
+                        "topics": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/cloudforce-one-events_PirTopic"
+                          }
+                        }
+                      },
+                      "required": [
+                        "topics",
+                        "organization_types"
+                      ]
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "result",
+                    "success",
+                    "errors",
+                    "messages"
+                  ]
+                }
+              }
+            }
           },
           "4XX": {
             "$ref": "#/components/responses/cloudforce-one-events_ApiV4ClientError"
@@ -249389,7 +249505,7 @@
         "x-fern-availability": "deprecated",
         "x-fern-ignore": true,
         "x-fern-sdk-group-name": "zero-trust.access.targets",
-        "x-fern-sdk-method-name": "bulk-delete"
+        "x-fern-sdk-method-name": "bulk-delete-deprecated"
       },
       "put": {
         "operationId": "infra-targets-put-batch",
@@ -249487,8 +249603,8 @@
           "Infrastructure Access Targets"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.access.targets.bulk",
-        "x-fern-sdk-method-name": "update",
+        "x-fern-sdk-group-name": "zero-trust.access.targets",
+        "x-fern-sdk-method-name": "bulk-create",
         "x-stainless-skip": [
           "terraform"
         ]
@@ -249557,8 +249673,8 @@
           "Infrastructure Access Targets"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.access.targets.bulk",
-        "x-fern-sdk-method-name": "delete"
+        "x-fern-sdk-group-name": "zero-trust.access.targets",
+        "x-fern-sdk-method-name": "bulk-delete"
       }
     },
     "/accounts/{account_id}/infrastructure/targets/batch_tags": {
@@ -249642,8 +249758,8 @@
           "Infrastructure Access Targets"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "zero-trust.access.targets.bulk",
-        "x-fern-sdk-method-name": "replace-tags",
+        "x-fern-sdk-group-name": "zero-trust.access.targets",
+        "x-fern-sdk-method-name": "bulk-replace-tags",
         "x-stainless-skip": [
           "terraform"
         ]
@@ -259468,7 +259584,8 @@
               "schema": {
                 "description": "SQL query to execute.",
                 "type": "string",
-                "format": "binary"
+                "format": "binary",
+                "x-auditable": false
               }
             }
           }
@@ -259509,7 +259626,6 @@
           "Logs Write",
           "Logs Read"
         ],
-        "x-auditable": false,
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "logs",
         "x-fern-sdk-method-name": "query",
@@ -276375,6 +276491,13 @@
                           "auth_config": {
                             "authorization_url": "https://login.microsoftonline.com/common/adminconsent",
                             "client_id": "abc123-def456",
+                            "feature_overrides": [
+                              {
+                                "authorization_url": "https://login.microsoftonline.com/common/adminconsent?client_id=ghi789-jkl012",
+                                "client_id": "ghi789-jkl012",
+                                "feature": "auto_remediation"
+                              }
+                            ],
                             "requires_pkce": false,
                             "scopes": [
                               "https://graph.microsoft.com/.default"
@@ -276579,6 +276702,7 @@
                             "display_name": "Google Domain-Wide Delegation Service Account",
                             "id": "google_domain_wide_delegation_service_account"
                           },
+                          "config": {},
                           "created": "2025-01-15T10:00:00Z",
                           "id": "019d2e6a-d995-7185-afbd-4feead9e42ec",
                           "is_paused": false,
@@ -276632,7 +276756,7 @@
       "post": {
         "operationId": "create_integration_v2",
         "summary": "Create integration",
-        "description": "Creates a new integration for the specified application. Integration creation with OAuth is not supported by API at the moment. For other auth methods, use `GET /v2/applications/{application_id}/credential-guide` to see the required credential structure and example payloads for each vendor.",
+        "description": "Creates a new integration for the specified application. For other auth methods, use `GET /v2/applications/{application_id}/credential-guide` to see the required credential structure and example payloads for each vendor.",
         "parameters": [
           {
             "name": "account_id",
@@ -276711,6 +276835,7 @@
                           },
                           "link": "https://example.cloudflare.com/authorize"
                         },
+                        "config": {},
                         "created": "2025-01-01T00:00:00Z",
                         "credentials_expiry": "2026-01-01T00:00:00Z",
                         "dlp_profiles": [
@@ -276903,6 +277028,7 @@
                           },
                           "link": "https://example.cloudflare.com/authorize"
                         },
+                        "config": {},
                         "created": "2025-01-01T00:00:00Z",
                         "credentials_expiry": "2026-01-01T00:00:00Z",
                         "dlp_profiles": [
@@ -276993,7 +277119,7 @@
       "patch": {
         "operationId": "update_integration_v2",
         "summary": "Update integration",
-        "description": "Updates an integration's name, permissions, DLP profiles, use cases, or credentials.",
+        "description": "Updates an integration's name, permissions, DLP profiles, use cases, credentials, or GitLab resources.",
         "parameters": [
           {
             "name": "account_id",
@@ -277031,6 +277157,16 @@
                 "UpdateFields": {
                   "summary": "Example update integration request",
                   "value": {
+                    "config": {
+                      "gitlab": {
+                        "group_ids": [
+                          "11"
+                        ],
+                        "project_ids": [
+                          "22"
+                        ]
+                      }
+                    },
                     "credentials": {
                       "admin_email": "admin@corp.com"
                     },
@@ -277087,6 +277223,7 @@
                           },
                           "link": "https://example.cloudflare.com/authorize"
                         },
+                        "config": {},
                         "created": "2025-01-01T00:00:00Z",
                         "credentials_expiry": "2026-01-01T00:00:00Z",
                         "dlp_profiles": [
@@ -277229,6 +277366,7 @@
                           },
                           "link": "https://example.cloudflare.com/authorize"
                         },
+                        "config": {},
                         "created": "2025-01-01T00:00:00Z",
                         "credentials_expiry": "2026-01-01T00:00:00Z",
                         "dlp_profiles": [
@@ -277371,6 +277509,7 @@
                           },
                           "link": "https://example.cloudflare.com/authorize"
                         },
+                        "config": {},
                         "created": "2025-01-01T00:00:00Z",
                         "credentials_expiry": "2026-01-01T00:00:00Z",
                         "dlp_profiles": [
@@ -286478,6 +286617,27 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/mq_identifier"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of queues, starting at 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of queues per page. Takes precedence over the legacy perPage query parameter.",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1
             }
           }
         ],
@@ -319882,8 +320042,8 @@
           "Workers KV Storage Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "kv.bulk",
-        "x-fern-sdk-method-name": "put"
+        "x-fern-sdk-group-name": "kv.keys",
+        "x-fern-sdk-method-name": "bulk-put"
       }
     },
     "/accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete": {
@@ -319981,8 +320141,8 @@
           "Workers KV Storage Write"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "kv.bulk",
-        "x-fern-sdk-method-name": "delete",
+        "x-fern-sdk-group-name": "kv.keys",
+        "x-fern-sdk-method-name": "bulk-delete",
         "x-forge-require-confirmation": "This operation deletes the specified keys and their values from the Workers KV namespace."
       }
     },
@@ -320104,8 +320264,8 @@
           "Workers KV Storage Read"
         ],
         "x-fern-availability": "generally-available",
-        "x-fern-sdk-group-name": "kv.bulk",
-        "x-fern-sdk-method-name": "get"
+        "x-fern-sdk-group-name": "kv.keys",
+        "x-fern-sdk-method-name": "bulk-get"
       }
     },
     "/accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys": {
@@ -377588,9 +377748,10 @@
           "free": true,
           "pro": true
         },
-        "x-fern-ignore": true,
+        "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "workflows.instances.batch",
-        "x-fern-sdk-method-name": "delete"
+        "x-fern-sdk-method-name": "delete",
+        "x-forge-require-confirmation": "This operation permanently deletes the Workflow instances."
       }
     },
     "/accounts/{account_id}/workflows/{workflow_name}/instances/batch/terminate": {
@@ -560779,7 +560940,8 @@
               "schema": {
                 "description": "SQL query to execute.",
                 "type": "string",
-                "format": "binary"
+                "format": "binary",
+                "x-auditable": false
               }
             }
           }
@@ -560820,7 +560982,6 @@
           "Logs Write",
           "Logs Read"
         ],
-        "x-auditable": false,
         "x-fern-availability": "generally-available",
         "x-fern-sdk-group-name": "logs.zone",
         "x-fern-sdk-method-name": "query",
@@ -575007,7 +575168,7 @@
       "patch": {
         "operationId": "zone-settings-change-automatic-platform-optimization-setting",
         "summary": "Change Automatic Platform Optimization setting",
-        "description": "Automatic Platform Optimization (APO) for WordPress is a performance feature that serves your\nWordPress site from Cloudflare's edge network, reducing load times for visitors.\nRefer to the APO documentation for more information.\n",
+        "description": "Automatic Platform Optimization (APO) for WordPress is a performance feature that serves your\nWordPress site from Cloudflare's edge network, reducing load times for visitors.\nRefer to the APO documentation for more information.\nWhen an APO configuration already exists, fields omitted from an object `value` keep their current value, except `recheck`, which is false unless the request sends it.\n",
         "parameters": [
           {
             "name": "zone_id",
@@ -575026,7 +575187,7 @@
                 "type": "object",
                 "properties": {
                   "value": {
-                    "$ref": "#/components/schemas/speed_automatic_platform_optimization_value"
+                    "$ref": "#/components/schemas/speed_automatic_platform_optimization_patch_value"
                   }
                 },
                 "required": [
@@ -605608,7 +605769,7 @@
                     }
                   },
                   "idp_public_certs": {
-                    "description": "X509 certificate to verify the signature in the SAML authentication response",
+                    "description": "X509 certificate to verify the signature in the SAML authentication response. Mutually exclusive with `metadata_url`.",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -605626,6 +605787,13 @@
                     "example": 8192,
                     "maximum": 100000,
                     "minimum": 512,
+                    "x-auditable": true
+                  },
+                  "metadata_url": {
+                    "description": "HTTPS URL of the IdP's SAML metadata document from which Access reads the signing certificates used to verify SAML authentication responses. Mutually exclusive with `idp_public_certs`.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://idp.example.com/FederationMetadata/2007-06/FederationMetadata.xml",
                     "x-auditable": true
                   },
                   "sign_request": {
@@ -605704,7 +605872,7 @@
                     }
                   },
                   "idp_public_certs": {
-                    "description": "X509 certificate to verify the signature in the SAML authentication response",
+                    "description": "X509 certificate to verify the signature in the SAML authentication response. Mutually exclusive with `metadata_url`.",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -605722,6 +605890,13 @@
                     "example": 8192,
                     "maximum": 100000,
                     "minimum": 512,
+                    "x-auditable": true
+                  },
+                  "metadata_url": {
+                    "description": "HTTPS URL of the IdP's SAML metadata document from which Access reads the signing certificates used to verify SAML authentication responses. Mutually exclusive with `idp_public_certs`.",
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://idp.example.com/FederationMetadata/2007-06/FederationMetadata.xml",
                     "x-auditable": true
                   },
                   "sign_request": {
@@ -611698,6 +611873,7 @@
                     "card_not_supported",
                     "currency_not_supported",
                     "prepaid_card_not_supported",
+                    "payment_method_not_supported",
                     "authentication_required",
                     "authentication_failed",
                     "card_not_3ds_capable",
@@ -621033,10 +621209,15 @@
         "type": "object",
         "properties": {
           "DimensionKeys": {
+            "description": "Dimension keys defined for this billable metric. Use them as\n`Key` in a `DIMENSION` `GroupBy` on the account usage endpoint.\nThey do not depend on the requested period, and a key can\nbe listed even when no usage in the period carries it. Empty when\nthe metric defines no dimensions.\n",
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "example": [
+              "ZONE_ID",
+              "REGION"
+            ]
           },
           "Id": {
             "description": "Public catalog identifier of the billable metric.",
@@ -621057,6 +621238,17 @@
             "items": {
               "$ref": "#/components/schemas/billable-usage-api_v2_product_family"
             }
+          },
+          "TagKeys": {
+            "description": "Resource-tag keys observed on this metric's usage within the\nrequested period, sorted and deduplicated. Use them as `Key` in a\n`TAG` `GroupBy` or in `FilterBy.Tags` on the account usage\nendpoint. Because the list reflects recorded usage, it changes with\n`from` and `to`, and is empty when no tagged usage exists in the\nperiod or tag-key discovery is not available.\n",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "environment",
+              "team"
+            ]
           }
         },
         "required": [
@@ -621064,7 +621256,8 @@
           "Name",
           "ProductFamily",
           "ProductCategory",
-          "DimensionKeys"
+          "DimensionKeys",
+          "TagKeys"
         ]
       },
       "billable-usage-api_v2_account_billable_metrics_response": {
@@ -633716,6 +633909,80 @@
           "name"
         ]
       },
+      "cloudforce-one-events_PirOrganizationType": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "sectors": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "aerospace",
+                "agriculture",
+                "automotive",
+                "chemical",
+                "commercial",
+                "communications",
+                "construction",
+                "defense",
+                "education",
+                "energy",
+                "entertainment",
+                "financial-services",
+                "government-local",
+                "government-national",
+                "government-public-services",
+                "government-regional",
+                "healthcare",
+                "hospitality-leisure",
+                "infrastructure",
+                "insurance",
+                "manufacturing",
+                "mining",
+                "non-profit",
+                "pharmaceuticals",
+                "professional-services",
+                "retail",
+                "technology",
+                "telecommunications",
+                "transportation",
+                "utilities"
+              ],
+              "type": "string"
+            }
+          },
+          "suggested_protected_targets": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "organization",
+                "customers",
+                "employees",
+                "executives",
+                "partners",
+                "events",
+                "products-infrastructure"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description",
+          "sectors",
+          "suggested_protected_targets"
+        ]
+      },
       "cloudforce-one-events_PirRelevanceCriterion": {
         "type": "object",
         "properties": {
@@ -634253,6 +634520,228 @@
         },
         "default": {},
         "additionalProperties": false
+      },
+      "cloudforce-one-events_PirTopic": {
+        "type": "object",
+        "properties": {
+          "actor_types": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "nation-state",
+                "crime-syndicate",
+                "criminal",
+                "activist",
+                "hacker",
+                "insider-disgruntled",
+                "insider-accidental",
+                "spy",
+                "terrorist",
+                "competitor",
+                "sensationalist"
+              ],
+              "type": "string"
+            }
+          },
+          "coverage_notes": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "articles",
+                    "events"
+                  ]
+                }
+              },
+              "required": [
+                "source",
+                "message"
+              ],
+              "type": "object"
+            }
+          },
+          "event_rules": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "explanation": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "explanation"
+              ],
+              "type": "object"
+            }
+          },
+          "filter_revision": {
+            "type": "integer"
+          },
+          "intent_revision": {
+            "type": "integer"
+          },
+          "motivations": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "personal-gain",
+                "organizational-gain",
+                "ideology",
+                "dominance",
+                "notoriety",
+                "coercion",
+                "revenge"
+              ],
+              "type": "string"
+            }
+          },
+          "presentation_revision": {
+            "type": "integer"
+          },
+          "profile_context": {
+            "description": "Inherited facts this topic emphasizes: listed as Highly relevant and available to its event rules. Every PIR inherits every fact.",
+            "type": "array",
+            "items": {
+              "enum": [
+                "technologies",
+                "key_suppliers"
+              ],
+              "type": "string"
+            }
+          },
+          "question_template": {
+            "description": "English question; only `{targets}` and `{regions}` are substituted.",
+            "type": "string"
+          },
+          "recommended_sectors": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "aerospace",
+                "agriculture",
+                "automotive",
+                "chemical",
+                "commercial",
+                "communications",
+                "construction",
+                "defense",
+                "education",
+                "energy",
+                "entertainment",
+                "financial-services",
+                "government-local",
+                "government-national",
+                "government-public-services",
+                "government-regional",
+                "healthcare",
+                "hospitality-leisure",
+                "infrastructure",
+                "insurance",
+                "manufacturing",
+                "mining",
+                "non-profit",
+                "pharmaceuticals",
+                "professional-services",
+                "retail",
+                "technology",
+                "telecommunications",
+                "transportation",
+                "utilities"
+              ],
+              "type": "string"
+            }
+          },
+          "relevance_criteria": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "band": {
+                  "type": "string",
+                  "enum": [
+                    "highly",
+                    "somewhat",
+                    "not"
+                  ]
+                },
+                "default_selected": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "band",
+                "text",
+                "default_selected"
+              ],
+              "type": "object"
+            }
+          },
+          "suggested_actors": {
+            "description": "Suggestions the account can see; others are left out.",
+            "type": "array",
+            "items": {
+              "properties": {
+                "alias": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "default_selected": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "alias",
+                "default_selected"
+              ],
+              "type": "object"
+            }
+          },
+          "title": {
+            "type": "string"
+          },
+          "topic_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic_id",
+          "title",
+          "question_template",
+          "intent_revision",
+          "filter_revision",
+          "presentation_revision",
+          "relevance_criteria",
+          "suggested_actors",
+          "actor_types",
+          "motivations",
+          "profile_context",
+          "event_rules",
+          "recommended_sectors",
+          "coverage_notes"
+        ]
       },
       "cloudforce-one-events_RelationshipEdge": {
         "type": "object",
@@ -676920,11 +677409,15 @@
             "additionalProperties": true,
             "nullable": true
           },
+          "result_info": {
+            "$ref": "#/components/schemas/lex_QueryResultInfo"
+          },
           "success": {
             "type": "boolean",
             "enum": [
               false
-            ]
+            ],
+            "x-auditable": true
           }
         },
         "required": [
@@ -677012,14 +677505,33 @@
             },
             "nullable": true
           },
+          "result_info": {
+            "$ref": "#/components/schemas/lex_QueryResultInfo"
+          },
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-auditable": true
           }
         },
         "required": [
+          "result_info",
           "success",
           "errors",
           "messages"
+        ]
+      },
+      "lex_QueryResultInfo": {
+        "description": "Metadata about the query execution.",
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "description": "Dataset type name queried (e.g. `http_requests`).",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "dataset"
         ]
       },
       "lex_QueryRow": {
@@ -677072,10 +677584,12 @@
         "properties": {
           "code": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "x-auditable": true
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "x-auditable": false
           }
         },
         "required": [
@@ -695425,6 +695939,13 @@
             "type": "string",
             "nullable": true
           },
+          "feature_overrides": {
+            "description": "Per-feature authorization overrides. When a listed feature is selected, authorize with the override's client ID and URL instead of the defaults above.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/one_FeatureAuthOverride"
+            }
+          },
           "requires_pkce": {
             "description": "Whether PKCE is required.",
             "type": "boolean"
@@ -695447,6 +695968,7 @@
         "required": [
           "authorization_url",
           "client_id",
+          "feature_overrides",
           "requires_pkce",
           "scopes",
           "url_placeholders"
@@ -695585,6 +696107,31 @@
           "type"
         ]
       },
+      "one_FeatureAuthOverride": {
+        "description": "Authorization settings to use instead of the defaults when a feature is selected.",
+        "type": "object",
+        "properties": {
+          "authorization_url": {
+            "description": "Full OAuth authorization URL with query parameters.",
+            "type": "string",
+            "nullable": true
+          },
+          "client_id": {
+            "description": "OAuth client ID to authorize with.",
+            "type": "string",
+            "nullable": true
+          },
+          "feature": {
+            "description": "Feature identifier that triggers this override.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorization_url",
+          "client_id",
+          "feature"
+        ]
+      },
       "one_FeatureScope": {
         "description": "A feature with its additional scopes.",
         "type": "object",
@@ -695689,6 +696236,34 @@
           "type"
         ]
       },
+      "one_GitLabIntegrationConfigurationRequest": {
+        "description": "Selected GitLab groups and projects.",
+        "type": "object",
+        "properties": {
+          "group_ids": {
+            "description": "Selected top-level GitLab group IDs as string-encoded positive integers.",
+            "type": "array",
+            "items": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]*$",
+              "type": "string"
+            },
+            "maxItems": 10000
+          },
+          "project_ids": {
+            "description": "Selected GitLab project IDs as string-encoded positive integers.",
+            "type": "array",
+            "items": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]*$",
+              "type": "string"
+            },
+            "maxItems": 10000
+          }
+        }
+      },
       "one_Instructions": {
         "description": "Instructions for obtaining credentials.",
         "type": "object",
@@ -695701,6 +696276,20 @@
         "required": [
           "markdown"
         ]
+      },
+      "one_IntegrationConfig": {
+        "description": "Vendor-specific integration configuration returned by the API.",
+        "type": "object",
+        "properties": {
+          "gitlab": {
+            "description": "GitLab-specific configuration. Present only for GitLab integrations.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/one_SelectedGitLabIntegrationConfiguration"
+              }
+            ]
+          }
+        }
       },
       "one_IntegrationCreateResponse": {
         "type": "object",
@@ -696015,6 +696604,15 @@
               "components"
             ]
           },
+          "config": {
+            "description": "Vendor-specific integration configuration.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/one_IntegrationConfig"
+              }
+            ],
+            "readOnly": true
+          },
           "created": {
             "description": "When the integration was created.",
             "type": "string",
@@ -696091,6 +696689,7 @@
           "application",
           "auth_method",
           "authorization_link",
+          "config",
           "created",
           "credentials_expiry",
           "dlp_profiles",
@@ -696133,6 +696732,15 @@
               "id",
               "display_name"
             ]
+          },
+          "config": {
+            "description": "Vendor-specific integration configuration.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/one_IntegrationConfig"
+              }
+            ],
+            "readOnly": true
           },
           "created": {
             "description": "When the integration was created.",
@@ -696178,6 +696786,7 @@
         "required": [
           "application",
           "auth_method",
+          "config",
           "created",
           "id",
           "is_paused",
@@ -696483,6 +697092,15 @@
         "description": "Serializer for v2 integration PATCH requests.",
         "type": "object",
         "properties": {
+          "config": {
+            "description": "Vendor-specific integration configuration.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/one_UpdateIntegrationConfigRequest"
+              }
+            ],
+            "x-fern-property-name": "integration_config"
+          },
           "credentials": {
             "description": "Partial credential fields to merge with existing.",
             "type": "object",
@@ -696553,6 +697171,53 @@
           "display_name",
           "scope",
           "severity"
+        ]
+      },
+      "one_SelectedGitLabIntegrationConfiguration": {
+        "description": "Selected GitLab groups and projects returned by the API.",
+        "type": "object",
+        "properties": {
+          "groups": {
+            "description": "Selected top-level GitLab groups.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/one_SelectedGitLabResource"
+            }
+          },
+          "projects": {
+            "description": "Selected GitLab projects.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/one_SelectedGitLabResource"
+            }
+          }
+        },
+        "required": [
+          "groups",
+          "projects"
+        ]
+      },
+      "one_SelectedGitLabResource": {
+        "type": "object",
+        "properties": {
+          "display_name": {
+            "description": "Human-readable GitLab resource name.",
+            "type": "string"
+          },
+          "id": {
+            "description": "GitLab resource ID as a string-encoded positive integer.",
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "path": {
+            "description": "Full GitLab resource path.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "id",
+          "path"
         ]
       },
       "one_SetupFlow": {
@@ -696676,6 +697341,20 @@
           "is_used_in_update",
           "type"
         ]
+      },
+      "one_UpdateIntegrationConfigRequest": {
+        "description": "Vendor-specific integration configuration accepted during updates.",
+        "type": "object",
+        "properties": {
+          "gitlab": {
+            "description": "GitLab-specific configuration. Accepted only for GitLab integrations.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/one_GitLabIntegrationConfigurationRequest"
+              }
+            ]
+          }
+        }
       },
       "one_UseCaseDetail": {
         "description": "Full use case with scopes and features for detail endpoint.",
@@ -720639,6 +721318,7 @@
           "ai_search_namespace",
           "alerting_policy",
           "alerting_webhook",
+          "app_library_application",
           "cloudflared_tunnel",
           "cws_deployment",
           "cws_policy",
@@ -720682,6 +721362,7 @@
           "ai_search_namespace",
           "alerting_policy",
           "alerting_webhook",
+          "app_library_application",
           "cloudflared_tunnel",
           "cws_deployment",
           "cws_policy",
@@ -720975,6 +721656,7 @@
           "alerting_policy",
           "alerting_webhook",
           "api_gateway_operation",
+          "app_library_application",
           "cloudflared_tunnel",
           "custom_certificate",
           "custom_hostname",
@@ -721026,6 +721708,7 @@
             "ai_search_namespace": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
             "alerting_policy": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
             "alerting_webhook": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
+            "app_library_application": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
             "cloudflared_tunnel": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
             "cws_deployment": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
             "cws_policy": "#/components/schemas/resource-tagging_set_tags_request_account_level_base",
@@ -721285,6 +721968,7 @@
             "alerting_policy": "#/components/schemas/resource-tagging_tagged_resource_object_alerting_policy",
             "alerting_webhook": "#/components/schemas/resource-tagging_tagged_resource_object_alerting_webhook",
             "api_gateway_operation": "#/components/schemas/resource-tagging_tagged_resource_object_api_gateway_operation",
+            "app_library_application": "#/components/schemas/resource-tagging_tagged_resource_object_app_library_application",
             "cloudflared_tunnel": "#/components/schemas/resource-tagging_tagged_resource_object_cloudflared_tunnel",
             "custom_certificate": "#/components/schemas/resource-tagging_tagged_resource_object_custom_certificate",
             "custom_hostname": "#/components/schemas/resource-tagging_tagged_resource_object_custom_hostname",
@@ -721358,6 +722042,9 @@
           },
           {
             "$ref": "#/components/schemas/resource-tagging_tagged_resource_object_api_gateway_operation"
+          },
+          {
+            "$ref": "#/components/schemas/resource-tagging_tagged_resource_object_app_library_application"
           },
           {
             "$ref": "#/components/schemas/resource-tagging_tagged_resource_object_cloudflared_tunnel"
@@ -721786,6 +722473,28 @@
           },
           {
             "$ref": "#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base"
+          }
+        ]
+      },
+      "resource-tagging_tagged_resource_object_app_library_application": {
+        "description": "Response for app_library_application resources",
+        "allOf": [
+          {
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "app_library_application"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "$ref": "#/components/schemas/resource-tagging_tagged_resource_object_account_level_base"
           }
         ]
       },
@@ -732362,6 +733071,64 @@
           "result"
         ]
       },
+      "speed_automatic_platform_optimization_patch_value": {
+        "description": "Configuration for Automatic Platform Optimization (APO) for WordPress.\nSet to \"off\" to disable, or provide an object to configure APO settings.\nWhen an APO configuration already exists, fields omitted from the object keep their current value.\n",
+        "oneOf": [
+          {
+            "description": "Disable Automatic Platform Optimization.",
+            "enum": [
+              "off"
+            ],
+            "type": "string"
+          },
+          {
+            "properties": {
+              "cache_by_device_type": {
+                "description": "Whether to cache by device type.",
+                "type": "boolean",
+                "example": false
+              },
+              "cf": {
+                "description": "Whether the zone is proxied through Cloudflare.",
+                "type": "boolean",
+                "example": true
+              },
+              "enabled": {
+                "description": "Whether APO is enabled.",
+                "type": "boolean",
+                "example": true
+              },
+              "hostnames": {
+                "description": "List of hostnames where APO is active.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "www.example.com"
+                ]
+              },
+              "recheck": {
+                "description": "Whether to recheck WordPress and plugin detection. When an APO configuration already exists, an omitted `recheck` is false, not its stored value.",
+                "type": "boolean",
+                "example": false
+              },
+              "wordpress": {
+                "description": "Whether the site is a WordPress site.",
+                "type": "boolean",
+                "example": true
+              },
+              "wp_plugin": {
+                "description": "Whether the Cloudflare WordPress plugin is installed.",
+                "type": "boolean",
+                "example": true
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "title": "Automatic Platform Optimization PATCH value"
+      },
       "speed_automatic_platform_optimization_response": {
         "description": "Controls Automatic Platform Optimization (APO) for WordPress.",
         "allOf": [
@@ -732683,6 +733450,36 @@
         },
         "example": []
       },
+      "speed_setting_metadata": {
+        "description": "Zone setting fields shared by settings whose value is not an on/off string.",
+        "type": "object",
+        "properties": {
+          "editable": {
+            "description": "Whether or not this setting can be modified for this zone (based on your Cloudflare plan level).",
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "readOnly": true,
+            "x-auditable": true
+          },
+          "id": {
+            "description": "Identifier of the zone setting.",
+            "type": "string",
+            "x-auditable": true
+          },
+          "modified_on": {
+            "description": "last time this setting was modified.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2014-01-01T05:20:00.12345Z",
+            "nullable": true,
+            "readOnly": true,
+            "x-auditable": true
+          }
+        }
+      },
       "speed_transformations_allowed_origins_response": {
         "description": "Controls which origins are allowed to request image and video transformations.\n",
         "allOf": [
@@ -732754,7 +733551,7 @@
         "description": "Combined view of Transformations, Allowed Origins, and C2PA settings for a zone.\n",
         "allOf": [
           {
-            "$ref": "#/components/schemas/speed_base"
+            "$ref": "#/components/schemas/speed_setting_metadata"
           },
           {
             "properties": {
@@ -762147,7 +762944,7 @@
                 }
               },
               "component": {
-                "description": "Tool's internal name.",
+                "description": "Name of the Managed Component the tool runs, for example `google-analytics_v4`.",
                 "type": "string",
                 "x-auditable": true
               },
@@ -762190,7 +762987,8 @@
                     "data"
                   ],
                   "type": "object"
-                }
+                },
+                "deprecated": true
               },
               "permissions": {
                 "description": "List of permissions granted to the component.",
@@ -762346,14 +763144,21 @@
                 ]
               },
               "worker": {
-                "description": "Cloudflare worker that acts as a managed component.",
+                "description": "Cloudflare Worker that acts as a Managed Component.",
                 "type": "object",
                 "properties": {
                   "escapedWorkerName": {
+                    "description": "Name of the Worker script.",
                     "type": "string",
                     "x-auditable": true
                   },
+                  "mutableId": {
+                    "description": "Set by Cloudflare when the config is saved. Do not set or change it.",
+                    "type": "string",
+                    "readOnly": true
+                  },
                   "workerTag": {
+                    "description": "Tag of the Worker script.",
                     "type": "string",
                     "x-auditable": true
                   }
@@ -762939,6 +763744,12 @@
               "autoInjectScript": {
                 "description": "Automatic injection of Zaraz scripts enabled.",
                 "type": "boolean",
+                "x-auditable": true
+              },
+              "botScoreThreshold": {
+                "description": "Minimum bot score required to load Zaraz.",
+                "type": "integer",
+                "format": "int64",
                 "x-auditable": true
               },
               "contextEnricher": {
