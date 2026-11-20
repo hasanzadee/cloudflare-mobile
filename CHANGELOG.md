@@ -4,6 +4,16 @@ Notable changes per release. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [2.0.6] — 2026-11-20
+
+### Changed
+
+- The explorer's API description is refreshed to Cloudflare's current one:
+  3773 operations. New endpoints in AI Gateway, Builds, Zero Trust
+  integrations and Logs Explorer appear in the explorer; the account-level
+  email domain endpoints Cloudflare withdrew are gone from it.
+- The weekly spec-update PR now gets its CI checks without a manual nudge.
+
 ## [2.0.5] — 2026-11-16
 
 ### Fixed
@@ -255,7 +265,8 @@ Carried over from the prototype, each of these was silent:
 - There is deliberately **no offline write queue**. A DNS change queued at 09:00
   and applied silently at 14:00 is the worst bug this app could ship.
 
-[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.6...HEAD
+[2.0.6]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/hasanzadee/cloudflare-mobile/compare/v2.0.2...v2.0.3

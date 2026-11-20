@@ -1,7 +1,7 @@
 # Cloudflare Mobile
 
 An open-source Android client for managing Cloudflare. Zones, DNS, cache — plus
-a schema-aware explorer that reaches **every one of the 3240 endpoints** in the
+a schema-aware explorer that reaches **every one of the 3773 endpoints** in the
 Cloudflare API, not just the ones with a hand-built screen.
 
 > Not affiliated with, endorsed by, or sponsored by Cloudflare, Inc.
@@ -167,8 +167,8 @@ Found something? See [SECURITY.md](SECURITY.md).
 
 ## How it covers the whole API
 
-The Cloudflare OpenAPI description contains **2021 paths, 3240 operations and
-6522 component schemas**. Generating typed Dart for all of it is not viable —
+The Cloudflare OpenAPI description contains **2352 paths, 3773 operations and
+7144 component schemas**. Generating typed Dart for all of it is not viable —
 `build_runner` over ~6500 classes is a 30-to-90-minute build and an analyzer
 that never finishes indexing. So there are three tiers:
 
@@ -178,8 +178,8 @@ that never finishes indexing. So there are three tiers:
    code is strictly less work than emitting annotations for a second tool to
    re-derive.
 2. **A schema index for everything else.** `assets/spec/operations.json` and
-   `schemas.json` describe all 3240 endpoints — parameters, types, enums,
-   required flags, request-body references — in **351 KB gzipped**. For
+   `schemas.json` describe all 3773 endpoints — parameters, types, enums,
+   required flags, request-body references — in **418 KB gzipped**. For
    comparison, the asset this replaced was 730 KB and carried no parameter
    information at all.
 3. **A raw escape hatch**, so nothing is ever unreachable.
