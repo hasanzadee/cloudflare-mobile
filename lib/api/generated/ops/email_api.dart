@@ -90,13 +90,25 @@ class EmailApi {
   /// List Turnstile Widgets
   Future<CfPage<WidgetList>> listTurnstileWidgets({
     required String accountId,
+    num? page,
+    num? perPage,
+    String? order,
+    String? direction,
+    String? filter,
     Map<String, Object?>? extraQuery,
     CancelToken? cancelToken,
   }) async {
     final _env = await _client.send(
       method: 'GET',
       path: '/accounts/$accountId/challenges/widgets',
-      query: <String, Object?>{...?extraQuery},
+      query: <String, Object?>{
+        'page': page,
+        'per_page': perPage,
+        'order': order,
+        'direction': direction,
+        'filter': filter,
+        ...?extraQuery,
+      },
       cancelToken: cancelToken,
       missingPermissions: const {'Turnstile Read'},
     );

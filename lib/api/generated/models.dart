@@ -9546,7 +9546,6 @@ class Observability2 {
 /// Agents observability settings for the Worker.
 class Observability2Agents {
   const Observability2Agents({
-    this.destinations,
     this.enabled,
     this.headSamplingRate,
     this.persist,
@@ -9555,15 +9554,11 @@ class Observability2Agents {
 
   factory Observability2Agents.fromJson(Map<String, Object?> json) =>
       Observability2Agents(
-        destinations: asPrimitiveList<String>(json['destinations'], asString),
         enabled: asBool(json['enabled']),
         headSamplingRate: asNum(json['head_sampling_rate']),
         persist: asBool(json['persist']),
         extra: extraOf(json, _knownKeys),
       );
-
-  /// A list of destinations where Agents observability data will be exported to.
-  final List<String>? destinations;
 
   /// Whether Agents observability is enabled for the Worker.
   final bool? enabled;
@@ -9581,7 +9576,6 @@ class Observability2Agents {
   final Map<String, Object?> extra;
 
   static const Set<String> _knownKeys = {
-    'destinations',
     'enabled',
     'head_sampling_rate',
     'persist',
@@ -9589,20 +9583,17 @@ class Observability2Agents {
 
   Map<String, Object?> toJson() => <String, Object?>{
     ...extra,
-    if (destinations != null) 'destinations': destinations!,
     if (enabled != null) 'enabled': enabled!,
     if (headSamplingRate != null) 'head_sampling_rate': headSamplingRate!,
     if (persist != null) 'persist': persist!,
   };
 
   Observability2Agents copyWith({
-    List<String>? destinations,
     bool? enabled,
     num? headSamplingRate,
     bool? persist,
     Map<String, Object?>? extra,
   }) => Observability2Agents(
-    destinations: destinations ?? this.destinations,
     enabled: enabled ?? this.enabled,
     headSamplingRate: headSamplingRate ?? this.headSamplingRate,
     persist: persist ?? this.persist,
